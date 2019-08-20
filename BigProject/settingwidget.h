@@ -8,6 +8,8 @@
 #include<QMessageBox>
 #include <QCloseEvent>
 
+#include"setinputdialog.h"
+
 namespace Ui {
 class SettingWidget;
 }
@@ -26,17 +28,12 @@ private slots:
 
     void on_resetButton_clicked();
 
-    void on_rowSpinBox_valueChanged(const QString &arg1);
-
-    void on_colSpinBox_valueChanged(const QString &arg1);
+    void on_inOKButton_clicked();
 
 private:
     Ui::SettingWidget *ui;
 
-    static int row;
-    static int col;
-
-
+    SetInputDialog *dlg;
 
 signals:
     void confirmSignal(int,int);
@@ -44,6 +41,10 @@ signals:
     void setAgain();
     void backToMainWindow();
     void backToSettingWidget();
+
+    void setInputPointsNumberSignal(int);
+
+    void sendInputPoint(QPoint);
 };
 
 #endif // SETTINGWIDGET_H

@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "settingwidget.h"
-#include "data.h"
 #include <QCloseEvent>
 
 //Deal with pop dialogue
@@ -23,6 +22,10 @@
 #include<QLabel>
 #include<QTextEdit>
 #include<QDockWidget>
+
+//Deal with input
+#include<vector>
+#include<QPoint>
 
 
 
@@ -45,11 +48,23 @@ private slots:
 private:
     Ui::myMainWindow *ui;
 
-    SettingWidget settingWidget;
+    SettingWidget *settingWidget;
 
-    Data *data;
+    int row;
+    int col;
+
+    std::vector<QPoint> inputPoints;
+    QPoint *outputPoint;
+
+
+    //Data *data;
 
     QFile *myFile;
+
+    int inputPointsNum;
+
+    std::vector<QPoint> inputPoint;
+
 
 protected:
     void closeEvent(QCloseEvent *event);

@@ -12,7 +12,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setWindowTitle("Main Window");
 
-    this->show();
+
+
+
+
+    inputPointsNum = 0;
 
     //菜单栏
     QMenuBar *mBar = menuBar();
@@ -21,31 +25,46 @@ myMainWindow::myMainWindow(QWidget *parent) :
     QMenu *menu = mBar->addMenu("Option");
 
 
-    connect(&settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
 
-    connect(&settingWidget,&SettingWidget::confirmSignal,
-            [=]()
-    {
-        settingWidget.close();
-        this->show();
-
-    });
-
-    connect(&settingWidget,&SettingWidget::backToMainWindow,
-            [=]()
-    {
-        this->show();
-    });
+//    connect(settingWidget,&SettingWidget::backToMainWindow,
+//            [=]()
+//    {
+//        this->show();
+//    });
 
     QAction *actSet= menu->addAction("Setting");
     connect(actSet,&QAction::triggered,
             [=]()
         {
             //这里可以弹出一个子窗口
-            settingWidget.exec();
+            settingWidget = new SettingWidget(this);
+            connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
+
+            connect(settingWidget,&SettingWidget::confirmSignal,
+                    [=]()
+            {
+                settingWidget->close();
+                this->show();
+
+            });
+            connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
+                    [=](int n)
+            {
+                inputPointsNum = n;
+                qDebug()<<"inputPointsNum = "<<inputPointsNum;
+            });
+            connect(settingWidget,&SettingWidget::sendInputPoint,
+                    [=](QPoint p)
+            {
+                inputPoints.push_back(p);
+                qDebug()<<"p = "<<p;
+            });
+            settingWidget->exec();
 
         }
     );
+
+
 
     menu->addSeparator();//为了美观添加分割线
     //QAction *actFile = menu->addAction("File");
@@ -80,9 +99,11 @@ myMainWindow::~myMainWindow()
     delete ui;
 }
 
-void myMainWindow::setData(int row, int col)
+void myMainWindow::setData(int r, int c)
 {
-    data->setNumber(row, col);
-
+    row = r;
+    col = c;
+    //data->setNumber(row, col);
+    qDebug()<<"setData!"<<"row = "<<row<<" col = "<<col;
 }
 

@@ -25,18 +25,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        data.cpp \
         main.cpp \
         mymainwindow.cpp \
+        setinputdialog.cpp \
         settingwidget.cpp
 
 HEADERS += \
-        data.h \
         mymainwindow.h \
+        setinputdialog.h \
         settingwidget.h
 
 FORMS += \
         mymainwindow.ui \
+        setinputdialog.ui \
         settingwidget.ui
 
 # Default rules for deployment.

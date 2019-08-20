@@ -1,17 +1,13 @@
 #include "settingwidget.h"
 #include "ui_settingwidget.h"
 
-
-int SettingWidget:: row =0;
-int SettingWidget:: col =0;
-
 SettingWidget::SettingWidget(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingWidget)
 {
     ui->setupUi(this);
 
-    this->resize(1200,900);
+    this->resize(800,600);
 
     ui->rowSpinBox->setMinimum(1);
     ui->colSpinBox->setMinimum(1);
@@ -50,7 +46,7 @@ SettingWidget::SettingWidget(QWidget *parent) :
         }
     });
 
-
+    //connect();
 }
 
 SettingWidget::~SettingWidget()
@@ -60,14 +56,19 @@ SettingWidget::~SettingWidget()
 
 void SettingWidget::on_confirmButton_clicked()
 {
+    int row = ui->rowSpinBox->value();
+    int col = ui->colSpinBox->value();
     if(row<=3 && col<=3)
     {
         emit setAgain();
         return;
     }
     else {
+        qDebug()<<"Here!";
+        qDebug()<<"row = "<<row;
+        qDebug()<<"col = "<<col;
         emit confirmSignal(row,col);
-        qDebug()<<"confirmSignal";
+        qDebug()<<"Success confirmSignal";
     }
 }
 
@@ -77,15 +78,14 @@ void SettingWidget::on_resetButton_clicked()
     qDebug()<<"resetSignal";
 }
 
-void SettingWidget::on_rowSpinBox_valueChanged(const QString &arg1)
+void SettingWidget::on_inOKButton_clicked()
 {
-    row = arg1.toInt();
-    qDebug()<<"row = "<<row;
-}
+    int n = ui->inpNumSpinBox->value();
+    emit setInputPointsNumberSignal(n);
 
-
-void SettingWidget::on_colSpinBox_valueChanged(const QString &arg2)
-{
-    col = arg2.toInt();
-    qDebug()<<"col = "<<col;
+    dlg = new SetInputDialog(this);
+    dlg->setInputNum(n);
+    connect(dlg,&SetInputDialog::setInputPointSignal,this,&SettingWidget::sendInputPoint);
+    dlg->exec();
+    qDebug()<<"^_^ setInputPointsNumberSignal";
 }
