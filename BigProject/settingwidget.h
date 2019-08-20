@@ -12,16 +12,13 @@ namespace Ui {
 class SettingWidget;
 }
 
-class SettingWidget : public QWidget
+class SettingWidget : public QDialog
 {
     Q_OBJECT
 
 public:
     explicit SettingWidget(QWidget *parent = nullptr);
     ~SettingWidget();
-
-protected:
-    void closeEvent(QCloseEvent *event);
 
 
 private slots:

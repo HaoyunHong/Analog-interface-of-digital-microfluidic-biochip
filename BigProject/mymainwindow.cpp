@@ -42,8 +42,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
             [=]()
         {
             //这里可以弹出一个子窗口
-            settingWidget.show();
-            this->hide();
+            settingWidget.exec();
+
         }
     );
 

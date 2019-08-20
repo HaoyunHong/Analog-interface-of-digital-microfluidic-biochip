@@ -6,7 +6,7 @@ int SettingWidget:: row =0;
 int SettingWidget:: col =0;
 
 SettingWidget::SettingWidget(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::SettingWidget)
 {
     ui->setupUi(this);
@@ -51,23 +51,6 @@ SettingWidget::SettingWidget(QWidget *parent) :
     });
 
 
-}
-
-void SettingWidget::closeEvent(QCloseEvent *event)
-{
-    int ret = QMessageBox::question(this,"question","Do you want to quit setting the properties?",QMessageBox::Yes|QMessageBox::No);
-    switch(ret)
-    {
-        case QMessageBox::Yes:
-            emit backToMainWindow();
-            break;
-        case QMessageBox::No:
-            emit backToSettingWidget();
-            event->ignore();
-            break;
-        default:
-            break;
-    }
 }
 
 SettingWidget::~SettingWidget()
