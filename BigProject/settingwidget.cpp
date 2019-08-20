@@ -1,6 +1,10 @@
 #include "settingwidget.h"
 #include "ui_settingwidget.h"
 
+
+int SettingWidget:: row =0;
+int SettingWidget:: col =0;
+
 SettingWidget::SettingWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SettingWidget)
@@ -47,11 +51,24 @@ SettingWidget::SettingWidget(QWidget *parent) :
     });
 
 
-
 }
 
-int SettingWidget:: row =0;
-int SettingWidget:: col =0;
+void SettingWidget::closeEvent(QCloseEvent *event)
+{
+    int ret = QMessageBox::question(this,"question","Do you want to quit setting the properties?",QMessageBox::Yes|QMessageBox::No);
+    switch(ret)
+    {
+        case QMessageBox::Yes:
+            emit backToMainWindow();
+            break;
+        case QMessageBox::No:
+            emit backToSettingWidget();
+            event->ignore();
+            break;
+        default:
+            break;
+    }
+}
 
 SettingWidget::~SettingWidget()
 {

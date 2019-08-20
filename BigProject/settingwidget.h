@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QDialog>
 #include<QMessageBox>
+#include <QCloseEvent>
 
 namespace Ui {
 class SettingWidget;
@@ -19,8 +20,9 @@ public:
     explicit SettingWidget(QWidget *parent = nullptr);
     ~SettingWidget();
 
-    static int row;
-    static int col;
+protected:
+    void closeEvent(QCloseEvent *event);
+
 
 private slots:
     void on_confirmButton_clicked();
@@ -34,13 +36,17 @@ private slots:
 private:
     Ui::SettingWidget *ui;
 
+    static int row;
+    static int col;
+
 
 
 signals:
     void confirmSignal(int,int);
     void resetSignal();
     void setAgain();
-    //void backToMainWindow();
+    void backToMainWindow();
+    void backToSettingWidget();
 };
 
 #endif // SETTINGWIDGET_H

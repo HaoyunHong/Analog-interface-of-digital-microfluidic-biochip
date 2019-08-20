@@ -31,6 +31,12 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     });
 
+    connect(&settingWidget,&SettingWidget::backToMainWindow,
+            [=]()
+    {
+        this->show();
+    });
+
     QAction *actSet= menu->addAction("Setting");
     connect(actSet,&QAction::triggered,
             [=]()
@@ -46,6 +52,27 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
 
 
+    //工具栏，菜单项的快捷方式
+    QToolBar *toolBar = addToolBar("toolBar");
+
+    //工具栏添加快捷键
+    toolBar->addAction(actSet);
+
+}
+
+void myMainWindow::closeEvent(QCloseEvent *event)
+{
+    int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
+    switch(ret)
+    {
+        case QMessageBox::Yes:
+            break;
+        case QMessageBox::No:
+            event->ignore();
+            break;
+        default:
+            break;
+    }
 }
 
 myMainWindow::~myMainWindow()

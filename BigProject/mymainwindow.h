@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "settingwidget.h"
 #include "data.h"
+#include <QCloseEvent>
 
 //Deal with pop dialogue
 #include<QAction>
@@ -49,6 +50,9 @@ private:
     Data *data;
 
     QFile *myFile;
+
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MYMAINWINDOW_H
