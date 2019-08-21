@@ -5,6 +5,11 @@
 #include "settingwidget.h"
 #include <QCloseEvent>
 
+//Deal with picture
+#include "designinterface.h"
+#include<QPainter>
+#include<QPaintEvent>
+
 //Deal with pop dialogue
 #include<QAction>
 #include<QDialog>
@@ -45,6 +50,8 @@ public:
 
 private slots:
 
+    void on_startButton_clicked();
+
 private:
     Ui::myMainWindow *ui;
 
@@ -65,9 +72,12 @@ private:
 
     std::vector<QPoint> inputPoint;
 
+    DesignInterface design;
+
 
 protected:
     void closeEvent(QCloseEvent *event);
+    void paintEvent(QPaintEvent *);
 };
 
 #endif // MYMAINWINDOW_H

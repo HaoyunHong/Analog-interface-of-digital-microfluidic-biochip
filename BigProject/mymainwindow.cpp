@@ -12,6 +12,20 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setWindowTitle("Main Window");
 
+//    this->setAutoFillBackground(true);
+//    QPalette palette;
+//    palette.setBrush(QPalette::Background, QBrush(QPixmap(":/image/image/pinback.jpg")));
+//    this->setPalette(palette);
+//    setAcceptDrops(true);
+
+
+
+
+    ui->startButton->setStyleSheet("background-color:transparent;color:rgb(254, 67, 101);");
+
+
+
+
     inputPointsNum = 0;
 
     outputPoint.setX(0);
@@ -136,20 +150,28 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
 
 
-
-
-
     menu->addSeparator();//为了美观添加分割线
-    //QAction *actFile = menu->addAction("File");
 
-
+    QAction *actCommand = menu->addAction("Command");
 
     //工具栏，菜单项的快捷方式
     QToolBar *toolBar = addToolBar("toolBar");
 
     //工具栏添加快捷键
     toolBar->addAction(actSet);
+    toolBar->addAction(actCommand);
 
+
+}
+
+void myMainWindow::paintEvent(QPaintEvent *)
+{
+    QPainter p;//创建画家对象
+    p.begin(this);//指定当前窗口为绘图设备
+    p.drawPixmap(0,0,width(),height(),QPixmap(":/image/image/pinback.jpg"));
+    p.end();
+    //设置屏幕透明度
+    setWindowOpacity(0.96);
 }
 
 void myMainWindow::closeEvent(QCloseEvent *event)
@@ -180,3 +202,9 @@ void myMainWindow::setData(int r, int c)
     qDebug()<<"setData!"<<"row = "<<row<<" col = "<<col;
 }
 
+
+void myMainWindow::on_startButton_clicked()
+{
+    design.show();
+    this->hide();
+}

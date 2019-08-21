@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/image">
         <file>image/correct.png</file>
+        <file>image/sky.jpg</file>
+        <file>image/back.jpg</file>
+        <file>image/purback.jpg</file>
+        <file>image/pinback.jpg</file>
+        <file>image/dlg.png</file>
     </qresource>
 </RCC>

@@ -7,6 +7,8 @@ SetInputDialog::SetInputDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setWindowTitle("Input Points Setting");
+
     ui->okButton->setEnabled(false);
 
     ui->xSpinBox->setMinimum(1);

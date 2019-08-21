@@ -8,7 +8,13 @@ SettingWidget::SettingWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->resize(800,600);
+    //去窗口裱框
+    setWindowFlags(Qt::FramelessWindowHint | windowFlags());
+
+    //窗口背景设置为透明、
+    setAttribute(Qt::WA_TranslucentBackground);
+
+    this->resize(1200,900);
 
     ui->rowSpinBox->setMinimum(1);
     ui->colSpinBox->setMinimum(1);
@@ -86,6 +92,12 @@ void SettingWidget::outIsOK(bool flag)
 void SettingWidget::sendDuplicate(bool flag)
 {
     dlg->checkDuplicate(flag);
+}
+
+void SettingWidget::paintEvent(QPaintEvent*)
+{
+    QPainter p(this);
+    p.drawPixmap(0,0,width(),height(),QPixmap(":/image/image/dlg.png"));
 }
 
 SettingWidget::~SettingWidget()

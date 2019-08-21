@@ -8,6 +8,9 @@
 #include<QMessageBox>
 #include <QCloseEvent>
 
+//把设置框变得更好看
+#include<QPainter>
+
 #include"setinputdialog.h"
 
 namespace Ui {
@@ -39,8 +42,6 @@ private slots:
 
     void on_confirmButton_2_clicked();
 
-
-
 private:
     Ui::SettingWidget *ui;
 
@@ -70,6 +71,7 @@ signals:
 
 protected:
     void closeEvent(QCloseEvent *event);
+    void paintEvent(QPaintEvent*);
 
 };
 
