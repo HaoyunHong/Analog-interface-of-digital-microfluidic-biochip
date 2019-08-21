@@ -40,13 +40,13 @@ myMainWindow::myMainWindow(QWidget *parent) :
             settingWidget = new SettingWidget(this);
             connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
 
-            connect(settingWidget,&SettingWidget::confirmSignal,
-                    [=]()
-            {
-                settingWidget->close();
-                this->show();
+//            connect(settingWidget,&SettingWidget::confirmSignal,
+//                    [=]()
+//            {
+//                settingWidget->close();
+//                this->show();
 
-            });
+//            });
             connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
                     [=](int n)
             {
@@ -56,10 +56,35 @@ myMainWindow::myMainWindow(QWidget *parent) :
             connect(settingWidget,&SettingWidget::sendInputPoint,
                     [=](QPoint p)
             {
-                inputPoints.push_back(p);
-                qDebug()<<"p = "<<p;
+                unsigned int size = inputPoints.size();
+                bool canStore = true;
+                if(size !=0)
+                {
+                    for(unsigned int i=0;i<size-1;i++)
+                    {
+                        if(inputPoints[i].x() == p.x() && inputPoints[i].y() == p.y())
+                        {
+                            settingWidget->sendDuplicate(true);
+                            canStore = false;
+                            qDebug()<<"In Main Window Duplicate : p = "<<p;
+                            break;
+                        }
+                    }
+                }
+                if(canStore)
+                {
+                    inputPoints.push_back(p);
+                    qDebug()<<"In main window p = "<<p;
+                }
+
             });
             settingWidget->exec();
+
+            connect(settingWidget,&SettingWidget::setAgain,
+                    [=]()
+            {
+                inputPoint.clear();
+            });
 
         }
     );

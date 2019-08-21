@@ -6,6 +6,9 @@
 
 QT       += core gui
 
+QT += multimedia
+# 加入音效必须的
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = BigProject
@@ -44,3 +47,10 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    image/correct.jpg \
+    image/correct.png
+
+RESOURCES += \
+    image.qrc

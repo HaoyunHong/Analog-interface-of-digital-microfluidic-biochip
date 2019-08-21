@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include<QDebug>
+#include<QMessageBox>
 
 namespace Ui {
 class SetInputDialog;
@@ -18,6 +19,12 @@ public:
 
     void setInputNum(int);
 
+    void knowRowAndCol(int,int);
+
+    void checkDuplicate(bool);
+
+    void resetInputPoints();
+
 private slots:
     void on_addButton_clicked();
 
@@ -28,8 +35,17 @@ private:
 
     int count;
 
+    bool ac;
+
+    //行列数还都是要存的
+    int row;
+    int col;
+
+    bool isDuplicate;
+
 signals:
     void setInputPointSignal(QPoint);
+    void InFinishedSignal();
 };
 
 #endif // SETINPUTDIALOG_H

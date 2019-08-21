@@ -22,6 +22,8 @@ public:
     explicit SettingWidget(QWidget *parent = nullptr);
     ~SettingWidget();
 
+    void sendDuplicate(bool flag = false);
+
 
 private slots:
     void on_confirmButton_clicked();
@@ -29,6 +31,7 @@ private slots:
     void on_resetButton_clicked();
 
     void on_inOKButton_clicked();
+
 
 private:
     Ui::SettingWidget *ui;
