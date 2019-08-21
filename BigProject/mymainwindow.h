@@ -54,7 +54,7 @@ private:
     int col;
 
     std::vector<QPoint> inputPoints;
-    QPoint *outputPoint;
+    QPoint outputPoint;
 
 
     //Data *data;

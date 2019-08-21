@@ -5,6 +5,8 @@
 #include<QDebug>
 #include<QMessageBox>
 
+#include<QCloseEvent>
+
 namespace Ui {
 class SetInputDialog;
 }
@@ -23,10 +25,12 @@ public:
 
     void checkDuplicate(bool);
 
-    void resetInputPoints();
+    void resetThisInputPoint();
 
 private slots:
     void on_addButton_clicked();
+
+    void on_okButton_clicked();
 
 private:
     Ui::SetInputDialog *ui;
@@ -46,6 +50,10 @@ private:
 signals:
     void setInputPointSignal(QPoint);
     void InFinishedSignal();
+    void clearInputPoints();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // SETINPUTDIALOG_H

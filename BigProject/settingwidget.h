@@ -24,6 +24,8 @@ public:
 
     void sendDuplicate(bool flag = false);
 
+    //void outIsOK(bool);
+
 
 private slots:
     void on_confirmButton_clicked();
@@ -33,10 +35,23 @@ private slots:
     void on_inOKButton_clicked();
 
 
+    void on_saveButton_clicked();
+
+    void on_confirmButton_2_clicked();
+
+
+
 private:
     Ui::SettingWidget *ui;
 
     SetInputDialog *dlg;
+
+    bool rcOK;
+    bool inputOK;
+    bool outputOK;
+
+    int rowNum;
+    int colNum;
 
 signals:
     void confirmSignal(int,int);
@@ -48,6 +63,14 @@ signals:
     void setInputPointsNumberSignal(int);
 
     void sendInputPoint(QPoint);
+
+    void clearInputPoints();
+
+    void outputFinishedSignal(int,int);
+
+    void outputCheckSignal(int,int);
+
+
 };
 
 #endif // SETTINGWIDGET_H

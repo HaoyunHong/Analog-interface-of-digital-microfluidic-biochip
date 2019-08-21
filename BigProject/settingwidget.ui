@@ -31,7 +31,7 @@
     <rect>
      <x>10</x>
      <y>40</y>
-     <width>391</width>
+     <width>481</width>
      <height>108</height>
     </rect>
    </property>
@@ -93,7 +93,7 @@
    <widget class="QPushButton" name="confirmButton">
     <property name="geometry">
      <rect>
-      <x>184</x>
+      <x>190</x>
       <y>40</y>
       <width>93</width>
       <height>28</height>
@@ -106,7 +106,7 @@
    <widget class="QLabel" name="rcCheckLabel">
     <property name="geometry">
      <rect>
-      <x>310</x>
+      <x>290</x>
       <y>40</y>
       <width>51</width>
       <height>31</height>
@@ -137,9 +137,9 @@
   <widget class="QWidget" name="widget_2" native="true">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>280</y>
-     <width>431</width>
+     <x>10</x>
+     <y>240</y>
+     <width>561</width>
      <height>50</height>
     </rect>
    </property>
@@ -204,7 +204,7 @@
     <rect>
      <x>10</x>
      <y>370</y>
-     <width>361</width>
+     <width>521</width>
      <height>43</height>
     </rect>
    </property>
@@ -270,7 +270,7 @@
    <widget class="QLabel" name="outputCheckLabel">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>400</x>
       <y>10</y>
       <width>51</width>
       <height>31</height>
@@ -284,6 +284,19 @@
     </property>
     <property name="scaledContents">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="confirmButton_2">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>10</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>confirm</string>
     </property>
    </widget>
   </widget>
@@ -304,7 +317,7 @@
       </property>
       <property name="sizeHint" stdset="0">
        <size>
-        <width>40</width>
+        <width>115</width>
         <height>20</height>
        </size>
       </property>
@@ -324,27 +337,7 @@
       </property>
       <property name="sizeHint" stdset="0">
        <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QPushButton" name="resetButton">
-      <property name="text">
-       <string>reset</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
+        <width>115</width>
         <height>20</height>
        </size>
       </property>

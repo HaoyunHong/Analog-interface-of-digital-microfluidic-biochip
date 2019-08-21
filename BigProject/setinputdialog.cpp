@@ -33,11 +33,6 @@ void SetInputDialog::setInputNum(int n)
     inputNum = n;
 }
 
-void SetInputDialog::resetInputPoints()
-{
-    ui->xSpinBox->setValue(1);
-    ui->ySpinBox->setValue(1);
-}
 
 SetInputDialog::~SetInputDialog()
 {
@@ -56,7 +51,21 @@ void SetInputDialog::on_addButton_clicked()
         point.setY(ui->ySpinBox->value());
         qDebug()<<"In Setting point = "<<point;
         emit setInputPointSignal(point);
-        if(point.x()==1 || point.x()==row || point.y()==1||point.y()==col )
+
+        if(point.x()>row || point.y()>col)
+        {
+            int ret = QMessageBox::warning(this,"Error","The position of this input point out of range!",QMessageBox::Ok);
+            switch(ret)
+            {
+            case QMessageBox::Ok:
+                ui->xSpinBox->setValue(1);
+                ui->ySpinBox->setValue(1);
+                break;
+            default:
+                break;
+            }
+        }
+        else if(point.x()==1 || point.x()==row || point.y()==1||point.y()==col )
         {
             if(isDuplicate)
             {
@@ -64,27 +73,17 @@ void SetInputDialog::on_addButton_clicked()
                 switch(ret)
                 {
                 case QMessageBox::Ok:
-                    this->resetInputPoints();
+                    ui->xSpinBox->setValue(1);
+                    ui->ySpinBox->setValue(1);
                     break;
                 default:
                     break;
-            }
+                }
             }
             else{
                  count++;
                 }
 
-        }
-        else if(point.x()>row||point.y()>col)
-        {
-            int ret = QMessageBox::warning(this,"Error","The position of this input point out of range!",QMessageBox::Ok);
-            switch(ret)
-            {
-            case QMessageBox::Ok:
-                break;
-            default:
-                break;
-            }
         }
         else {
             int ret = QMessageBox::warning(this,"Error","Please make sure that input points are on the edge!",QMessageBox::Ok);
@@ -99,14 +98,11 @@ void SetInputDialog::on_addButton_clicked()
 
         if(count == inputNum)
         {
+            qDebug()<<"OK";
             ui->addButton->setEnabled(false);
             ui->okButton->setEnabled(true);
-            connect(ui->okButton,&QPushButton::clicked,
-                    [=]()
-            {
-                this->close();
-            });
-            emit InFinishedSignal();//让SettingWidget知道自己ok了
+
+
         }
     }
     else {
@@ -114,6 +110,33 @@ void SetInputDialog::on_addButton_clicked()
     }
 }
 
+void SetInputDialog::resetThisInputPoint()
+{
+    ui->xSpinBox->setValue(1);
+    ui->ySpinBox->setValue(1);
+}
 
 
+void SetInputDialog::closeEvent(QCloseEvent *event)
+{
+    int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
+    switch(ret)
+    {
+        case QMessageBox::Yes:
 
+            break;
+        case QMessageBox::No:
+            event->ignore();
+            break;
+        default:
+            break;
+    }
+}
+
+
+void SetInputDialog::on_okButton_clicked()
+{
+    this->hide();
+    emit InFinishedSignal();
+    qDebug()<<"lll";
+}

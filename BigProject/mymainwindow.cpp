@@ -12,9 +12,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setWindowTitle("Main Window");
 
-
-
-
+    settingWidget = new SettingWidget(this);
 
     inputPointsNum = 0;
 
@@ -24,29 +22,14 @@ myMainWindow::myMainWindow(QWidget *parent) :
     //添加菜单
     QMenu *menu = mBar->addMenu("Option");
 
-
-
-//    connect(settingWidget,&SettingWidget::backToMainWindow,
-//            [=]()
-//    {
-//        this->show();
-//    });
-
     QAction *actSet= menu->addAction("Setting");
     connect(actSet,&QAction::triggered,
             [=]()
         {
             //这里可以弹出一个子窗口
-            settingWidget = new SettingWidget(this);
+
             connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
 
-//            connect(settingWidget,&SettingWidget::confirmSignal,
-//                    [=]()
-//            {
-//                settingWidget->close();
-//                this->show();
-
-//            });
             connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
                     [=](int n)
             {
@@ -58,23 +41,33 @@ myMainWindow::myMainWindow(QWidget *parent) :
             {
                 unsigned int size = inputPoints.size();
                 bool canStore = true;
-                if(size !=0)
+                if(size == 0)
                 {
-                    for(unsigned int i=0;i<size-1;i++)
+                    inputPoints.push_back(p);
+                    qDebug()<<"First in main window p = "<<p;
+                }
+                else
+                {
+                    qDebug()<<"size = "<<size;
+                    for(unsigned int i=0;i<size;i++)
                     {
-                        if(inputPoints[i].x() == p.x() && inputPoints[i].y() == p.y())
+
+                        if(inputPoints[i]==p)
                         {
+                            qDebug()<<i<<" : inputPoints["<<i<<"] = "<<inputPoints[i];
+                            qDebug()<<"p = "<<p;
                             settingWidget->sendDuplicate(true);
                             canStore = false;
                             qDebug()<<"In Main Window Duplicate : p = "<<p;
                             break;
                         }
                     }
-                }
-                if(canStore)
-                {
-                    inputPoints.push_back(p);
-                    qDebug()<<"In main window p = "<<p;
+                    if(canStore)
+                    {
+                        settingWidget->sendDuplicate(false);
+                        inputPoints.push_back(p);
+                        qDebug()<<"In main window p = "<<p;
+                    }
                 }
 
             });
@@ -84,10 +77,35 @@ myMainWindow::myMainWindow(QWidget *parent) :
                     [=]()
             {
                 inputPoint.clear();
+                qDebug()<<"Clear input points!";
+            });
+
+            connect(settingWidget,&SettingWidget::clearInputPoints,
+                    [=]()
+            {
+                inputPoint.clear();
+                qDebug()<<"Clear input points!";
             });
 
         }
     );
+
+    connect(settingWidget,&SettingWidget::outputCheckSignal,
+            [=](int x, int y)
+    {
+        qDebug()<<"Checking!!!";
+    });
+
+
+    connect(settingWidget,&SettingWidget::outputFinishedSignal,
+            [=](int x, int y)
+    {
+        outputPoint.setX(x);
+        outputPoint.setY(y);
+        qDebug()<<"outputPoint = "<<outputPoint;
+    });
+
+
 
 
 
