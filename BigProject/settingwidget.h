@@ -24,7 +24,7 @@ public:
 
     void sendDuplicate(bool flag = false);
 
-    //void outIsOK(bool);
+    void outIsOK(bool);
 
 
 private slots:
@@ -64,12 +64,12 @@ signals:
 
     void sendInputPoint(QPoint);
 
-    void clearInputPoints();
-
     void outputFinishedSignal(int,int);
 
     void outputCheckSignal(int,int);
 
+protected:
+    void closeEvent(QCloseEvent *event);
 
 };
 

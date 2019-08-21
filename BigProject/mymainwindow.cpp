@@ -12,9 +12,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setWindowTitle("Main Window");
 
-    settingWidget = new SettingWidget(this);
-
     inputPointsNum = 0;
+
+    outputPoint.setX(0);
+    outputPoint.setY(0);
 
     //菜单栏
     QMenuBar *mBar = menuBar();
@@ -23,10 +24,13 @@ myMainWindow::myMainWindow(QWidget *parent) :
     QMenu *menu = mBar->addMenu("Option");
 
     QAction *actSet= menu->addAction("Setting");
+
+    settingWidget = new SettingWidget(this);
     connect(actSet,&QAction::triggered,
             [=]()
         {
-            //这里可以弹出一个子窗口
+            //这里弹出一个子窗口
+
 
             connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
 
@@ -36,6 +40,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
                 inputPointsNum = n;
                 qDebug()<<"inputPointsNum = "<<inputPointsNum;
             });
+
             connect(settingWidget,&SettingWidget::sendInputPoint,
                     [=](QPoint p)
             {
@@ -52,7 +57,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
                     for(unsigned int i=0;i<size;i++)
                     {
 
-                        if(inputPoints[i]==p)
+                        if(inputPoints[i]==p || p == outputPoint)
                         {
                             qDebug()<<i<<" : inputPoints["<<i<<"] = "<<inputPoints[i];
                             qDebug()<<"p = "<<p;
@@ -80,21 +85,44 @@ myMainWindow::myMainWindow(QWidget *parent) :
                 qDebug()<<"Clear input points!";
             });
 
-            connect(settingWidget,&SettingWidget::clearInputPoints,
-                    [=]()
-            {
-                inputPoint.clear();
-                qDebug()<<"Clear input points!";
-            });
-
         }
     );
 
     connect(settingWidget,&SettingWidget::outputCheckSignal,
             [=](int x, int y)
     {
-        qDebug()<<"Checking!!!";
-    });
+        unsigned int size = inputPoints.size();
+        qDebug()<<"size = "<<size;
+//        for(unsigned int i=0;i<size;i++)
+//        {
+//            qDebug()<<inputPoints[i];
+//        }
+        if(size == 0)
+        {
+            settingWidget->outIsOK(true);
+            qDebug()<<"Input points haven't entered, so it's OK.";
+        }
+        else
+        {
+            bool flag = true;
+            for(unsigned int i=0;i<size;i++)
+            {
+                qDebug()<<"x = "<<x<<"y = "<<y;
+                qDebug()<<"inputPoints["<<i<<"]"<<inputPoints[i];
+
+
+                if(inputPoints[i].x() == x && inputPoints[i].y() == y)
+                {
+                    flag = false;
+                    qDebug()<<"Output overlap with input!";
+                    break;
+                }
+            }
+            settingWidget->outIsOK(flag);
+
+        }
+    }
+        );
 
 
     connect(settingWidget,&SettingWidget::outputFinishedSignal,
@@ -104,6 +132,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
         outputPoint.setY(y);
         qDebug()<<"outputPoint = "<<outputPoint;
     });
+
+
 
 
 

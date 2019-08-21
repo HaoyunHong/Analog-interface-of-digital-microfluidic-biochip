@@ -26,10 +26,11 @@ SettingWidget::SettingWidget(QWidget *parent) :
     ui->inputCheckLabel->setEnabled(false);
     ui->rcCheckLabel->setEnabled(false);
     ui->outputCheckLabel->setEnabled(false);
+    ui->confirmButton_2->setEnabled(false);
 
     rcOK = false;
     inputOK = false;
-    //outputOK = false;
+    outputOK = true;
 
     rowNum = 0;
     colNum = 0;
@@ -39,9 +40,11 @@ SettingWidget::SettingWidget(QWidget *parent) :
     connect(dlg,&SetInputDialog::InFinishedSignal,
             [=]()
     {
+        inputOK = true;
         qDebug()<<"lllllll";
         ui->inOKButton->setEnabled(false);
         ui->inputCheckLabel->setEnabled(true);
+        ui->inpNumSpinBox->setEnabled(false);
     });
 
 
@@ -59,6 +62,7 @@ SettingWidget::SettingWidget(QWidget *parent) :
         ui->inputCheckLabel->setEnabled(false);
         ui->rcCheckLabel->setEnabled(false);
         ui->outputCheckLabel->setEnabled(false);
+        ui->confirmButton_2->setEnabled(false);
         int ret = QMessageBox::warning(this,"Error","Please make sure that row number or col number is larger than 3!",QMessageBox::Ok);
         switch(ret)
         {
@@ -68,12 +72,14 @@ SettingWidget::SettingWidget(QWidget *parent) :
             break;
         }
     });
+
 }
 
-//void SettingWidget::outIsOK(bool flag)
-//{
-//    outputOK = flag;
-//}
+void SettingWidget::outIsOK(bool flag)
+{
+    outputOK = flag;
+    qDebug()<<"outputOK~~ "<<outputOK;
+}
 
 
 
@@ -102,11 +108,12 @@ void SettingWidget::on_confirmButton_clicked()
         return;
     }
     else {
+        rcOK = false;
         rowNum = row;
         colNum = col;
 
         rcOK = true;
-        int ret = QMessageBox::information(this,"Tips","Now you can enter the number of input points with their postions and the postion of an output point!",QMessageBox::Ok);
+        int ret = QMessageBox::information(this,"Tips","Now you can enter the following!",QMessageBox::Ok);
         switch(ret)
         {
         case QMessageBox::Ok:
@@ -125,8 +132,10 @@ void SettingWidget::on_confirmButton_clicked()
         ui->inOKButton->setStyleSheet("background: rgb(245,150,170)");
         ui->outXSpinBox->setEnabled(true);
         ui->outYSpinBox->setEnabled(true);
+        ui->confirmButton_2->setEnabled(true);
 
-
+        ui->rowSpinBox->setEnabled(false);
+        ui->colSpinBox->setEnabled(false);
 
     }
 }
@@ -148,31 +157,47 @@ void SettingWidget::on_inOKButton_clicked()
     dlg->exec();
     qDebug()<<"setInputPointsNumberSignal";
 
-
-    connect(dlg,&SetInputDialog::clearInputPoints,
-            [=]()
-    {
-        emit clearInputPoints();
-    });
 }
 
 void SettingWidget::on_saveButton_clicked()
 {
-    this->hide();
-    ui->saveButton->setEnabled(false);
+    if(rcOK && inputOK && outputOK)
+    {
+        this->hide();
+        ui->saveButton->setEnabled(false);
+    }
+    else if(!inputOK){
+        int ret = QMessageBox::warning(this,"Undone","Input points setting undone!",QMessageBox::Ok);
+        switch(ret)
+        {
+        case QMessageBox::Ok:
+            break;
+        default:
+            break;
+        }
+    }
+    else if(!outputOK)
+    {
+        int ret = QMessageBox::warning(this,"Undone","Output point setting undone!",QMessageBox::Ok);
+        switch(ret)
+        {
+        case QMessageBox::Ok:
+            break;
+        default:
+            break;
+        }
+
+    }
+
 }
 
 void SettingWidget::on_confirmButton_2_clicked()
 {
     int x = ui->outXSpinBox->value();
     int y = ui->outYSpinBox->value();
-    if((x==1||x==rowNum||y==1||y==colNum)/*&&outputOK*/)
-    {
-        emit outputFinishedSignal(x,y);
-        ui->confirmButton_2->setEnabled(false);
-        ui->outputCheckLabel->setEnabled(true);
-    }
-    else if(x > rowNum || y > colNum)
+    emit outputCheckSignal(x,y);
+    qDebug()<<"Checked! "<<"outputOK = "<<outputOK;
+    if(x > rowNum || y > colNum)
     {
         int ret = QMessageBox::warning(this,"Error","The position of the output point out of range!",QMessageBox::Ok);
         switch(ret)
@@ -185,6 +210,31 @@ void SettingWidget::on_confirmButton_2_clicked()
             break;
          }
     }
+            else if(!outputOK)
+            {
+                int ret = QMessageBox::warning(this,"Error","The position of the output point is already taken!",QMessageBox::Ok);
+                switch(ret)
+                {
+                case QMessageBox::Ok:
+                    ui->outXSpinBox->setValue(1);
+                    ui->outYSpinBox->setValue(1);
+                    break;
+                default:
+                    break;
+                }
+            }
+    else if((x==1||x==rowNum||y==1||y==colNum)&&outputOK)
+    {
+        qDebug()<<"rowNum = "<<rowNum;
+        qDebug()<<"colNum = "<<colNum;
+        emit outputFinishedSignal(x,y);
+        ui->confirmButton_2->setEnabled(false);
+        ui->outputCheckLabel->setEnabled(true);
+        ui->outXSpinBox->setEnabled(false);
+        ui->outYSpinBox->setEnabled(false);
+    }
+
+
     else {
         int ret = QMessageBox::warning(this,"Error","Please make sure that output points are on the edge!",QMessageBox::Ok);
         switch(ret)
@@ -198,3 +248,19 @@ void SettingWidget::on_confirmButton_2_clicked()
         }
     }
 }
+
+void SettingWidget::closeEvent(QCloseEvent *event)
+{
+    int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
+    switch(ret)
+    {
+        case QMessageBox::Yes:
+            break;
+        case QMessageBox::No:
+            event->ignore();
+            break;
+        default:
+            break;
+    }
+}
+
