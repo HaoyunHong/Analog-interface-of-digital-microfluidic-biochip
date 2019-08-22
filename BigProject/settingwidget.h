@@ -29,6 +29,8 @@ public:
 
     void outIsOK(bool);
 
+    void defaultAll();
+
 
 private slots:
     void on_confirmButton_clicked();
@@ -41,6 +43,8 @@ private slots:
     void on_saveButton_clicked();
 
     void on_confirmButton_2_clicked();
+
+    void on_closeButton_clicked();
 
 private:
     Ui::SettingWidget *ui;

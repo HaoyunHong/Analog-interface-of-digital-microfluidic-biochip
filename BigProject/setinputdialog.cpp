@@ -83,6 +83,7 @@ void SetInputDialog::on_addButton_clicked()
                 }
             }
             else{
+                qDebug()<<"Point is OK: point = "<<point;
                  count++;
                 }
 
@@ -103,8 +104,8 @@ void SetInputDialog::on_addButton_clicked()
             qDebug()<<"OK";
             ui->addButton->setEnabled(false);
             ui->okButton->setEnabled(true);
-
-
+            ui->xSpinBox->setEnabled(false);
+            ui->ySpinBox->setEnabled(false);
         }
     }
     else {

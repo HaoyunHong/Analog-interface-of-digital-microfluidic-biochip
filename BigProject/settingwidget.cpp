@@ -16,30 +16,32 @@ SettingWidget::SettingWidget(QWidget *parent) :
 
     this->resize(1200,900);
 
-    ui->rowSpinBox->setMinimum(1);
-    ui->colSpinBox->setMinimum(1);
-    ui->inpNumSpinBox->setMinimum(1);
-    ui->outXSpinBox->setMinimum(1);
-    ui->outYSpinBox->setMinimum(1);
+    this->defaultAll();
 
-    ui->confirmButton->setStyleSheet("background: rgb(245,150,170)");
-    ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170)");
+//    ui->rowSpinBox->setMinimum(1);
+//    ui->colSpinBox->setMinimum(1);
+//    ui->inpNumSpinBox->setMinimum(1);
+//    ui->outXSpinBox->setMinimum(1);
+//    ui->outYSpinBox->setMinimum(1);
 
-    ui->inpNumSpinBox->setEnabled(false);
-    ui->inOKButton->setEnabled(false);
-    ui->outXSpinBox->setEnabled(false);
-    ui->outYSpinBox->setEnabled(false);
-    ui->inputCheckLabel->setEnabled(false);
-    ui->rcCheckLabel->setEnabled(false);
-    ui->outputCheckLabel->setEnabled(false);
-    ui->confirmButton_2->setEnabled(false);
+//    ui->confirmButton->setStyleSheet("background: rgb(245,150,170)");
+//    ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170)");
 
-    rcOK = false;
-    inputOK = false;
-    outputOK = true;
+//    ui->inpNumSpinBox->setEnabled(false);
+//    ui->inOKButton->setEnabled(false);
+//    ui->outXSpinBox->setEnabled(false);
+//    ui->outYSpinBox->setEnabled(false);
+//    ui->inputCheckLabel->setEnabled(false);
+//    ui->rcCheckLabel->setEnabled(false);
+//    ui->outputCheckLabel->setEnabled(false);
+//    ui->confirmButton_2->setEnabled(false);
 
-    rowNum = 0;
-    colNum = 0;
+//    rcOK = false;
+//    inputOK = false;
+//    outputOK = true;
+
+//    rowNum = 0;
+//    colNum = 0;
 
     dlg = new SetInputDialog(this);
 
@@ -175,8 +177,19 @@ void SettingWidget::on_saveButton_clicked()
 {
     if(rcOK && inputOK && outputOK)
     {
-        this->hide();
         ui->saveButton->setEnabled(false);
+        ui->closeButton->setEnabled(true);
+    }
+    else if(!rcOK)
+    {
+        int ret = QMessageBox::warning(this,"Undone","Row and column numbers setting undone!",QMessageBox::Ok);
+        switch(ret)
+        {
+        case QMessageBox::Ok:
+            break;
+        default:
+            break;
+        }
     }
     else if(!inputOK){
         int ret = QMessageBox::warning(this,"Undone","Input points setting undone!",QMessageBox::Ok);
@@ -261,9 +274,39 @@ void SettingWidget::on_confirmButton_2_clicked()
     }
 }
 
+void SettingWidget::defaultAll()
+{
+    ui->rowSpinBox->setMinimum(1);
+    ui->colSpinBox->setMinimum(1);
+    ui->inpNumSpinBox->setMinimum(1);
+    ui->outXSpinBox->setMinimum(1);
+    ui->outYSpinBox->setMinimum(1);
+
+    ui->confirmButton->setStyleSheet("background: rgb(245,150,170)");
+    ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170)");
+
+    ui->inpNumSpinBox->setEnabled(false);
+    ui->inOKButton->setEnabled(false);
+    ui->outXSpinBox->setEnabled(false);
+    ui->outYSpinBox->setEnabled(false);
+    ui->inputCheckLabel->setEnabled(false);
+    ui->rcCheckLabel->setEnabled(false);
+    ui->outputCheckLabel->setEnabled(false);
+    ui->confirmButton_2->setEnabled(false);
+
+    ui->closeButton->setEnabled(false);
+
+    rcOK = false;
+    inputOK = false;
+    outputOK = true;
+
+    rowNum = 0;
+    colNum = 0;
+}
+
 void SettingWidget::closeEvent(QCloseEvent *event)
 {
-    int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
+    int ret = QMessageBox::question(this,"question","Do you want to close?",QMessageBox::Yes|QMessageBox::No);
     switch(ret)
     {
         case QMessageBox::Yes:
@@ -276,3 +319,8 @@ void SettingWidget::closeEvent(QCloseEvent *event)
     }
 }
 
+
+void SettingWidget::on_closeButton_clicked()
+{
+    this->close();
+}

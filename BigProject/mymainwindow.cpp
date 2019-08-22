@@ -60,6 +60,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             {
                 unsigned int size = inputPoints.size();
                 bool canStore = true;
+                qDebug()<<"size = "<<size;
                 if(size == 0)
                 {
                     inputPoints.push_back(p);
@@ -67,10 +68,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
                 }
                 else
                 {
-                    qDebug()<<"size = "<<size;
                     for(unsigned int i=0;i<size;i++)
                     {
-
                         if(inputPoints[i]==p || p == outputPoint)
                         {
                             qDebug()<<i<<" : inputPoints["<<i<<"] = "<<inputPoints[i];
