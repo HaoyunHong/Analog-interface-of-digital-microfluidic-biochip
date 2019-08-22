@@ -12,7 +12,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setWindowTitle("Main Window");
 
-    this->setStyleSheet("color: rgb(142,53,74);font-weight:bold;");
+    QIcon mainIcon(":/image/image/rabbit.png");
+    this->setWindowIcon(mainIcon);
+
+    this->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
 
 //    this->setAutoFillBackground(true);
 //    QPalette palette;
@@ -22,26 +25,62 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     inputPointsNum = 0;
 
+    unit = 50;
+
     outputPoint.setX(0);
     outputPoint.setY(0);
 
     //菜单栏
     QMenuBar *mBar = menuBar();
     setMenuBar(mBar);
-    mBar->setStyleSheet("border-image:url(:/image/image/pinback.jpg)");
+    mBar->setStyleSheet("background-image:url(:/image/image/back.jpg)");
     //添加菜单
     QMenu *menu = mBar->addMenu("Option");
-    menu->setStyleSheet("border-image:url(:/image/image/pinback.jpg);color: rgb(142,53,74)");
+    menu->setStyleSheet("background-image:url(:/image/image/back.jpg)");
 
     QAction *actSet= menu->addAction("Setting");
+
+    //工具栏，菜单项的快捷方式
+    QToolBar *toolBar = new QToolBar("toolBar",this);
+    addToolBar(Qt::RightToolBarArea,toolBar);
+    toolBar->setStyleSheet("background-image:url(:/image/image/back.jpg)");
+
+    menu->addSeparator();//为了美观添加分割线
+    QAction *actCommand = menu->addAction("Command");
+    //工具栏添加快捷键
+    toolBar->addAction(actSet);
+    toolBar->addAction(actCommand);
+
+    QIcon settingIcon(":/image/image/settingIcon.png");
+    actSet->setIcon(settingIcon);
+    QIcon commandIcon(":/image/image/commandIcon.png");
+    actCommand->setIcon(commandIcon);
+
+    actCommand->setEnabled(false);
+    ui->commandTextEdit->hide();
+    QString chooseFile = "Please Click Setting Option!";
+    //状态栏
+    QStatusBar *sBar = statusBar();
+    QLabel *label = new QLabel(this);
+    label->setText(chooseFile);
+    label->setStyleSheet("font-size:40px;font-weight:bold;font-family:Calibri;");
+    sBar->addWidget(label);
+
+    ui->commandViewerlabel->hide();
+    ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
+    ui->lastButton->hide();
+    ui->nextButton->hide();
+    ui->cleanButton->hide();
+    ui->limitedCheckBox->hide();
+    ui->playButton->hide();
+    ui->resetButton->hide();
 
     settingWidget = new SettingWidget(this);
     connect(actSet,&QAction::triggered,
             [=]()
         {
+            label->hide();
             //这里弹出一个子窗口
-
-
             connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
 
             connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
@@ -150,25 +189,19 @@ myMainWindow::myMainWindow(QWidget *parent) :
     {
         canShowMatrix = true;
         update();
-    });
+        actCommand->setEnabled(true);
+        ui->commandTextEdit->show();
+        QString chooseFile = "Please Click Command Option!";
+        ui->commandViewerlabel->setText(chooseFile);
+        ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
+        ui->lastButton->show();
+        ui->nextButton->show();
+        ui->cleanButton->show();
+        ui->limitedCheckBox->show();
+        ui->playButton->show();
+        ui->resetButton->show();
 
-
-    menu->addSeparator();//为了美观添加分割线
-
-    QAction *actCommand = menu->addAction("Command");
-
-    //工具栏，菜单项的快捷方式
-    QToolBar *toolBar = addToolBar("toolBar");
-    toolBar->setStyleSheet("border-image:url(:/image/image/pinback.jpg)");
-
-    //工具栏添加快捷键
-    toolBar->addAction(actSet);
-    toolBar->addAction(actCommand);
-
-    QIcon settingIcon(":/image/image/settingIcon.png");
-    actSet->setIcon(settingIcon);
-    QIcon commandIcon(":/image/image/commandIcon.png");
-    actCommand->setIcon(commandIcon);
+    });   
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)
@@ -184,30 +217,30 @@ void myMainWindow::paintEvent(QPaintEvent *)
         //定义画笔
         QPen pen;
         pen.setWidth(5);//设置线宽
-        //pen.setColor(Qt::red);//设置颜色
-        //pen.setColor(QColor(244,96,108));//设置RGB颜色
         pen.setColor(QColor(220,159,180));
         pen.setStyle(Qt::SolidLine);
 
         //把画笔交给画家
         p.setPen(pen);
 
-       //    //画直线
-       //    p.drawLine(50,50,150,50);
-       //    p.drawLine(50,50,50,150);
-
         //创建画刷对象
         QBrush brush;
-        brush.setColor(QColor(255,255,255,96));//设置颜色
+        brush.setColor(QColor(255,255,255,98));//设置颜色
         brush.setStyle(Qt::SolidPattern);//设置样式
-
         //把画刷交给画家
         p.setBrush(brush);
-
-        int x = 2*width()/3-40;
+        int x = width()/2-40;
         int y = height()-70;
-        //画矩形
+
+        //画背景矩形
         p.drawRect(20,50,x,y);
+
+        //画矩阵框
+        pen.setColor(QColor(191,103,102));
+        pen.setStyle(Qt::SolidLine);
+        p.setPen(pen);
+        p.drawRect(70,100,x-100,y-100);
+
     }
     p.end();
 }

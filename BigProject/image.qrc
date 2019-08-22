@@ -8,5 +8,6 @@
         <file>image/dlg.png</file>
         <file>image/commandIcon.png</file>
         <file>image/settingIcon.png</file>
+        <file>image/rabbit.png</file>
     </qresource>
 </RCC>

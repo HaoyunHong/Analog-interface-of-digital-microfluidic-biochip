@@ -17,7 +17,6 @@
 #include<QFile>
 #include<QFileDialog>
 #include<QDebug>
-#include<QDateTime>
 
 //Deal with MainWindow
 #include<QToolBar>
@@ -61,7 +60,8 @@ private:
     QPoint outputPoint;
 
     bool canShowMatrix;
-    //Data *data;
+    int unit;
+
 
     QFile *myFile;
 
