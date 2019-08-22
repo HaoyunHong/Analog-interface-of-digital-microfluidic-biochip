@@ -12,6 +12,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setWindowTitle("Main Window");
 
+    this->setStyleSheet("color: rgb(142,53,74);font-weight:bold;");
+
 //    this->setAutoFillBackground(true);
 //    QPalette palette;
 //    palette.setBrush(QPalette::Background, QBrush(QPixmap(":/image/image/pinback.jpg")));
@@ -26,8 +28,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
     //菜单栏
     QMenuBar *mBar = menuBar();
     setMenuBar(mBar);
+    mBar->setStyleSheet("border-image:url(:/image/image/pinback.jpg)");
     //添加菜单
     QMenu *menu = mBar->addMenu("Option");
+    menu->setStyleSheet("border-image:url(:/image/image/pinback.jpg);color: rgb(142,53,74)");
 
     QAction *actSet= menu->addAction("Setting");
 
@@ -50,15 +54,16 @@ myMainWindow::myMainWindow(QWidget *parent) :
             connect(settingWidget,&SettingWidget::sendInputPoint,
                     [=](QPoint p)
             {
-                unsigned int size = inputPoints.size();
-                bool canStore = true;
+                unsigned int size = inputPoints.size();            
                 qDebug()<<"size = "<<size;
                 if(size == 0)
                 {
+                    inputPoints.push_back(p);
                     qDebug()<<"First in main window p = "<<p;
                 }
                 else if(size != 0)
                 {
+                    bool canStore = true;
                     for(unsigned int i=0;i<size;i++)
                     {
                         if(inputPoints[i]==p || p == outputPoint)
@@ -69,7 +74,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
                             canStore = false;
                             qDebug()<<"In Main Window Duplicate : p = "<<p;
                             break;
-                        }
+                        }               
                     }
                     if(canStore)
                     {
@@ -77,6 +82,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
                         inputPoints.push_back(p);
                         qDebug()<<"In main window p = "<<p;
                     }
+
                 }
 
             });
@@ -153,12 +159,16 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     //工具栏，菜单项的快捷方式
     QToolBar *toolBar = addToolBar("toolBar");
+    toolBar->setStyleSheet("border-image:url(:/image/image/pinback.jpg)");
 
     //工具栏添加快捷键
     toolBar->addAction(actSet);
     toolBar->addAction(actCommand);
 
-
+    QIcon settingIcon(":/image/image/settingIcon.png");
+    actSet->setIcon(settingIcon);
+    QIcon commandIcon(":/image/image/commandIcon.png");
+    actCommand->setIcon(commandIcon);
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)

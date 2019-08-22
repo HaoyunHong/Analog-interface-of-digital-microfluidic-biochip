@@ -6,5 +6,7 @@
         <file>image/purback.jpg</file>
         <file>image/pinback.jpg</file>
         <file>image/dlg.png</file>
+        <file>image/commandIcon.png</file>
+        <file>image/settingIcon.png</file>
     </qresource>
 </RCC>

@@ -14,7 +14,7 @@ SettingWidget::SettingWidget(QWidget *parent) :
     //窗口背景设置为透明、
     setAttribute(Qt::WA_TranslucentBackground);
 
-    this->resize(1200,900);
+    this->resize(1500,800);
 
     this->defaultAll();
 
@@ -153,9 +153,8 @@ void SettingWidget::on_saveButton_clicked()
     if(rcOK && inputOK && outputOK)
     {
         ui->saveButton->setEnabled(false);
-        ui->closeButton->setEnabled(true);
         emit setAllDone();
-        int ret = QMessageBox::information(this,"Tips","Now you can close the widget!",QMessageBox::Ok);
+        int ret = QMessageBox::information(this,"Tips","Setting is done and will be closed!",QMessageBox::Ok);
         switch(ret)
         {
         case QMessageBox::Ok:
@@ -163,6 +162,7 @@ void SettingWidget::on_saveButton_clicked()
         default:
             break;
         }
+        this->close();
 
     }
     else if(!rcOK)
@@ -281,7 +281,6 @@ void SettingWidget::defaultAll()
     ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170);color: rgb(142,53,74)");
     ui->inOKButton->setStyleSheet("background: rgb(232,122,144);color: rgb(142,53,74)");
     ui->saveButton->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
-    ui->closeButton->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
 
     ui->inpNumSpinBox->setEnabled(false);
     ui->inOKButton->setEnabled(false);
@@ -292,17 +291,10 @@ void SettingWidget::defaultAll()
     ui->outputCheckLabel->setEnabled(false);
     ui->confirmButton_2->setEnabled(false);
 
-    ui->closeButton->setEnabled(false);
-
     rcOK = false;
     inputOK = false;
     outputOK = false;
 
     rowNum = 0;
     colNum = 0;
-}
-
-void SettingWidget::on_closeButton_clicked()
-{
-    this->close();
 }
