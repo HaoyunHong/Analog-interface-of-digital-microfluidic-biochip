@@ -32,30 +32,33 @@ void DesignInterface::paintEvent(QPaintEvent *)
     //设置不透明度
     setWindowOpacity(0.96);
 
-//    //定义画笔
-//    QPen pen;
-//    pen.setWidth(5);//设置线宽
-//    pen.setColor(Qt::red);//设置颜色
-//    pen.setColor(QColor(244,96,108));//设置RGB颜色
-//    pen.setStyle(Qt::DashLine);
+    //定义画笔
+    QPen pen;
+    pen.setWidth(5);//设置线宽
+    //pen.setColor(Qt::red);//设置颜色
+    //pen.setColor(QColor(244,96,108));//设置RGB颜色
+    pen.setColor(QColor(220,159,180));
+    pen.setStyle(Qt::SolidLine);
 
-//    //把画笔交给画家
-//    p.setPen(pen);
+    //把画笔交给画家
+    p.setPen(pen);
 
 //    //画直线
 //    p.drawLine(50,50,150,50);
 //    p.drawLine(50,50,50,150);
 
-//    //创建画刷对象
-//    QBrush brush;
-//    brush.setColor(QColor(236,173,158));//设置颜色
-//    brush.setStyle(Qt::Dense1Pattern);//设置样式
+    //创建画刷对象
+    QBrush brush;
+    brush.setColor(QColor(248,195,205));//设置颜色
+    brush.setStyle(Qt::SolidPattern);//设置样式
 
-//    //把画刷交给画家
-//    p.setBrush(brush);
+    //把画刷交给画家
+    p.setBrush(brush);
 
-//    //画矩形
-//    p.drawRect(150,150,100,50);
+    int x = width()/2-60;
+    int y = height()-60;
+    //画矩形
+    p.drawRect(30,30,x,y);
 
 //    //画圆
 //    p.drawEllipse(QPoint(150,150),50,25);

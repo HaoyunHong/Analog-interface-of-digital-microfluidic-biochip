@@ -6,7 +6,6 @@
 #include <QPushButton>
 #include <QDialog>
 #include<QMessageBox>
-#include <QCloseEvent>
 
 //把设置框变得更好看
 #include<QPainter>
@@ -73,8 +72,9 @@ signals:
 
     void outputCheckSignal(int,int);
 
+    void setAllDone();
+
 protected:
-    void closeEvent(QCloseEvent *event);
     void paintEvent(QPaintEvent*);
 
 };

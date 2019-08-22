@@ -18,38 +18,14 @@ SettingWidget::SettingWidget(QWidget *parent) :
 
     this->defaultAll();
 
-//    ui->rowSpinBox->setMinimum(1);
-//    ui->colSpinBox->setMinimum(1);
-//    ui->inpNumSpinBox->setMinimum(1);
-//    ui->outXSpinBox->setMinimum(1);
-//    ui->outYSpinBox->setMinimum(1);
-
-//    ui->confirmButton->setStyleSheet("background: rgb(245,150,170)");
-//    ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170)");
-
-//    ui->inpNumSpinBox->setEnabled(false);
-//    ui->inOKButton->setEnabled(false);
-//    ui->outXSpinBox->setEnabled(false);
-//    ui->outYSpinBox->setEnabled(false);
-//    ui->inputCheckLabel->setEnabled(false);
-//    ui->rcCheckLabel->setEnabled(false);
-//    ui->outputCheckLabel->setEnabled(false);
-//    ui->confirmButton_2->setEnabled(false);
-
-//    rcOK = false;
-//    inputOK = false;
-//    outputOK = true;
-
-//    rowNum = 0;
-//    colNum = 0;
-
     dlg = new SetInputDialog(this);
 
     connect(dlg,&SetInputDialog::InFinishedSignal,
             [=]()
     {
         inputOK = true;
-        qDebug()<<"lllllll";
+        qDebug()<<"InFinishedSignal";
+
         ui->inOKButton->setEnabled(false);
         ui->inputCheckLabel->setEnabled(true);
         ui->inpNumSpinBox->setEnabled(false);
@@ -143,7 +119,6 @@ void SettingWidget::on_confirmButton_clicked()
         qDebug()<<"row and col set! row = "<<row<<", col = "<<col;
         ui->inpNumSpinBox->setEnabled(true);
         ui->inOKButton->setEnabled(true);
-        ui->inOKButton->setStyleSheet("background: rgb(245,150,170)");
         ui->outXSpinBox->setEnabled(true);
         ui->outYSpinBox->setEnabled(true);
         ui->confirmButton_2->setEnabled(true);
@@ -179,6 +154,16 @@ void SettingWidget::on_saveButton_clicked()
     {
         ui->saveButton->setEnabled(false);
         ui->closeButton->setEnabled(true);
+        emit setAllDone();
+        int ret = QMessageBox::information(this,"Tips","Now you can close the widget and click START!",QMessageBox::Ok);
+        switch(ret)
+        {
+        case QMessageBox::Ok:
+            break;
+        default:
+            break;
+        }
+
     }
     else if(!rcOK)
     {
@@ -211,9 +196,7 @@ void SettingWidget::on_saveButton_clicked()
         default:
             break;
         }
-
     }
-
 }
 
 void SettingWidget::on_confirmButton_2_clicked()
@@ -276,14 +259,29 @@ void SettingWidget::on_confirmButton_2_clicked()
 
 void SettingWidget::defaultAll()
 {
+    ui->titleLabel->setStyleSheet("color: rgb(142,53,74)");
+    ui->rowNum->setStyleSheet("color: rgb(142,53,74)");
+    ui->colNum->setStyleSheet("color: rgb(142,53,74)");
+    ui->label_2->setStyleSheet("color: rgb(142,53,74)");
+    ui->label_3->setStyleSheet("color: rgb(142,53,74)");
+    ui->label_4->setStyleSheet("color: rgb(142,53,74)");
+    ui->label_5->setStyleSheet("color: rgb(142,53,74)");
     ui->rowSpinBox->setMinimum(1);
+    ui->rowSpinBox->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
     ui->colSpinBox->setMinimum(1);
+    ui->colSpinBox->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
     ui->inpNumSpinBox->setMinimum(1);
+    ui->inpNumSpinBox->setStyleSheet("background: rgb(238,169,169);color: rgb(142,53,74)");
     ui->outXSpinBox->setMinimum(1);
+    ui->outXSpinBox->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
     ui->outYSpinBox->setMinimum(1);
+    ui->outYSpinBox->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
 
-    ui->confirmButton->setStyleSheet("background: rgb(245,150,170)");
-    ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170)");
+    ui->confirmButton->setStyleSheet("background: rgb(245,150,170);color: rgb(142,53,74)");
+    ui->confirmButton_2->setStyleSheet("background: rgb(245,150,170);color: rgb(142,53,74)");
+    ui->inOKButton->setStyleSheet("background: rgb(232,122,144);color: rgb(142,53,74)");
+    ui->saveButton->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
+    ui->closeButton->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
 
     ui->inpNumSpinBox->setEnabled(false);
     ui->inOKButton->setEnabled(false);
@@ -298,27 +296,11 @@ void SettingWidget::defaultAll()
 
     rcOK = false;
     inputOK = false;
-    outputOK = true;
+    outputOK = false;
 
     rowNum = 0;
     colNum = 0;
 }
-
-void SettingWidget::closeEvent(QCloseEvent *event)
-{
-    int ret = QMessageBox::question(this,"question","Do you want to close?",QMessageBox::Yes|QMessageBox::No);
-    switch(ret)
-    {
-        case QMessageBox::Yes:
-            break;
-        case QMessageBox::No:
-            event->ignore();
-            break;
-        default:
-            break;
-    }
-}
-
 
 void SettingWidget::on_closeButton_clicked()
 {

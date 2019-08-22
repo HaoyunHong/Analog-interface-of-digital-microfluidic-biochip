@@ -23,13 +23,12 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     ui->startButton->setStyleSheet("background-color:transparent;color:rgb(254, 67, 101);");
 
-
-
-
     inputPointsNum = 0;
 
     outputPoint.setX(0);
     outputPoint.setY(0);
+
+    ui->startButton->setEnabled(false);
 
     //菜单栏
     QMenuBar *mBar = menuBar();
@@ -146,7 +145,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
         qDebug()<<"outputPoint = "<<outputPoint;
     });
 
-
+    connect(settingWidget,&SettingWidget::setAllDone,
+            [=]
+    {
+        ui->startButton->setEnabled(true);
+    });
 
 
     menu->addSeparator();//为了美观添加分割线
