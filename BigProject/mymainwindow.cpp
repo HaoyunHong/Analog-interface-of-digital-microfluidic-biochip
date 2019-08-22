@@ -18,17 +18,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
 //    this->setPalette(palette);
 //    setAcceptDrops(true);
 
-
-
-
-    ui->startButton->setStyleSheet("background-color:transparent;color:rgb(254, 67, 101);");
-
     inputPointsNum = 0;
 
     outputPoint.setX(0);
     outputPoint.setY(0);
-
-    ui->startButton->setEnabled(false);
 
     //菜单栏
     QMenuBar *mBar = menuBar();
@@ -62,10 +55,9 @@ myMainWindow::myMainWindow(QWidget *parent) :
                 qDebug()<<"size = "<<size;
                 if(size == 0)
                 {
-                    inputPoints.push_back(p);
                     qDebug()<<"First in main window p = "<<p;
                 }
-                else
+                else if(size != 0)
                 {
                     for(unsigned int i=0;i<size;i++)
                     {
@@ -145,10 +137,13 @@ myMainWindow::myMainWindow(QWidget *parent) :
         qDebug()<<"outputPoint = "<<outputPoint;
     });
 
+    canShowMatrix = false;
+
     connect(settingWidget,&SettingWidget::setAllDone,
-            [=]
+            [=]()
     {
-        ui->startButton->setEnabled(true);
+        canShowMatrix = true;
+        update();
     });
 
 
@@ -171,9 +166,40 @@ void myMainWindow::paintEvent(QPaintEvent *)
     QPainter p;//创建画家对象
     p.begin(this);//指定当前窗口为绘图设备
     p.drawPixmap(0,0,width(),height(),QPixmap(":/image/image/pinback.jpg"));
-    p.end();
     //设置屏幕透明度
     setWindowOpacity(0.96);
+
+    if(canShowMatrix)
+    {
+        //定义画笔
+        QPen pen;
+        pen.setWidth(5);//设置线宽
+        //pen.setColor(Qt::red);//设置颜色
+        //pen.setColor(QColor(244,96,108));//设置RGB颜色
+        pen.setColor(QColor(220,159,180));
+        pen.setStyle(Qt::SolidLine);
+
+        //把画笔交给画家
+        p.setPen(pen);
+
+       //    //画直线
+       //    p.drawLine(50,50,150,50);
+       //    p.drawLine(50,50,50,150);
+
+        //创建画刷对象
+        QBrush brush;
+        brush.setColor(QColor(255,255,255,96));//设置颜色
+        brush.setStyle(Qt::SolidPattern);//设置样式
+
+        //把画刷交给画家
+        p.setBrush(brush);
+
+        int x = 2*width()/3-40;
+        int y = height()-70;
+        //画矩形
+        p.drawRect(20,50,x,y);
+    }
+    p.end();
 }
 
 void myMainWindow::closeEvent(QCloseEvent *event)
@@ -202,11 +228,4 @@ void myMainWindow::setData(int r, int c)
     col = c;
     //data->setNumber(row, col);
     qDebug()<<"setData!"<<"row = "<<row<<" col = "<<col;
-}
-
-
-void myMainWindow::on_startButton_clicked()
-{
-    design.show();
-    this->hide();
 }

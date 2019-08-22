@@ -6,7 +6,6 @@
 #include <QCloseEvent>
 
 //Deal with picture
-#include "designinterface.h"
 #include<QPainter>
 #include<QPaintEvent>
 
@@ -50,8 +49,6 @@ public:
 
 private slots:
 
-    void on_startButton_clicked();
-
 private:
     Ui::myMainWindow *ui;
 
@@ -63,7 +60,7 @@ private:
     std::vector<QPoint> inputPoints;
     QPoint outputPoint;
 
-
+    bool canShowMatrix;
     //Data *data;
 
     QFile *myFile;
@@ -71,8 +68,6 @@ private:
     int inputPointsNum;
 
     std::vector<QPoint> inputPoint;
-
-    DesignInterface design;
 
 
 protected:

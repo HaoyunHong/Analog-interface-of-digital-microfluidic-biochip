@@ -155,7 +155,7 @@ void SettingWidget::on_saveButton_clicked()
         ui->saveButton->setEnabled(false);
         ui->closeButton->setEnabled(true);
         emit setAllDone();
-        int ret = QMessageBox::information(this,"Tips","Now you can close the widget and click START!",QMessageBox::Ok);
+        int ret = QMessageBox::information(this,"Tips","Now you can close the widget!",QMessageBox::Ok);
         switch(ret)
         {
         case QMessageBox::Ok:
