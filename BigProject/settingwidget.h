@@ -59,10 +59,9 @@ signals:
     void confirmSignal(int,int);
     void resetSignal();
     void setAgain();
+    void sendRC(int,int);
     void backToMainWindow();
     void backToSettingWidget();
-
-    void cleanInputPoints();
 
     void setInputPointsNumberSignal(int);
 

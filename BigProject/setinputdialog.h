@@ -50,7 +50,6 @@ private:
 signals:
     void setInputPointSignal(QPoint);
     void InFinishedSignal();
-    void cleanInputPoints();
 
 protected:
     void closeEvent(QCloseEvent *event);

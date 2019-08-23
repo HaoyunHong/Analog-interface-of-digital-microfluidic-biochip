@@ -25,7 +25,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     inputPointsNum = 0;
 
-    unit = 50;
+    row = 0;
+    col = 0;
 
     outputPoint.setX(0);
     outputPoint.setY(0);
@@ -70,17 +71,17 @@ myMainWindow::myMainWindow(QWidget *parent) :
     ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
     ui->commandTextEdit->setStyleSheet("border-image:url(:/image/image/back.jpg);border-width:1;border-style:outset");
 
-    ui->lastButton->setStyleSheet("border-width:1;border-style:outset");
+    ui->lastButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->lastButton->hide();
-    ui->nextButton->setStyleSheet("border-width:1;border-style:outset");
+    ui->nextButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->nextButton->hide();
-    ui->cleanButton->setStyleSheet("border-width:1;border-style:outset");
+    ui->cleanButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->cleanButton->hide();
-    ui->limitedCheckBox->setStyleSheet("border-width:1;border-style:outset");
+    ui->limitedCheckBox->setStyleSheet("border-width:3;border-color:rgb(220,159,180);");
     ui->limitedCheckBox->hide();
-    ui->playButton->setStyleSheet("border-width:1;border-style:outset");
+    ui->playButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->playButton->hide();
-    ui->resetButton->setStyleSheet("border-width:1;border-style:outset");
+    ui->resetButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->resetButton->hide();
 
     settingWidget = new SettingWidget(this);
@@ -122,6 +123,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             //这里弹出一个子窗口
             connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
 
+            connect(settingWidget,&SettingWidget::sendRC,this,&myMainWindow::setData);
             connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
                     [=](int n)
             {
@@ -153,7 +155,6 @@ myMainWindow::myMainWindow(QWidget *parent) :
                         inputPoints.push_back(p);
                         qDebug()<<"In main window p = "<<p;
                     }
-
             });
             settingWidget->exec();
 
@@ -241,13 +242,15 @@ void myMainWindow::paintEvent(QPaintEvent *)
     //设置屏幕透明度
     setWindowOpacity(0.96);
 
+    QPoint center(width()/2,height()/2);
+
     if(canShowMatrix)
     {
         //定义画笔
         QPen pen;
         pen.setWidth(2);//设置线宽
         pen.setColor(QColor(220,159,180));
-        pen.setStyle(Qt::SolidLine);
+        pen.setStyle(Qt::DashDotDotLine);
 
         //把画笔交给画家
         p.setPen(pen);
@@ -260,7 +263,8 @@ void myMainWindow::paintEvent(QPaintEvent *)
         p.setBrush(brush);
         int x = width()-40;
         int y = height()-70;
-        int x2 = 3*width()/5-40;
+        int x2 = 3*width()/5-10;
+        int y2 = y-60;
 
         //画背景矩形
         p.drawRect(20,50,x,y);
@@ -273,8 +277,40 @@ void myMainWindow::paintEvent(QPaintEvent *)
         brush.setColor(QColor(255,255,255));//设置颜色
         brush.setStyle(Qt::SolidPattern);//设置样式
         p.setBrush(brush);
-        p.drawRect(70,100,x2-100,y-100);
 
+        //对坐标做平移变换
+        QPoint origin(50,80);
+        p.translate(origin.x(),origin.y());
+        p.drawRect(0,0,x2,y2);
+
+        center.setX(x2/2);
+        center.setY(y2/2);
+        qDebug()<<"center = "<<center;
+
+        qDebug()<<"row = "<<row;
+        qDebug()<<"col = "<<col;
+        int unit = 50;
+        int mwidth = col*unit;
+        qDebug()<<"mwidth = "<<mwidth;
+        int mheight = row*unit;
+        qDebug()<<"mheight = "<<mheight;
+        QPen mpen;
+        mpen.setWidth(3);//设置线宽
+        mpen.setColor(QColor(245,150,170));
+        mpen.setStyle(Qt::SolidLine);
+        p.setPen(mpen);
+        //一定要是center,把坐标画对
+        p.drawPoint(center);
+        p.drawRect(center.x()-mwidth/2,center.y()-mheight/2,mwidth,mheight);
+        for(int i=1;i<col;i++)
+        {
+            //qDebug()<<"center.x()-mwidth/2+i*unit = "<<center.x()-mwidth/2+i*unit;
+            p.drawLine(center.x()-mwidth/2+i*unit,center.y()-mheight/2,center.x()-mwidth/2+i*unit,center.y()+mheight/2);
+        }
+        for(int i=1;i<row;i++)
+        {
+            p.drawLine(center.x()-mwidth/2,center.y()-mheight/2+i*unit,center.x()+mwidth/2,center.y()-mheight/2+i*unit);
+        }
     }
     p.end();
 }
@@ -303,6 +339,5 @@ void myMainWindow::setData(int r, int c)
 {
     row = r;
     col = c;
-    //data->setNumber(row, col);
     qDebug()<<"setData!"<<"row = "<<row<<" col = "<<col;
 }

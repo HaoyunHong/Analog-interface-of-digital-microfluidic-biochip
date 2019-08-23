@@ -60,7 +60,6 @@ private:
     QPoint outputPoint;
 
     bool canShowMatrix;
-    int unit;
 
 
     QFile *myFile;

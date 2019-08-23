@@ -57,14 +57,6 @@ SettingWidget::SettingWidget(QWidget *parent) :
         }
     });
 
-    connect(dlg,&SetInputDialog::cleanInputPoints,
-            [=]
-    {
-        ui->inpNumSpinBox->setValue(1);
-        emit cleanInputPoints();
-
-    });
-
 }
 
 void SettingWidget::outIsOK(bool flag)
@@ -106,6 +98,7 @@ void SettingWidget::on_confirmButton_clicked()
         return;
     }
     else {
+        emit sendRC(row,col);
         rcOK = false;
         rowNum = row;
         colNum = col;
