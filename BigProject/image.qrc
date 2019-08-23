@@ -9,5 +9,6 @@
         <file>image/commandIcon.png</file>
         <file>image/settingIcon.png</file>
         <file>image/rabbit.png</file>
+        <file>image/bl.PNG</file>
     </qresource>
 </RCC>

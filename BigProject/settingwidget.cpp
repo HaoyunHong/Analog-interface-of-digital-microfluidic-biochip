@@ -57,6 +57,14 @@ SettingWidget::SettingWidget(QWidget *parent) :
         }
     });
 
+    connect(dlg,&SetInputDialog::cleanInputPoints,
+            [=]
+    {
+        ui->inpNumSpinBox->setValue(1);
+        emit cleanInputPoints();
+
+    });
+
 }
 
 void SettingWidget::outIsOK(bool flag)
@@ -138,6 +146,19 @@ void SettingWidget::on_resetButton_clicked()
 void SettingWidget::on_inOKButton_clicked()
 {
     int n = ui->inpNumSpinBox->value();
+    if(n>=2*(rowNum+colNum)-3)
+    {
+        int ret = QMessageBox::warning(this,"Error","Input points number out of range!",QMessageBox::Ok);
+        switch(ret)
+        {
+        case QMessageBox::Ok:
+            break;
+        default:
+            break;
+        }
+        ui->inpNumSpinBox->setValue(1);
+        return;
+    }
     emit setInputPointsNumberSignal(n);
 
     //dlg = new SetInputDialog(this);

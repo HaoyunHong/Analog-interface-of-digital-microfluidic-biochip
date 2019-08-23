@@ -62,6 +62,8 @@ signals:
     void backToMainWindow();
     void backToSettingWidget();
 
+    void cleanInputPoints();
+
     void setInputPointsNumberSignal(int);
 
     void sendInputPoint(QPoint);

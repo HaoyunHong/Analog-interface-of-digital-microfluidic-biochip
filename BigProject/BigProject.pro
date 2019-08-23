@@ -29,14 +29,14 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
+        matrix.cpp \
         mymainwindow.cpp \
-        operation.cpp \
         setinputdialog.cpp \
         settingwidget.cpp
 
 HEADERS += \
+        matrix.h \
         mymainwindow.h \
-        operation.h \
         setinputdialog.h \
         settingwidget.h
 

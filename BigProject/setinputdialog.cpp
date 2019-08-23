@@ -15,6 +15,8 @@ SetInputDialog::SetInputDialog(QWidget *parent) :
     ui->ySpinBox->setMinimum(1);
 
     count = 0;
+
+    isDuplicate = false;
 }
 
 void SetInputDialog::knowRowAndCol(int r,int c)
@@ -46,7 +48,6 @@ void SetInputDialog::on_addButton_clicked()
     qDebug()<<"inputNum = "<<inputNum;
     if(count < inputNum)
     {
-
         qDebug()<<"count = "<<count;
         QPoint point;
         point.setX(ui->xSpinBox->value());
@@ -126,7 +127,8 @@ void SetInputDialog::closeEvent(QCloseEvent *event)
     switch(ret)
     {
         case QMessageBox::Yes:
-
+            count = 0;
+            emit cleanInputPoints();
             break;
         case QMessageBox::No:
             event->ignore();

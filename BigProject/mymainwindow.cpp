@@ -8,7 +8,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->resize(1200,900);
+    this->setFixedSize(1200,900);
 
     this->setWindowTitle("Main Window");
 
@@ -68,14 +68,53 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     ui->commandViewerlabel->hide();
     ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
+    ui->commandTextEdit->setStyleSheet("border-image:url(:/image/image/back.jpg);border-width:1;border-style:outset");
+
+    ui->lastButton->setStyleSheet("border-width:1;border-style:outset");
     ui->lastButton->hide();
+    ui->nextButton->setStyleSheet("border-width:1;border-style:outset");
     ui->nextButton->hide();
+    ui->cleanButton->setStyleSheet("border-width:1;border-style:outset");
     ui->cleanButton->hide();
+    ui->limitedCheckBox->setStyleSheet("border-width:1;border-style:outset");
     ui->limitedCheckBox->hide();
+    ui->playButton->setStyleSheet("border-width:1;border-style:outset");
     ui->playButton->hide();
+    ui->resetButton->setStyleSheet("border-width:1;border-style:outset");
     ui->resetButton->hide();
 
     settingWidget = new SettingWidget(this);
+
+    connect(actCommand,&QAction::triggered,
+            [=]()
+    {
+        QString path = QFileDialog::getOpenFileName(this,
+                                    "open","../","TXT(*.txt)");
+        //只有当文件不为空时才进行操作
+        if(path.isEmpty()== false)
+        {
+            //文件操作
+            QFile file(path);
+
+            //打开文件，只读方式
+            bool isOK = file.open(QIODevice::ReadOnly);
+            if(isOK == true)
+            {
+                myFile = new QFile(path);
+                qDebug()<<"myFile newed!";
+
+                QByteArray array;
+                while(file.atEnd() == false)
+                {
+                    //每次读一行
+                    array += file.readLine();
+                }
+                ui->commandTextEdit->setText(array);
+            }
+            //关闭文件
+            file.close();
+        }
+    });
     connect(actSet,&QAction::triggered,
             [=]()
         {
@@ -94,14 +133,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
                     [=](QPoint p)
             {
                 unsigned int size = inputPoints.size();            
-                qDebug()<<"size = "<<size;
-                if(size == 0)
-                {
-                    inputPoints.push_back(p);
-                    qDebug()<<"First in main window p = "<<p;
-                }
-                else if(size != 0)
-                {
+                qDebug()<<"size = "<<size;             
                     bool canStore = true;
                     for(unsigned int i=0;i<size;i++)
                     {
@@ -121,8 +153,6 @@ myMainWindow::myMainWindow(QWidget *parent) :
                         inputPoints.push_back(p);
                         qDebug()<<"In main window p = "<<p;
                     }
-
-                }
 
             });
             settingWidget->exec();
@@ -191,9 +221,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
         update();
         actCommand->setEnabled(true);
         ui->commandTextEdit->show();
-        QString chooseFile = "Please Click Command Option!";
-        ui->commandViewerlabel->setText(chooseFile);
         ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
+        ui->commandViewerlabel->show();
         ui->lastButton->show();
         ui->nextButton->show();
         ui->cleanButton->show();
@@ -202,6 +231,13 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->resetButton->show();
 
     });   
+
+    connect(settingWidget,&SettingWidget::cleanInputPoints,
+            [=]()
+    {
+        inputPoints.clear();
+        qDebug()<<"inputPoints clear!";
+    });
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)
@@ -229,7 +265,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
         brush.setStyle(Qt::SolidPattern);//设置样式
         //把画刷交给画家
         p.setBrush(brush);
-        int x = width()/2-40;
+        int x = 3*width()/5-40;
         int y = height()-70;
 
         //画背景矩形
