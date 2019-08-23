@@ -231,13 +231,6 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->resetButton->show();
 
     });   
-
-    connect(settingWidget,&SettingWidget::cleanInputPoints,
-            [=]()
-    {
-        inputPoints.clear();
-        qDebug()<<"inputPoints clear!";
-    });
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)
@@ -252,7 +245,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
     {
         //定义画笔
         QPen pen;
-        pen.setWidth(5);//设置线宽
+        pen.setWidth(2);//设置线宽
         pen.setColor(QColor(220,159,180));
         pen.setStyle(Qt::SolidLine);
 
@@ -265,17 +258,22 @@ void myMainWindow::paintEvent(QPaintEvent *)
         brush.setStyle(Qt::SolidPattern);//设置样式
         //把画刷交给画家
         p.setBrush(brush);
-        int x = 3*width()/5-40;
+        int x = width()-40;
         int y = height()-70;
+        int x2 = 3*width()/5-40;
 
         //画背景矩形
         p.drawRect(20,50,x,y);
 
         //画矩阵框
-        pen.setColor(QColor(191,103,102));
+        pen.setWidth(5);//设置线宽
+        pen.setColor(QColor(220,159,180));
         pen.setStyle(Qt::SolidLine);
         p.setPen(pen);
-        p.drawRect(70,100,x-100,y-100);
+        brush.setColor(QColor(255,255,255));//设置颜色
+        brush.setStyle(Qt::SolidPattern);//设置样式
+        p.setBrush(brush);
+        p.drawRect(70,100,x2-100,y-100);
 
     }
     p.end();

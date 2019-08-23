@@ -123,14 +123,10 @@ void SetInputDialog::resetThisInputPoint()
 
 void SetInputDialog::closeEvent(QCloseEvent *event)
 {
-    int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
+    int ret = QMessageBox::warning(this,"Warning","Please finish editing!",QMessageBox::Ok);
     switch(ret)
     {
-        case QMessageBox::Yes:
-            count = 0;
-            emit cleanInputPoints();
-            break;
-        case QMessageBox::No:
+        case QMessageBox::Ok:
             event->ignore();
             break;
         default:
