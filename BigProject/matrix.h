@@ -7,7 +7,14 @@ class Matrix
 {
 public:
     Matrix();
-    Matrix(int,int);
+    void setPosition(int colIndex, int rowIndex);
+
+    //void setRGBA(int r, int g,int b,int a);
+
+    //void getRGBA();
+
+    //void insertPollutedSet(QString kind);
+
 
 private:
     //自己的位置信息
@@ -17,14 +24,8 @@ private:
     int green;
     int blue;
     int alpha;
-    //污染次数信息
-    int count;
-    QSet<int> pollutedSet;
-
-
-
-
-
+    //污染信息
+    QSet<QString> pollutedSet;
 };
 
 #endif // MATRIX_H

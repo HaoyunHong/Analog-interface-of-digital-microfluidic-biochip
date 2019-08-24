@@ -55,7 +55,7 @@ void SetInputDialog::on_addButton_clicked()
         qDebug()<<"In Setting point = "<<point;
         emit setInputPointSignal(point);
 
-        if(point.x()>row || point.y()>col)
+        if(point.x()>col || point.y()>row)
         {
             int ret = QMessageBox::warning(this,"Error","The position of this input point out of range!",QMessageBox::Ok);
             switch(ret)
@@ -68,7 +68,7 @@ void SetInputDialog::on_addButton_clicked()
                 break;
             }
         }
-        else if(point.x()==1 || point.x()==row || point.y()==1||point.y()==col )
+        else if(point.x()==1 || point.x()==col || point.y()==1||point.y()==row )
         {
             if(isDuplicate)
             {

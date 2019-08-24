@@ -101,9 +101,6 @@ myMainWindow::myMainWindow(QWidget *parent) :
             bool isOK = file.open(QIODevice::ReadOnly);
             if(isOK == true)
             {
-                myFile = new QFile(path);
-                qDebug()<<"myFile newed!";
-
                 QByteArray array;
                 while(file.atEnd() == false)
                 {
@@ -121,9 +118,9 @@ myMainWindow::myMainWindow(QWidget *parent) :
         {
             label->hide();
             //这里弹出一个子窗口
-            connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setData);
+            //connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setRC);
 
-            connect(settingWidget,&SettingWidget::sendRC,this,&myMainWindow::setData);
+            connect(settingWidget,&SettingWidget::sendRC,this,&myMainWindow::setRC);
             connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
                     [=](int n)
             {
@@ -161,7 +158,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             connect(settingWidget,&SettingWidget::setAgain,
                     [=]()
             {
-                inputPoint.clear();
+                inputPoints.clear();
                 qDebug()<<"Clear input points!";
             });
 
@@ -263,7 +260,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
         p.setBrush(brush);
         int x = width()-40;
         int y = height()-70;
-        int x2 = 3*width()/5-10;
+        int x2 = 3*width()/5;
         int y2 = y-60;
 
         //画背景矩形
@@ -311,6 +308,70 @@ void myMainWindow::paintEvent(QPaintEvent *)
         {
             p.drawLine(center.x()-mwidth/2,center.y()-mheight/2+i*unit,center.x()+mwidth/2,center.y()-mheight/2+i*unit);
         }
+
+        //然后以左下角为原点
+        p.translate(center.x()-mwidth/2,center.y()+mheight/2);
+
+        //开始画输出口
+        QPen outPen;
+        outPen.setWidth(3);//设置线宽
+        outPen.setColor(QColor(245,150,170));
+        outPen.setStyle(Qt::DashLine);
+        QBrush outBrush;
+        outBrush.setColor(QColor(219,77,109));//设置颜色
+        outBrush.setStyle(Qt::SolidPattern);//设置样式
+
+        p.setPen(outPen);
+        p.setBrush(outBrush);
+        if(outputPoint.y()==1 && outputPoint.x() < col)
+        {
+            p.drawRect((outputPoint.x()-1)*unit,0-(outputPoint.y()-2)*unit+unit/8,unit,-9*unit/8);
+        }
+        else if(outputPoint.y()==row && outputPoint.x() <= col)
+        {
+            p.drawRect((outputPoint.x()-1)*unit,0-(outputPoint.y())*unit,unit,-9*unit/8);
+        }
+        else if(outputPoint.x()==1 && outputPoint.y() < row)
+        {
+            p.drawRect((outputPoint.x()-2)*unit-unit/8,0-(outputPoint.y()-1)*unit,9*unit/8,-unit);
+        }
+        else if(outputPoint.x()==col && outputPoint.y() < row)
+        {
+            p.drawRect((outputPoint.x())*unit,0-(outputPoint.y()-1)*unit,9*unit/8,-unit);
+        }
+
+
+
+
+        //画输入端口
+        QPen inPen;
+        inPen.setWidth(3);//设置线宽
+        inPen.setColor(QColor(245,150,170));
+        inPen.setStyle(Qt::DashLine);
+        QBrush inBrush;
+        inBrush.setColor(QColor(254,223,225));//设置颜色
+        inBrush.setStyle(Qt::SolidPattern);//设置样式
+        p.setPen(inPen);
+        p.setBrush(inBrush);
+        for(unsigned int i=0;i<inputPoints.size();i++)
+        {
+            if(inputPoints[i].y()==1 && inputPoints[i].x() < col)
+            {
+                p.drawRect((inputPoints[i].x()-1)*unit,0-(inputPoints[i].y()-2)*unit+unit/8,unit,-9*unit/8);
+            }
+            else if(inputPoints[i].y()==row && inputPoints[i].x() <= col)
+            {
+                p.drawRect((inputPoints[i].x()-1)*unit,0-(inputPoints[i].y())*unit,unit,-9*unit/8);
+            }
+            else if(inputPoints[i].x()==1 && inputPoints[i].y() < row)
+            {
+                p.drawRect((inputPoints[i].x()-2)*unit-unit/8,0-(inputPoints[i].y()-1)*unit,9*unit/8,-unit);
+            }
+            else if(inputPoints[i].x()==col && inputPoints[i].y() < row)
+            {
+                p.drawRect((inputPoints[i].x())*unit,0-(inputPoints[i].y()-1)*unit,9*unit/8,-unit);
+            }
+        }
     }
     p.end();
 }
@@ -335,9 +396,9 @@ myMainWindow::~myMainWindow()
     delete ui;
 }
 
-void myMainWindow::setData(int r, int c)
+void myMainWindow::setRC(int r, int c)
 {
     row = r;
     col = c;
-    qDebug()<<"setData!"<<"row = "<<row<<" col = "<<col;
+    qDebug()<<"setRC!"<<"row = "<<row<<" col = "<<col;
 }

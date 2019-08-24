@@ -26,9 +26,12 @@
 #include<QTextEdit>
 #include<QDockWidget>
 
-//Deal with input
+//Deal with input Points
 #include<vector>
 #include<QPoint>
+
+//Deal with operations
+#include "operation.h"
 
 
 
@@ -44,7 +47,7 @@ public:
     explicit myMainWindow(QWidget *parent = nullptr);
     ~myMainWindow();
 
-    void setData(int,int);
+    void setRC(int,int);
 
 private slots:
 
@@ -56,17 +59,12 @@ private:
     int row;
     int col;
 
+    int inputPointsNum;
     std::vector<QPoint> inputPoints;
     QPoint outputPoint;
 
     bool canShowMatrix;
 
-
-    QFile *myFile;
-
-    int inputPointsNum;
-
-    std::vector<QPoint> inputPoint;
 
 
 protected:

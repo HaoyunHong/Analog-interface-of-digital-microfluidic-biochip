@@ -130,11 +130,6 @@ void SettingWidget::on_confirmButton_clicked()
     }
 }
 
-void SettingWidget::on_resetButton_clicked()
-{
-    emit resetSignal();
-    qDebug()<<"resetSignal";
-}
 
 void SettingWidget::on_inOKButton_clicked()
 {
@@ -219,7 +214,7 @@ void SettingWidget::on_confirmButton_2_clicked()
     int y = ui->outYSpinBox->value();
     emit outputCheckSignal(x,y);
     qDebug()<<"Checked! "<<"outputOK = "<<outputOK;
-    if(x > rowNum || y > colNum)
+    if(x > colNum || y > rowNum)
     {
         int ret = QMessageBox::warning(this,"Error","The position of the output point out of range!",QMessageBox::Ok);
         switch(ret)
@@ -245,7 +240,7 @@ void SettingWidget::on_confirmButton_2_clicked()
                     break;
                 }
             }
-    else if((x==1||x==rowNum||y==1||y==colNum)&&outputOK)
+    else if((x==1||x==colNum||y==1||y==rowNum)&&outputOK)
     {
         qDebug()<<"rowNum = "<<rowNum;
         qDebug()<<"colNum = "<<colNum;

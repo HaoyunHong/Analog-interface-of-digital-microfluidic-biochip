@@ -34,8 +34,6 @@ public:
 private slots:
     void on_confirmButton_clicked();
 
-    void on_resetButton_clicked();
-
     void on_inOKButton_clicked();
 
 
@@ -56,8 +54,6 @@ private:
     int colNum;
 
 signals:
-    void confirmSignal(int,int);
-    void resetSignal();
     void setAgain();
     void sendRC(int,int);
     void backToMainWindow();

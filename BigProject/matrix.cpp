@@ -3,10 +3,12 @@
 
 Matrix::Matrix()
 {
-
+    position.setX(0);
+    position.setY(0);
 }
 
-Matrix::Matrix(int m, int n)
+void Matrix::setPosition(int colIndex, int rowIndex)
 {
-
+    position.setX(colIndex);
+    position.setY(rowIndex);
 }
