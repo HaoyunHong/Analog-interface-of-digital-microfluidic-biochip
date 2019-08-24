@@ -13,7 +13,6 @@ SetInputDialog::SetInputDialog(QWidget *parent) :
 
     ui->xSpinBox->setMinimum(1);
     ui->ySpinBox->setMinimum(1);
-
     ui->progressBar->setValue(0);
 
     count = 0;
