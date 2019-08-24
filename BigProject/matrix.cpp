@@ -3,12 +3,12 @@
 
 Matrix::Matrix()
 {
-    position.setX(0);
-    position.setY(0);
+
 }
 
-void Matrix::setPosition(int colIndex, int rowIndex)
+void Matrix::insertPollutedSet(QString kind)
 {
-    position.setX(colIndex);
-    position.setY(rowIndex);
+    pollutedSet<<kind;
+    qDebug()<<"kind = "<<kind;
 }
+

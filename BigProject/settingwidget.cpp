@@ -47,7 +47,7 @@ SettingWidget::SettingWidget(QWidget *parent) :
         ui->rcCheckLabel->setEnabled(false);
         ui->outputCheckLabel->setEnabled(false);
         ui->confirmButton_2->setEnabled(false);
-        int ret = QMessageBox::warning(this,"Error","Please make sure that row number or col number is larger than 3!",QMessageBox::Ok);
+        int ret = QMessageBox::warning(this,"Error","Please make sure that row number or col number is larger than 3 and both are no larger than 12!",QMessageBox::Ok);
         switch(ret)
         {
         case QMessageBox::Ok:
@@ -91,7 +91,15 @@ void SettingWidget::on_confirmButton_clicked()
 
     if(row<=3 && col<=3)
     {
-        qDebug()<<"What Here!";
+        qDebug()<<"SetRC Again!";
+        ui->rcCheckLabel->setEnabled(false);
+        ui->confirmButton->setEnabled(true);
+        emit setAgain();
+        return;
+    }
+    if(row>12 || col>12)
+    {
+        qDebug()<<"SetRC Again!";
         ui->rcCheckLabel->setEnabled(false);
         ui->confirmButton->setEnabled(true);
         emit setAgain();

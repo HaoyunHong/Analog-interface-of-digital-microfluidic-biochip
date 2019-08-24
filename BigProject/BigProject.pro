@@ -39,6 +39,7 @@ HEADERS += \
         matrix.h \
         mymainwindow.h \
         operation.h \
+        operationsignal.h \
         setinputdialog.h \
         settingwidget.h
 

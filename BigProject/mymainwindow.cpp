@@ -31,6 +31,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
     outputPoint.setX(0);
     outputPoint.setY(0);
 
+    op = new Operation(this);
+
     //菜单栏
     QMenuBar *mBar = menuBar();
     setMenuBar(mBar);
@@ -59,11 +61,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     actCommand->setEnabled(false);
     ui->commandTextEdit->hide();
-    QString chooseFile = "Please Click Setting Option!";
+    QString chooseSetting = "Please Click Setting Option!";
     //状态栏
     QStatusBar *sBar = statusBar();
     QLabel *label = new QLabel(this);
-    label->setText(chooseFile);
+    label->setText(chooseSetting);
     label->setStyleSheet("font-size:40px;font-weight:bold;font-family:Calibri;");
     sBar->addWidget(label);
 
@@ -89,29 +91,41 @@ myMainWindow::myMainWindow(QWidget *parent) :
     connect(actCommand,&QAction::triggered,
             [=]()
     {
-        QString path = QFileDialog::getOpenFileName(this,
-                                    "open","../","TXT(*.txt)");
-        //只有当文件不为空时才进行操作
-        if(path.isEmpty()== false)
-        {
-            //文件操作
-            QFile file(path);
-
-            //打开文件，只读方式
-            bool isOK = file.open(QIODevice::ReadOnly);
-            if(isOK == true)
+            QString path = QFileDialog::getOpenFileName(this,
+                                        "open","../","TXT(*.txt)");
+            //只有当文件不为空时才进行操作
+            if(path.isEmpty()== false)
             {
-                QByteArray array;
-                while(file.atEnd() == false)
+                //文件操作
+                QFile file(path);
+                myFile = new QFile(path);
+                //打开文件，只读方式
+                bool isOK = file.open(QIODevice::ReadOnly);
+                if(isOK == true)
                 {
-                    //每次读一行
-                    array += file.readLine();
+                    op->setFile(path);
+                    QByteArray array;
+                    while(file.atEnd() == false)
+                    {
+                        //每次读一行
+                        array += file.readLine();
+                    }
+                    ui->commandTextEdit->setText(array);
                 }
-                ui->commandTextEdit->setText(array);
-            }
-            //关闭文件
-            file.close();
-        }
+                else if(isOK == false){
+                    int ret = QMessageBox::warning(this,"Error","Please choose another readable file as the command file!",QMessageBox::Ok);
+                    switch(ret)
+                    {
+                        case QMessageBox::Ok:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                //关闭文件
+                file.close();
+             }
+
     });
     connect(actSet,&QAction::triggered,
             [=]()
@@ -228,7 +242,56 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->playButton->show();
         ui->resetButton->show();
 
+        sBar->show();
+        QString chooseCommand = "Please Click Command Option!";
+        QLabel *label2 = new QLabel(this);
+        label2->setText(chooseCommand);
+        label2->setStyleSheet("font-size:20px;font-weight:bold;font-family:Calibri;");
+        sBar->addWidget(label);
+
+        for(unsigned int i = 0;i< inputPoints.size();i++)
+        {
+            op->setEveryInput(inputPoints[i]);
+            qDebug()<<"In Main Window send av inputPoint to Operation!";
+            qDebug()<<"inputPoints["<<i<<"] = "<<inputPoints[i];
+        }
+        op->setTheOut(outputPoint);
+        qDebug()<<"In Main Window send the outputPoint to Operation!";
+        qDebug()<<"outputPoint = "<<outputPoint;
     });   
+
+//    connect(op,&Operation::canShowCommand,
+//            [=]()
+//    {
+//        qDebug()<<"Here!";
+//        myFile->open(QIODevice::ReadOnly);
+//            QByteArray array;
+//            while(myFile->atEnd() == false)
+//            {
+//                //每次读一行
+//                qDebug()<<"Here!";
+//                array += myFile->readLine();
+//            }
+//            ui->commandTextEdit->setText(array);
+//            myFile->close();
+//    });
+
+    connect(op,&Operation::cannotShowCommand,
+            [=]()
+    {
+        ui->commandTextEdit->clear();
+        ui->commandTextEdit->setText("Please choose a valid Command File!");
+        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please restart the application!",QMessageBox::Ok);
+        switch(ret)
+        {
+            case QMessageBox::Ok:
+                this->close();
+                break;
+            default:
+                break;
+        }
+    });
+
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)
@@ -400,5 +463,6 @@ void myMainWindow::setRC(int r, int c)
 {
     row = r;
     col = c;
+    op->setRC(row,col);
     qDebug()<<"setRC!"<<"row = "<<row<<" col = "<<col;
 }

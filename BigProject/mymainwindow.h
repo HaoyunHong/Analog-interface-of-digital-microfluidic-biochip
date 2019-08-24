@@ -65,6 +65,10 @@ private:
 
     bool canShowMatrix;
 
+    Operation *op;
+
+    QFile *myFile;
+
 
 
 protected:
