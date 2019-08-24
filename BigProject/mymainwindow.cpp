@@ -63,7 +63,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     actCommand->setEnabled(false);
     ui->commandTextEdit->hide();
-    QString chooseSetting = "Please Click Setting Option!";
+    QString chooseSetting = "Please Click Setting Option! ";
     //状态栏
     QStatusBar *sBar = statusBar();
     QLabel *label = new QLabel(this);
@@ -73,8 +73,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     ui->commandViewerlabel->hide();
     ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
-    ui->commandTextEdit->setStyleSheet("border-image:url(:/image/image/back.jpg);border-width:1;border-style:outset");
+    ui->commandTextEdit->setStyleSheet("border-image:url(:/image/image/back.jpg);border-width:1;border-style:outset;");
 
+    ui->lcdNumber->setStyleSheet("background-color: rgba(208,16,76,200);border-width:2;border-style:outset;border-color:rgb(208,16,76);");
+    ui->lcdNumber->hide();
     ui->lastButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->lastButton->hide();
     ui->nextButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
@@ -100,7 +102,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     connect(actCommand,&QAction::triggered,
             [=]()
     {
-        QString chooseCommand = "Start!";
+        QString chooseCommand = "Start! Light pink represents input points, dark pink represents the output point.";
         label->setText(chooseCommand);
         label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
         QString path = QFileDialog::getOpenFileName(this,
@@ -144,6 +146,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             ui->limitedCheckBox->setEnabled(true);
             ui->playButton->setEnabled(true);
             ui->resetButton->setEnabled(true);
+            ui->lcdNumber->show();
     });
     connect(actSet,&QAction::triggered,
             [=]()
@@ -264,7 +267,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->resetButton->show();
 
         //sBar->show();
-        QString chooseCommand = "Please Click Command Option!";
+        QString chooseCommand = "Light pink represents input points, dark pink represents the output point. Please Click Command Option!";
         //label->show();
         label->setText(chooseCommand);
         label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");

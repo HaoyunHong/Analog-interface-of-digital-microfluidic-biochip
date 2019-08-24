@@ -14,6 +14,8 @@ SetInputDialog::SetInputDialog(QWidget *parent) :
     ui->xSpinBox->setMinimum(1);
     ui->ySpinBox->setMinimum(1);
 
+    ui->progressBar->setValue(0);
+
     count = 0;
 
     isDuplicate = false;
@@ -84,8 +86,11 @@ void SetInputDialog::on_addButton_clicked()
                 }
             }
             else{
+
                 qDebug()<<"Point is OK: point = "<<point;
                  count++;
+                 ui->progressBar->setMaximum(inputNum);
+                 ui->progressBar->setValue(count);
                 }
 
         }
