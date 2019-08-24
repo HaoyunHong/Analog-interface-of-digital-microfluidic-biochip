@@ -51,6 +51,10 @@ public:
 
 private slots:
 
+    void on_lastButton_clicked();
+
+    void on_nextButton_clicked();
+
 private:
     Ui::myMainWindow *ui;
 
@@ -68,6 +72,11 @@ private:
     Operation *op;
 
     QFile *myFile;
+
+    bool drawInput;
+    bool drawNext;
+
+    QPoint currentSquare;
 
 
 

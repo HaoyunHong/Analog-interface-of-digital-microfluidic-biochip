@@ -22,6 +22,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
 //    palette.setBrush(QPalette::Background, QBrush(QPixmap(":/image/image/pinback.jpg")));
 //    this->setPalette(palette);
 //    setAcceptDrops(true);
+    drawInput = false;
+    drawNext = false;
 
     inputPointsNum = 0;
 
@@ -66,7 +68,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     QStatusBar *sBar = statusBar();
     QLabel *label = new QLabel(this);
     label->setText(chooseSetting);
-    label->setStyleSheet("font-size:40px;font-weight:bold;font-family:Calibri;");
+    label->setStyleSheet("font-size:40px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
     sBar->addWidget(label);
 
     ui->commandViewerlabel->hide();
@@ -86,12 +88,22 @@ myMainWindow::myMainWindow(QWidget *parent) :
     ui->resetButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->resetButton->hide();
 
+    ui->lastButton->setEnabled(false);
+    ui->nextButton->setEnabled(false);
+    ui->cleanButton->setEnabled(false);
+    ui->limitedCheckBox->setEnabled(false);
+    ui->playButton->setEnabled(false);
+    ui->resetButton->setEnabled(false);
+
     settingWidget = new SettingWidget(this);
 
     connect(actCommand,&QAction::triggered,
             [=]()
     {
-            QString path = QFileDialog::getOpenFileName(this,
+        QString chooseCommand = "Start!";
+        label->setText(chooseCommand);
+        label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
+        QString path = QFileDialog::getOpenFileName(this,
                                         "open","../","TXT(*.txt)");
             //只有当文件不为空时才进行操作
             if(path.isEmpty()== false)
@@ -126,11 +138,19 @@ myMainWindow::myMainWindow(QWidget *parent) :
                 file.close();
              }
 
+            ui->lastButton->setEnabled(true);
+            ui->nextButton->setEnabled(true);
+            ui->cleanButton->setEnabled(true);
+            ui->limitedCheckBox->setEnabled(true);
+            ui->playButton->setEnabled(true);
+            ui->resetButton->setEnabled(true);
     });
     connect(actSet,&QAction::triggered,
             [=]()
         {
-            label->hide();
+        QString chooseCommand = "Setting now~";
+        label->setText(chooseCommand);
+        label->setStyleSheet("font-size:40px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
             //这里弹出一个子窗口
             //connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setRC);
 
@@ -230,6 +250,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             [=]()
     {
         canShowMatrix = true;
+        qDebug()<<"Set all done Updating!";
         update();
         actCommand->setEnabled(true);
         ui->commandTextEdit->show();
@@ -242,12 +263,12 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->playButton->show();
         ui->resetButton->show();
 
-        sBar->show();
+        //sBar->show();
         QString chooseCommand = "Please Click Command Option!";
-        QLabel *label2 = new QLabel(this);
-        label2->setText(chooseCommand);
-        label2->setStyleSheet("font-size:20px;font-weight:bold;font-family:Calibri;");
-        sBar->addWidget(label);
+        //label->show();
+        label->setText(chooseCommand);
+        label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
+        //sBar->addWidget(label);
 
         for(unsigned int i = 0;i< inputPoints.size();i++)
         {
@@ -260,21 +281,6 @@ myMainWindow::myMainWindow(QWidget *parent) :
         qDebug()<<"outputPoint = "<<outputPoint;
     });   
 
-//    connect(op,&Operation::canShowCommand,
-//            [=]()
-//    {
-//        qDebug()<<"Here!";
-//        myFile->open(QIODevice::ReadOnly);
-//            QByteArray array;
-//            while(myFile->atEnd() == false)
-//            {
-//                //每次读一行
-//                qDebug()<<"Here!";
-//                array += myFile->readLine();
-//            }
-//            ui->commandTextEdit->setText(array);
-//            myFile->close();
-//    });
 
     connect(op,&Operation::cannotShowCommand,
             [=]()
@@ -292,12 +298,25 @@ myMainWindow::myMainWindow(QWidget *parent) :
         }
     });
 
+    connect(op,&Operation::drawInput,
+            [=](int col, int row)
+    {
+        qDebug()<<"DrawInput Signal!";
+        currentSquare.setX(col);
+        currentSquare.setY(row);
+        drawInput = true;
+    });
+
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)
 {
     QPainter p;//创建画家对象
     p.begin(this);//指定当前窗口为绘图设备
+
+    qDebug()<<"Begin painting!";
+    //反锯齿
+    p.setRenderHint(QPainter::Antialiasing, true);
     p.drawPixmap(0,0,width(),height(),QPixmap(":/image/image/pinback.jpg"));
     //设置屏幕透明度
     setWindowOpacity(0.96);
@@ -345,20 +364,19 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
         center.setX(x2/2);
         center.setY(y2/2);
-        qDebug()<<"center = "<<center;
+        //qDebug()<<"center = "<<center;
 
-        qDebug()<<"row = "<<row;
-        qDebug()<<"col = "<<col;
+        //qDebug()<<"row = "<<row;
+        //qDebug()<<"col = "<<col;
         int unit = 50;
         int mwidth = col*unit;
-        qDebug()<<"mwidth = "<<mwidth;
+        //qDebug()<<"mwidth = "<<mwidth;
         int mheight = row*unit;
-        qDebug()<<"mheight = "<<mheight;
-        QPen mpen;
-        mpen.setWidth(3);//设置线宽
-        mpen.setColor(QColor(245,150,170));
-        mpen.setStyle(Qt::SolidLine);
-        p.setPen(mpen);
+        //qDebug()<<"mheight = "<<mheight;
+        pen.setWidth(3);//设置线宽
+        pen.setColor(QColor(245,150,170));
+        pen.setStyle(Qt::SolidLine);
+        p.setPen(pen);
         //一定要是center,把坐标画对
         p.drawPoint(center);
         p.drawRect(center.x()-mwidth/2,center.y()-mheight/2,mwidth,mheight);
@@ -376,16 +394,14 @@ void myMainWindow::paintEvent(QPaintEvent *)
         p.translate(center.x()-mwidth/2,center.y()+mheight/2);
 
         //开始画输出口
-        QPen outPen;
-        outPen.setWidth(3);//设置线宽
-        outPen.setColor(QColor(245,150,170));
-        outPen.setStyle(Qt::DashLine);
-        QBrush outBrush;
-        outBrush.setColor(QColor(219,77,109));//设置颜色
-        outBrush.setStyle(Qt::SolidPattern);//设置样式
+        pen.setWidth(3);//设置线宽
+        pen.setColor(QColor(245,150,170));
+        pen.setStyle(Qt::DashLine);
+        brush.setColor(QColor(219,77,109));//设置颜色
+        brush.setStyle(Qt::SolidPattern);//设置样式
 
-        p.setPen(outPen);
-        p.setBrush(outBrush);
+        p.setPen(pen);
+        p.setBrush(brush);
         if(outputPoint.y()==1 && outputPoint.x() < col)
         {
             p.drawRect((outputPoint.x()-1)*unit,0-(outputPoint.y()-2)*unit+unit/8,unit,-9*unit/8);
@@ -407,15 +423,13 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
 
         //画输入端口
-        QPen inPen;
-        inPen.setWidth(3);//设置线宽
-        inPen.setColor(QColor(245,150,170));
-        inPen.setStyle(Qt::DashLine);
-        QBrush inBrush;
-        inBrush.setColor(QColor(254,223,225));//设置颜色
-        inBrush.setStyle(Qt::SolidPattern);//设置样式
-        p.setPen(inPen);
-        p.setBrush(inBrush);
+        pen.setWidth(3);//设置线宽
+        pen.setColor(QColor(245,150,170));
+        pen.setStyle(Qt::DashLine);
+        brush.setColor(QColor(254,223,225));//设置颜色
+        brush.setStyle(Qt::SolidPattern);//设置样式
+        p.setPen(pen);
+        p.setBrush(brush);
         for(unsigned int i=0;i<inputPoints.size();i++)
         {
             if(inputPoints[i].y()==1 && inputPoints[i].x() < col)
@@ -435,8 +449,29 @@ void myMainWindow::paintEvent(QPaintEvent *)
                 p.drawRect((inputPoints[i].x())*unit,0-(inputPoints[i].y()-1)*unit,9*unit/8,-unit);
             }
         }
+
+        if(drawInput && drawNext)
+        {
+            pen.setWidth(1);//设置线宽
+            pen.setColor(QColor(245,150,170,150));
+            pen.setStyle(Qt::SolidLine);
+            brush.setColor(QColor(245,150,170,150));//设置颜色
+            brush.setStyle(Qt::SolidPattern);//设置样式
+            p.setPen(pen);
+            p.setBrush(brush);
+            int r = 30;
+            QPoint oCircle(0,0);
+            oCircle.setX((currentSquare.x()-1)*unit+unit/2);
+            oCircle.setY(0-(currentSquare.y()-1)*unit-unit/2);
+
+            //是像画矩形那样画圆和椭圆的
+            p.drawEllipse(oCircle.x()-r/2,oCircle.y()-r/2,r,r);
+            qDebug()<<"Painting Inputs!";
+        }
     }
     p.end();
+
+
 }
 
 void myMainWindow::closeEvent(QCloseEvent *event)
@@ -465,4 +500,16 @@ void myMainWindow::setRC(int r, int c)
     col = c;
     op->setRC(row,col);
     qDebug()<<"setRC!"<<"row = "<<row<<" col = "<<col;
+}
+
+void myMainWindow::on_lastButton_clicked()
+{
+
+}
+
+void myMainWindow::on_nextButton_clicked()
+{
+    drawNext = true;
+    qDebug()<<"updating!";
+    update();
 }

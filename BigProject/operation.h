@@ -25,6 +25,7 @@ public:
 
 signals:
     void cannotShowCommand();
+    void drawInput(int,int);
 
 public slots:
 

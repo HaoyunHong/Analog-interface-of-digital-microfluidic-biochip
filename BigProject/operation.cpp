@@ -53,7 +53,6 @@ void Operation::parseLine(QString line)
 {
     qDebug()<<"line = "<<line;
     QStringList parts = line.split(",");
-    qDebug()<<"inputPoints.size() = "<<inputPoints.size();
     qDebug()<<parts;
     if(parts[0]=="Input")
     {
@@ -61,8 +60,6 @@ void Operation::parseLine(QString line)
         int colIndex = parts[2].toInt();
         qDebug()<<parts[3];
         int rowIndex = parts[3].toInt();
-        qDebug()<<"colIndex = "<<colIndex<<" inputPoints["<<0<<"].x() = "<<inputPoints[0].x();
-        qDebug()<<"rowIndex = "<<rowIndex<<" inputPoints["<<0<<"].y() = "<<inputPoints[0].y();
 
         bool equal=false;
         for(unsigned int i=0;i<inputPoints.size();i++)
@@ -75,41 +72,40 @@ void Operation::parseLine(QString line)
                 break;
             }
         }
-        qDebug()<<"equal = "<<equal;
         if(equal)
         {
+            emit drawInput(colIndex,rowIndex);
             countKind++;
             QString kind = QString("%1").arg(countKind);
-            qDebug()<<"kind = "<<kind;
             matrix[colIndex-1][rowIndex-1].insertPollutedSet(kind);
             qDebug()<<"kind = "<<kind;
         }
         else {
             canShowCommand = false;
-            //emit cannotShowCommand();
         }
-//        if(parts[0]=="Output")
-//        {
-//            time=parts[1].toInt();
-//            int colIndex = parts[2].toInt();
-//            int rowIndex = parts[3].toInt();
+    }
 
-//            bool equal=false;
-//            if(colIndex == outputPoint.x() && rowIndex == outputPoint.y())
-//            {
-//                equal = true;
-//            }
-//            if(equal)
-//            {
-//                //matrix[colIndex][rowIndex].insertPollutedSet(kind);
-//                timer.push_back(time);
-//                status.push_back(matrix);
-//            }
-//            else {
-//                emit cannotShowCommand();
-//            }
-//        }
+    if(parts[0]=="Output")
+    {
+        time=parts[1].toInt();
+        int colIndex = parts[2].toInt();
+        int rowIndex = parts[3].toInt();
 
+        bool equal=false;
+        qDebug()<<"colIndex = "<<colIndex<<" outputPoint.x() = "<<outputPoint.x();
+        qDebug()<<"rowIndex = "<<rowIndex<<" outputPoint.y() = "<<outputPoint.y();
+        if(colIndex == outputPoint.x() && rowIndex == outputPoint.y())
+        {
+            equal = true;
+        }
+        if(equal)
+        {
+            timer.push_back(time);
+            status.push_back(matrix);
+        }
+        else {
+            canShowCommand = false;
+        }
     }
 }
 
