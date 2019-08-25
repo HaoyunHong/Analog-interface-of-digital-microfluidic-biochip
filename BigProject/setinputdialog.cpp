@@ -122,6 +122,7 @@ void SetInputDialog::resetThisInputPoint()
 {
     ui->xSpinBox->setValue(1);
     ui->ySpinBox->setValue(1);
+    ui->progressBar->setValue(0);
 }
 
 

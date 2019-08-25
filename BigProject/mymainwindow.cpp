@@ -102,7 +102,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     connect(actCommand,&QAction::triggered,
             [=]()
     {
-        QString chooseCommand = "Start! Light pink represents input points, dark pink represents the output point.";
+        QString chooseCommand = "Light pink represents input points, dark pink represents the output point.";
         label->setText(chooseCommand);
         label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
         QString path = QFileDialog::getOpenFileName(this,
