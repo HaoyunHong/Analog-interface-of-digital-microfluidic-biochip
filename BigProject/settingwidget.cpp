@@ -47,7 +47,7 @@ SettingWidget::SettingWidget(QWidget *parent) :
         ui->rcCheckLabel->setEnabled(false);
         ui->outputCheckLabel->setEnabled(false);
         ui->confirmButton_2->setEnabled(false);
-        int ret = QMessageBox::warning(this,"Error","Please make sure that row number or col number is larger than 3 and both are no larger than 12!",QMessageBox::Ok);
+        int ret = QMessageBox::warning(this,"Error","Please make sure that row number or col number is larger than 3!",QMessageBox::Ok);
         switch(ret)
         {
         case QMessageBox::Ok:
@@ -90,14 +90,6 @@ void SettingWidget::on_confirmButton_clicked()
     int col = ui->colSpinBox->value();
 
     if(row<=3 && col<=3)
-    {
-        qDebug()<<"SetRC Again!";
-        ui->rcCheckLabel->setEnabled(false);
-        ui->confirmButton->setEnabled(true);
-        emit setAgain();
-        return;
-    }
-    if(row>12 || col>12)
     {
         qDebug()<<"SetRC Again!";
         ui->rcCheckLabel->setEnabled(false);
@@ -284,8 +276,10 @@ void SettingWidget::defaultAll()
     ui->label_4->setStyleSheet("color: rgb(142,53,74)");
     ui->label_5->setStyleSheet("color: rgb(142,53,74)");
     ui->rowSpinBox->setMinimum(1);
+    ui->rowSpinBox->setMaximum(12);
     ui->rowSpinBox->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
     ui->colSpinBox->setMinimum(1);
+    ui->colSpinBox->setMaximum(12);
     ui->colSpinBox->setStyleSheet("background: rgb(254,223,225);color: rgb(142,53,74)");
     ui->inpNumSpinBox->setMinimum(1);
     ui->inpNumSpinBox->setStyleSheet("background: rgb(238,169,169);color: rgb(142,53,74)");
