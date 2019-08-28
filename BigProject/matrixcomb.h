@@ -9,8 +9,8 @@ public:
     matrixComb();
 
     Matrix comb[13][13];
+    bool isDecided;
 
-    void setValidMatrix(int col, int row);
 };
 
 #endif // MATRIXCOMB_H

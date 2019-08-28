@@ -22,8 +22,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
 //    palette.setBrush(QPalette::Background, QBrush(QPixmap(":/image/image/pinback.jpg")));
 //    this->setPalette(palette);
 //    setAcceptDrops(true);
-    drawInput = false;
+    drawLast = false;
     drawNext = false;
+
+    now = 0;
 
     inputPointsNum = 0;
 
@@ -84,7 +86,9 @@ myMainWindow::myMainWindow(QWidget *parent) :
     ui->nextButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->nextButton->hide();
     //ui->cleanButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
-    //ui->cleanButton->hide();
+    //ui->cleanButton->hide();ui->limitedCheckBox->setStyleSheet("border-width:3;border-color:rgb(220,159,180);");
+    ui->cleanCheckBox->setStyleSheet("border-width:3;border-color:rgb(220,159,180);");
+    ui->cleanCheckBox->hide();
     ui->limitedCheckBox->setStyleSheet("border-width:3;border-color:rgb(220,159,180);");
     ui->limitedCheckBox->hide();
     ui->playButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
@@ -150,7 +154,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             ui->playButton->setEnabled(true);
             ui->resetButton->setEnabled(true);
 
-            ui->lcdNumber->display("-1");
+            ui->lcdNumber->display("0");
             ui->lcdNumber->show();
     });
     connect(actSet,&QAction::triggered,
@@ -173,10 +177,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
             connect(settingWidget,&SettingWidget::sendInputPoint,
                     [=](QPoint p)
             {
-                unsigned int size = inputPoints.size();            
-                qDebug()<<"size = "<<size;             
+                int size = inputPoints.size();
+                qDebug()<<"size = "<<size;
                     bool canStore = true;
-                    for(unsigned int i=0;i<size;i++)
+                    for(int i=0;i<size;i++)
                     {
                         if(inputPoints[i]==p || p == outputPoint)
                         {
@@ -186,7 +190,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
                             canStore = false;
                             qDebug()<<"In Main Window Duplicate : p = "<<p;
                             break;
-                        }               
+                        }
                     }
                     if(canStore)
                     {
@@ -210,7 +214,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     connect(settingWidget,&SettingWidget::outputCheckSignal,
             [=](int x, int y)
     {
-        unsigned int size = inputPoints.size();
+       int size = inputPoints.size();
         qDebug()<<"size = "<<size;
 //        for(unsigned int i=0;i<size;i++)
 //        {
@@ -224,7 +228,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         else
         {
             bool flag = true;
-            for(unsigned int i=0;i<size;i++)
+            for(int i=0;i<size;i++)
             {
                 qDebug()<<"x = "<<x<<"y = "<<y;
                 qDebug()<<"inputPoints["<<i<<"]"<<inputPoints[i];
@@ -266,7 +270,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->commandViewerlabel->show();
         ui->lastButton->show();
         ui->nextButton->show();
-        //ui->cleanButton->show();
+        ui->cleanCheckBox->show();
         ui->limitedCheckBox->show();
         ui->playButton->show();
         ui->resetButton->show();
@@ -278,7 +282,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
         //sBar->addWidget(label);
 
-        for(unsigned int i = 0;i< inputPoints.size();i++)
+        for(int i = 0;i< inputPoints.size();i++)
         {
             op->setEveryInput(inputPoints[i]);
             qDebug()<<"In Main Window send av inputPoint to Operation!";
@@ -287,7 +291,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         op->setTheOut(outputPoint);
         qDebug()<<"In Main Window send the outputPoint to Operation!";
         qDebug()<<"outputPoint = "<<outputPoint;
-    });   
+    });
 
 
     connect(op,&Operation::cannotShowCommand,
@@ -305,13 +309,6 @@ myMainWindow::myMainWindow(QWidget *parent) :
             default:
                 break;
         }
-    });
-
-    connect(op,&Operation::updatePic,
-            [=]()
-    {
-        qDebug()<<"updatePic!";
-        update();
     });
 
 }
@@ -426,9 +423,6 @@ void myMainWindow::paintEvent(QPaintEvent *)
             p.drawRect((outputPoint.x())*unit,0-(outputPoint.y()-1)*unit,9*unit/8,-unit);
         }
 
-
-
-
         //画输入端口
         pen.setWidth(3);//设置线宽
         pen.setColor(QColor(245,150,170));
@@ -437,7 +431,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
         brush.setStyle(Qt::SolidPattern);//设置样式
         p.setPen(pen);
         p.setBrush(brush);
-        for(unsigned int i=0;i<inputPoints.size();i++)
+        for(int i=0;i<inputPoints.size();i++)
         {
             if(inputPoints[i].y()==1 && inputPoints[i].x() < col)
             {
@@ -457,27 +451,55 @@ void myMainWindow::paintEvent(QPaintEvent *)
             }
         }
 
-        if(drawInput && drawNext)
-        {
-            pen.setWidth(1);//设置线宽
-            pen.setColor(QColor(245,150,170,150));
-            pen.setStyle(Qt::SolidLine);
-            brush.setColor(QColor(245,150,170,150));//设置颜色
-            brush.setStyle(Qt::SolidPattern);//设置样式
-            p.setPen(pen);
-            p.setBrush(brush);
-            int r = 30;
-            QPoint oCircle(0,0);
-            oCircle.setX((currentSquare.x()-1)*unit+unit/2);
-            oCircle.setY(0-(currentSquare.y()-1)*unit-unit/2);
+        //三种不同型号的小圆直径
+        int sD = 24;
+        int mD = 34;
+        int lD = 44;
+        //椭圆形的参数
+        int longD = 120;
+        int shortD = 30;
 
-            //是像画矩形那样画圆和椭圆的
-            p.drawEllipse(oCircle.x()-r/2,oCircle.y()-r/2,r,r);
-            qDebug()<<"Painting Inputs!";
+        if(drawNext || drawLast)
+        {
+            brush.setStyle(Qt::SolidPattern);//设置样式
+            for(int i=1;i<=col;i++)
+             {
+                  for(int j=1;j<=row;j++)
+                  {
+                       if(!op->status[now].comb[i][j].isEmpty)
+                       {
+                           brush.setColor(op->status[now].comb[i][j].dropColor);//设置颜色
+                           p.setBrush(brush);
+                           p.setPen(Qt::NoPen);
+                           if(op->status[now].comb[i][j].isLongDrop)
+                           {
+                               if(op->status[now].comb[i][j].isFat)
+                               {
+                                   p.drawEllipse((i-2)*unit+unit/2-longD/2,0-(j-1)*unit-unit/2+shortD/2,longD,-shortD);
+                               }
+                               else {
+                                   p.drawEllipse((i-1)*unit+unit/2-shortD/2,0-(j-2)*unit-unit/2+longD/2,shortD,-longD);
+                               }
+
+                           }
+                           else if(op->status[now].comb[i][j].isBigger)
+                           {
+                               p.drawEllipse((i-1)*unit+unit/2-lD/2,0-(j-1)*unit-unit/2+lD/2,lD,-lD);
+                           }
+                           else if(op->status[now].comb[i][j].isSmaller)
+                           {
+                               p.drawEllipse((i-1)*unit+unit/2-sD/2,0-(j-1)*unit-unit/2+sD/2,sD,-sD);
+                           }
+                           else {
+                               p.drawEllipse((i-1)*unit+unit/2-mD/2,0-(j-1)*unit-unit/2+mD/2,mD,-mD);
+                           }
+
+                       }
+                  }
+             }
         }
     }
     p.end();
-
 
 }
 
@@ -506,20 +528,40 @@ void myMainWindow::setRC(int r, int c)
 {
     row = r;
     col = c;
-    op->setRC(row,col);
+    //op->setRC(row,col);
     qDebug()<<"setRC!"<<"row = "<<row<<" col = "<<col;
 }
 
 void myMainWindow::on_lastButton_clicked()
 {
-
+    now--;
+    if(now<0 || now>op->wholeTime)
+    {
+        drawLast = false;
+    }
+    else {
+        drawLast = true;
+        qDebug()<<"Last updating!";
+        update();
+        qDebug()<<"now: "<<now;
+    }
+    ui->lcdNumber->display(now);
 }
 
 void myMainWindow::on_nextButton_clicked()
 {
-    drawNext = true;
-    qDebug()<<"updating!";
-    update();
+    now++;
+    if(now<0 || now>op->wholeTime)
+    {
+        drawNext = false;
+    }
+    else {
+        drawNext = true;
+        qDebug()<<"Next updating!";
+        update();
+        qDebug()<<"now: "<<now;
+    }
+    ui->lcdNumber->display(now);
 }
 
 void myMainWindow::on_limitedCheckBox_stateChanged(int state)

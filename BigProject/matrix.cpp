@@ -7,8 +7,9 @@ Matrix::Matrix()
     isValid = false;
     isEmpty = true;
     isLongDrop = false;
+    isFat = false;
 
-    //如果有trace的话，是找之前的路径然后画出透明的同色带子
+    //如果有trace的话，是找之前的路径然后画出很多小圆
     hasTrace = true;
 
     //Merge时

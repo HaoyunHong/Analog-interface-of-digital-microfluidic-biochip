@@ -77,10 +77,10 @@ private:
 
     QFile *myFile;
 
-    bool drawInput;
     bool drawNext;
+    bool drawLast;
+    int now;
 
-    QPoint currentSquare;
 
     bool haveToClose;
 

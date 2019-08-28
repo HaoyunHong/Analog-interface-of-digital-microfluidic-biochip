@@ -18,7 +18,6 @@ class Operation : public QObject
 public:
     explicit Operation(QObject *parent = nullptr);
 
-    void setRC(int row, int col);
     void setFile(QString path);
     void setEveryInput(QPoint pIn);
     void setTheOut(QPoint pOut);
@@ -29,12 +28,13 @@ public:
     bool isLimited;
     bool isClean;
 
-    QVector<matrixComb> status;
+    matrixComb* status;
+
+    int wholeTime;
 
 
 signals:
     void cannotShowCommand();
-    void updatePic();
 
 public slots:
 

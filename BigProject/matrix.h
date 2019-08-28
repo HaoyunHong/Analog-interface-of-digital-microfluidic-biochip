@@ -22,6 +22,8 @@ public:
 
     bool isLongDrop;
 
+    bool isFat;
+
     bool hasTrace;
 
     bool isBigger;

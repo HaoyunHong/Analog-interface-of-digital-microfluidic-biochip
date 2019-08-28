@@ -18,6 +18,7 @@ public:
     int endTime;
     int curStep;
 
+
 };
 
 #endif // LINE_H
