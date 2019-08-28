@@ -452,9 +452,9 @@ void myMainWindow::paintEvent(QPaintEvent *)
         }
 
         //三种不同型号的小圆直径
-        int sD = 24;
-        int mD = 34;
-        int lD = 44;
+        int sD = 20;
+        int mD = 30;
+        int lD = 40;
         //椭圆形的参数
         int longD = 120;
         int shortD = 30;

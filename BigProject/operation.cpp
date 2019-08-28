@@ -287,6 +287,7 @@ void Operation::updateMatrixME(int i)
     status[nowTime].comb[commandLines[i].path[1].x()][commandLines[i].path[1].y()].isEmpty = false;
     status[nowTime].comb[commandLines[i].path[1].x()][commandLines[i].path[1].y()].dropColor = nowColor2;
 
+    colorSeed++;
     QColor nowColor = QColor((colorSeed * 220) % 255, (colorSeed * 20) % 255, (colorSeed * 60) % 255, 200);
     QPoint center = (commandLines[i].path[0] + commandLines[i].path[1]) / 2;
     status[nowTime+1].comb[center.x()][center.y()].isEmpty = false;
