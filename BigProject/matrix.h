@@ -3,6 +3,7 @@
 #include<QPoint>
 #include<QSet>
 #include<QDebug>
+#include<QColor>
 
 class Matrix
 {
@@ -19,17 +20,25 @@ public:
 
     bool isEmpty;
 
+    bool isLongDrop;
+
+    bool hasTrace;
+
+    bool isBigger;
+
+    bool isSmaller;
+
     int lastStepKind;
 
     int nextStepKind;
 
+    //颜色信息
+    QColor dropColor;
+
+
+
 
 private:
-    //颜色信息
-    int red;
-    int green;
-    int blue;
-    int alpha;
     //污染信息
     QSet<QString> pollutedSet;
 };

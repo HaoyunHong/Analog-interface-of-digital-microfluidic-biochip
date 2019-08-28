@@ -2,6 +2,7 @@
 
 Line::Line(QString line)
 {
+    curStep = 0;
     wholeLine = line;
     qDebug()<<"wholeLine = "<<wholeLine;
     line = line.replace(" ", ",");
@@ -39,8 +40,6 @@ Line::Line(QString line)
     {
         kind = 2;
         interval = 1;
-
-
     }
     if(action == "Split")
     {

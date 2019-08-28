@@ -29,10 +29,12 @@ public:
     bool isLimited;
     bool isClean;
 
+    QVector<matrixComb> status;
+
 
 signals:
     void cannotShowCommand();
-    void drawInput(int,int);
+    void updatePic();
 
 public slots:
 
@@ -45,14 +47,22 @@ private:
 
     bool canShowCommand;
 
-    int countKind;
+
 
     int rowNum;
     int colNum;
 
     QVector<Line> commandLines;
-    QVector<matrixComb> status;
 
+    int colorSeed;
+    QVector<QColor> dropKinds;
+
+    void updateMatrixI(int);
+    void updateMatrixMO(int);
+    void updateMatrixS(int);
+    void updateMatrixME(int);
+    void updateMatrixMI(int);
+    void updateMatrixO(int);
 };
 
 #endif // OPERATION_H

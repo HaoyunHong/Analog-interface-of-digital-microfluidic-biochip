@@ -307,13 +307,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
         }
     });
 
-    connect(op,&Operation::drawInput,
-            [=](int col, int row)
+    connect(op,&Operation::updatePic,
+            [=]()
     {
-        qDebug()<<"DrawInput Signal!";
-        currentSquare.setX(col);
-        currentSquare.setY(row);
-        drawInput = true;
+        qDebug()<<"updatePic!";
+        update();
     });
 
 }

@@ -9,6 +9,8 @@ SetInputDialog::SetInputDialog(QWidget *parent) :
 
     this->setWindowTitle("Input Points Setting");
 
+    this->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
+
     ui->okButton->setEnabled(false);
 
     ui->xSpinBox->setMinimum(1);

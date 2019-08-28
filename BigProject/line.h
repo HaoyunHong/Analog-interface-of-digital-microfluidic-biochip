@@ -16,6 +16,7 @@ public:
     int kind;
     QVector<QPoint> path;
     int endTime;
+    int curStep;
 
 };
 
