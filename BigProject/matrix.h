@@ -37,6 +37,8 @@ public:
     //颜色信息
     QColor dropColor;
 
+    int d;
+
 
 
 

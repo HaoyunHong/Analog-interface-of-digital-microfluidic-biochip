@@ -33,7 +33,7 @@ Line::Line(QString line)
     if(action == "Input")
     {
         kind = 1;
-        beginTime = parts[1].toInt()-1;
+        beginTime = parts[1].toInt();
         interval = 1;
     }
     if(action == "Move")

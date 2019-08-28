@@ -473,12 +473,15 @@ void myMainWindow::paintEvent(QPaintEvent *)
                            p.setPen(Qt::NoPen);
                            if(op->status[now].comb[i][j].isLongDrop)
                            {
+                               qDebug()<<"IsLong!";
                                if(op->status[now].comb[i][j].isFat)
                                {
-                                   p.drawEllipse((i-2)*unit+unit/2-longD/2,0-(j-1)*unit-unit/2+shortD/2,longD,-shortD);
+                                    qDebug()<<"IsFat!";
+                                    p.drawEllipse((i-1)*unit+unit/2-longD/2,0-(j-1)*unit-unit/2+shortD/2,longD,-shortD);
                                }
                                else {
-                                   p.drawEllipse((i-1)*unit+unit/2-shortD/2,0-(j-2)*unit-unit/2+longD/2,shortD,-longD);
+                                   qDebug()<<"IsThin!";
+                                    p.drawEllipse((i-1)*unit+unit/2-shortD/2,0-(j-1)*unit-unit/2+longD/2,shortD,-longD);
                                }
 
                            }

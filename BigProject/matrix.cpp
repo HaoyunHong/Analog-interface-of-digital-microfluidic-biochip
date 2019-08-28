@@ -17,6 +17,8 @@ Matrix::Matrix()
     //Split时
     isSmaller = false;
 
+    d=30;
+
 }
 
 void Matrix::insertPollutedSet(QString kind)

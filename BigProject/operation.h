@@ -63,6 +63,9 @@ private:
     void updateMatrixME(int);
     void updateMatrixMI(int);
     void updateMatrixO(int);
+
+    void fillBlank(int);
+
 };
 
 #endif // OPERATION_H
