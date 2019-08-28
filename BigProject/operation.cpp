@@ -6,6 +6,9 @@ Operation::Operation(QObject *parent) : QObject(parent)
       countKind = 0;
 
       canShowCommand = true;
+
+      isLimited = false;
+      isClean = false;
 }
 
 void Operation::setFile(QString path)
@@ -88,6 +91,11 @@ void Operation::parseFile()
         {
             qDebug()<<"commandLines.wholeLine: "<<commandLines[i].wholeLine;
             //if(commandLines[i])
+        }
+
+        if(!isClean)
+        {
+
         }
     }
     myFile->close();

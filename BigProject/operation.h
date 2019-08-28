@@ -26,6 +26,9 @@ public:
     void parseFile();
     void parseLine(QString);
 
+    bool isLimited;
+    bool isClean;
+
 
 signals:
     void cannotShowCommand();

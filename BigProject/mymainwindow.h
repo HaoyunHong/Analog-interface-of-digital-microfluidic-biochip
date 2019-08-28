@@ -55,6 +55,10 @@ private slots:
 
     void on_nextButton_clicked();
 
+    void on_limitedCheckBox_stateChanged(int state);
+
+    void on_cleanCheckBox_stateChanged(int state);
+
 private:
     Ui::myMainWindow *ui;
 
@@ -77,6 +81,8 @@ private:
     bool drawNext;
 
     QPoint currentSquare;
+
+    bool haveToClose;
 
 
 

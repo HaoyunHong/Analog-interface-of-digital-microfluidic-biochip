@@ -33,6 +33,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
     outputPoint.setX(0);
     outputPoint.setY(0);
 
+    haveToClose = false;
+
     op = new Operation(this);
 
     //菜单栏
@@ -81,8 +83,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
     ui->lastButton->hide();
     ui->nextButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->nextButton->hide();
-    ui->cleanButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
-    ui->cleanButton->hide();
+    //ui->cleanButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
+    //ui->cleanButton->hide();
     ui->limitedCheckBox->setStyleSheet("border-width:3;border-color:rgb(220,159,180);");
     ui->limitedCheckBox->hide();
     ui->playButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
@@ -92,7 +94,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     ui->lastButton->setEnabled(false);
     ui->nextButton->setEnabled(false);
-    ui->cleanButton->setEnabled(false);
+    ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
     ui->playButton->setEnabled(false);
     ui->resetButton->setEnabled(false);
@@ -142,8 +144,9 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
             ui->lastButton->setEnabled(true);
             ui->nextButton->setEnabled(true);
-            ui->cleanButton->setEnabled(true);
-            ui->limitedCheckBox->setEnabled(true);
+            //ui->cleanButton->setEnabled(true);
+            ui->cleanCheckBox->setEnabled(true);
+
             ui->playButton->setEnabled(true);
             ui->resetButton->setEnabled(true);
 
@@ -263,7 +266,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         ui->commandViewerlabel->show();
         ui->lastButton->show();
         ui->nextButton->show();
-        ui->cleanButton->show();
+        //ui->cleanButton->show();
         ui->limitedCheckBox->show();
         ui->playButton->show();
         ui->resetButton->show();
@@ -292,10 +295,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
     {
         ui->commandTextEdit->clear();
         ui->commandTextEdit->setText("Please choose a valid Command File!");
-        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please choose a valid Command File next time and restart the application!",QMessageBox::Ok);
+        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please choose a valid Command File next time and restart the application! It will close soon!",QMessageBox::Ok);
         switch(ret)
         {
             case QMessageBox::Ok:
+                haveToClose = true;
                 this->close();
                 break;
             default:
@@ -481,6 +485,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
 void myMainWindow::closeEvent(QCloseEvent *event)
 {
+    if(haveToClose) return;
     int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
     switch(ret)
     {
@@ -517,4 +522,29 @@ void myMainWindow::on_nextButton_clicked()
     drawNext = true;
     qDebug()<<"updating!";
     update();
+}
+
+void myMainWindow::on_limitedCheckBox_stateChanged(int state)
+{
+    if(state == Qt::Checked)
+    {
+        op->isLimited = true;
+    }
+    else if(state == Qt::Unchecked)
+    {
+        op->isLimited = false;
+    }
+}
+
+void myMainWindow::on_cleanCheckBox_stateChanged(int state)
+{
+    if(state == Qt::Checked)
+    {
+        ui->limitedCheckBox->setEnabled(true);
+        op->isClean = true;
+    }
+    else if(state == Qt::Unchecked)
+    {
+        op->isClean = false;
+    }
 }
