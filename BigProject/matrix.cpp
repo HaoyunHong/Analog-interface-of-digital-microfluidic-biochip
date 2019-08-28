@@ -3,6 +3,8 @@
 
 Matrix::Matrix()
 {
+    isValid = false;
+    isEmpty = true;
 
 }
 

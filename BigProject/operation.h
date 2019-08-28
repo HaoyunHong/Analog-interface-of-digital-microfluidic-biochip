@@ -6,7 +6,11 @@
 #include<QFile>
 #include<QDebug>
 #include<vector>
-#include<map>
+
+#include "line.h"
+#include "matrixcomb.h"
+#include<algorithm>
+
 
 class Operation : public QObject
 {
@@ -30,7 +34,6 @@ signals:
 public slots:
 
 private:
-    Matrix ** matrix;
     QFile *myFile;
     std::vector<QPoint> inputPoints;
     QPoint outputPoint;
@@ -41,8 +44,11 @@ private:
 
     int countKind;
 
-    std::vector<int> timer;
-    std::vector<Matrix**> status;
+    int rowNum;
+    int colNum;
+
+    QVector<Line> commandLines;
+    QVector<matrixComb> status;
 
 };
 

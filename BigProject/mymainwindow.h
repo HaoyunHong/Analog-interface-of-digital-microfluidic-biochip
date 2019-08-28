@@ -27,7 +27,7 @@
 #include<QDockWidget>
 
 //Deal with input Points
-#include<vector>
+#include<QVector>
 #include<QPoint>
 
 //Deal with operations
@@ -64,7 +64,7 @@ private:
     int col;
 
     int inputPointsNum;
-    std::vector<QPoint> inputPoints;
+    QVector<QPoint> inputPoints;
     QPoint outputPoint;
 
     bool canShowMatrix;

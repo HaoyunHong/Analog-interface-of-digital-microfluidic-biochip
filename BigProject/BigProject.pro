@@ -28,15 +28,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        line.cpp \
         main.cpp \
         matrix.cpp \
+        matrixcomb.cpp \
         mymainwindow.cpp \
         operation.cpp \
         setinputdialog.cpp \
         settingwidget.cpp
 
 HEADERS += \
+        line.h \
         matrix.h \
+        matrixcomb.h \
         mymainwindow.h \
         operation.h \
         operationsignal.h \

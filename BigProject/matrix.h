@@ -15,6 +15,14 @@ public:
 
     void insertPollutedSet(QString kind);
 
+    bool isValid;
+
+    bool isEmpty;
+
+    int lastStepKind;
+
+    int nextStepKind;
+
 
 private:
     //颜色信息

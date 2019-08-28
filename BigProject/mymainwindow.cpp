@@ -75,7 +75,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     ui->commandViewerlabel->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
     ui->commandTextEdit->setStyleSheet("border-image:url(:/image/image/back.jpg);border-width:1;border-style:outset;");
 
-    ui->lcdNumber->setStyleSheet("background-color: rgba(208,16,76,200);border-width:2;border-style:outset;border-color:rgb(208,16,76);");
+    ui->lcdNumber->setStyleSheet("background-color: rgba(208,16,76,200);border-width:2;border-style:outset;border-color:rgb(208,16,76);font-weight:bold;");
     ui->lcdNumber->hide();
     ui->lastButton->setStyleSheet("border-width:3;border-style:outset;border-color:rgb(220,159,180);");
     ui->lastButton->hide();
@@ -146,6 +146,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
             ui->limitedCheckBox->setEnabled(true);
             ui->playButton->setEnabled(true);
             ui->resetButton->setEnabled(true);
+
+            ui->lcdNumber->display("-1");
             ui->lcdNumber->show();
     });
     connect(actSet,&QAction::triggered,
@@ -290,7 +292,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     {
         ui->commandTextEdit->clear();
         ui->commandTextEdit->setText("Please choose a valid Command File!");
-        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please restart the application!",QMessageBox::Ok);
+        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please choose a valid Command File next time and restart the application!",QMessageBox::Ok);
         switch(ret)
         {
             case QMessageBox::Ok:

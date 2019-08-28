@@ -115,7 +115,6 @@ void SettingWidget::on_confirmButton_clicked()
         ui->confirmButton->setEnabled(false);
         ui->rcCheckLabel->setEnabled(true);
 
-        qDebug()<<"dlg new!";
         dlg->knowRowAndCol(row,col);
         qDebug()<<"row and col set! row = "<<row<<", col = "<<col;
         ui->inpNumSpinBox->setEnabled(true);
