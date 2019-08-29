@@ -76,6 +76,8 @@ private:
     int row;
     int col;
 
+    QPoint nowOrigin;
+
     int inputPointsNum;
     QVector<QPoint> inputPoints;
     QPoint outputPoint;
@@ -108,12 +110,17 @@ private:
     bool isClean;
 
     int pollutedNum(int i, int j);
+    bool isSet;
+    bool cannotSet;
+
+    //QPoint curBlock;
 
 
 
 protected:
     void closeEvent(QCloseEvent *event);
     void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent *e);
 };
 
 #endif // MYMAINWINDOW_H

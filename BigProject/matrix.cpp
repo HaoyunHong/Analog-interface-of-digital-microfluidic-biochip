@@ -15,6 +15,7 @@ Matrix::Matrix()
     isBigger = false;
     //Split时
     isSmaller = false;
+    isBlock = false;
 
 }
 

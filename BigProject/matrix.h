@@ -33,6 +33,8 @@ public:
 
     void setDefault();
 
+    bool isBlock;
+
 
 };
 

@@ -60,6 +60,9 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     isClean = false;
 
+    isSet = false;
+    cannotSet = false;
+
     //菜单栏
     QMenuBar *mBar = menuBar();
     setMenuBar(mBar);
@@ -378,7 +381,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
     //设置屏幕透明度
     setWindowOpacity(0.96);
 
-    QPoint center(width()/2,height()/2);
+    QPoint center = QPoint(width()/2,height()/2);
 
     if(canShowMatrix)
     {
@@ -448,6 +451,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
         }
 
         //然后以左下角为原点
+        nowOrigin = QPoint(50+center.x()-mwidth/2,80+center.y()+mheight/2);
         p.translate(center.x()-mwidth/2,center.y()+mheight/2);
 
         //开始画输出口
@@ -513,6 +517,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
         int shortD = 30;
         if(isClean)
         {
+
             //画清洗液滴输入口
             pen.setWidth(3);//设置线宽
             pen.setColor(QColor(245,150,170));
@@ -556,6 +561,27 @@ void myMainWindow::paintEvent(QPaintEvent *)
             text = "out";
             rec= QRect((col-1)*unit+unit,0-(row-1)*unit,9*unit/8,-unit/2);
             p.drawText(rec,Qt::AlignCenter,text);
+
+            if(isSet)
+            {
+                qDebug()<<"isSet";
+                for(int i=1;i<=col;i++)
+                {
+                    for(int j=1;j<=row;j++)
+                    {
+                        if(op->status[now].comb[i][j].isBlock)
+                        {
+                            brush.setColor(QColor(178,200,187,200));
+                            p.setPen(Qt::NoPen);
+                            p.setBrush(brush);
+                            p.drawRect((i-1)*unit+2,0-(j-1)*unit-2,unit-4,-unit+4);
+                            qDebug()<<"DrawRect!";
+                        }
+                    }
+                }
+
+
+            }
         }
 
         if(drawNext || drawLast)
@@ -698,6 +724,69 @@ void myMainWindow::play()
     }
 }
 
+void myMainWindow::mousePressEvent(QMouseEvent *e)
+{
+//    if(cannotSet)
+//    {
+//        qDebug()<<"CannotSet!";
+//        return;
+//    }
+
+    int unit = 50;
+
+    QPoint curPoint;
+
+    curPoint.setX(e->pos().x()-nowOrigin.x());
+    curPoint.setY(e->pos().y()-nowOrigin.y());
+
+    qDebug()<<"curPoint = "<<curPoint;
+
+    QPoint** centers;
+    centers = new QPoint*[col+1];
+    for(int i=0;i<=col;i++)
+    {
+        centers[i] = new QPoint[row+1];
+    }
+
+    for(int i=1;i<=col;i++)
+    {
+        for(int j=i;j<=row;j++)
+        {
+            centers[i][j]=QPoint((i-1)*unit+unit/2,0-(j-1)*unit-unit/2);
+            //qDebug()<<"centers["<<i<<"]["<<j<<"]"<<centers[i][j];
+        }
+    }
+
+    if(e->button() == Qt::RightButton)
+    {
+        qDebug()<<"RightButton!";
+        for(int i=1;i<=col;i++)
+        {
+            for(int j=i;j<=row;j++)
+            {
+                if(qAbs(centers[i][j].x()-curPoint.x())<unit/2 &&qAbs(centers[i][j].y()-curPoint.y())<unit/2)
+                {
+                    //curBlock = QPoint(i,j);
+                    //qDebug()<<"curBlock = "<<curBlock;
+                    if(op->status[now].comb[i][j].isBlock)
+                    {
+                        qDebug()<<"op->status["<<now<<"].comb["<<i<<"]["<<j<<"]is ALREADY Blocked!";
+                        op->status[now].comb[i][j].isBlock=false;
+                    }
+                    else{
+                        qDebug()<<"op->status["<<now<<"].comb["<<i<<"]["<<j<<"]is NEW Blocked!";
+                        op->status[now].comb[i][j].isBlock = true;
+                    }
+
+                }
+            }
+        }
+
+    }
+    isSet = true;
+    repaint();
+}
+
 myMainWindow::~myMainWindow()
 {
     delete ui;
@@ -714,6 +803,7 @@ void myMainWindow::setRC(int r, int c)
 void myMainWindow::on_lastButton_clicked()
 {
     //一旦开始玩了就不能进行清洗模式设置了
+    cannotSet = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
     now--;
@@ -737,6 +827,7 @@ void myMainWindow::on_lastButton_clicked()
 void myMainWindow::on_nextButton_clicked()
 {
     //一旦开始玩了就不能进行清洗模式设置了
+    cannotSet = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
 
@@ -832,6 +923,7 @@ void myMainWindow::on_resetButton_clicked()
 void myMainWindow::on_playButton_clicked()
 {
     //一旦开始玩了就不能进行清洗模式设置了
+    cannotSet = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
 
