@@ -33,6 +33,9 @@
 //Deal with operations
 #include "operation.h"
 
+#include <QTimer>
+#include <QTime>
+
 
 
 namespace Ui {
@@ -59,6 +62,10 @@ private slots:
 
     void on_cleanCheckBox_stateChanged(int state);
 
+    void on_resetButton_clicked();
+
+    void on_playButton_clicked();
+
 private:
     Ui::myMainWindow *ui;
 
@@ -83,6 +90,8 @@ private:
 
 
     bool haveToClose;
+
+    QTimer *timer;
 
 
 

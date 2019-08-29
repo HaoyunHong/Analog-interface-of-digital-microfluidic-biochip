@@ -18,6 +18,9 @@ public:
     int endTime;
     int curStep;
 
+    //每个命令都截成每个时间单位时对某一个格子的操作
+    QVector<QStringList> lineList;
+
 
 };
 

@@ -32,6 +32,8 @@ public:
 
     int wholeTime;
 
+    QList<QStringList>* lineTimeList;
+
 
 signals:
     void cannotShowCommand();
@@ -57,14 +59,14 @@ private:
     int colorSeed;
     QVector<QColor> dropKinds;
 
-    void updateMatrixI(int);
-    void updateMatrixMO(int);
-    void updateMatrixS(int);
-    void updateMatrixME(int);
-    void updateMatrixMI(int);
-    void updateMatrixO(int);
+//    void updateMatrixI(int);
+//    void updateMatrixMO(int);
+//    void updateMatrixS(int);
+//    void updateMatrixME(int);
+//    void updateMatrixMI(int);
+//    void updateMatrixO(int);
 
-    void fillBlank(int);
+    //void fillBlank(int);
 
 };
 

@@ -311,6 +311,13 @@ myMainWindow::myMainWindow(QWidget *parent) :
         }
     });
 
+    timer = new QTimer(this);
+    connect(timer,&QTimer::timeout,
+            [=]()
+    {
+        emit ui->nextButton->clicked();
+    });
+
 }
 
 void myMainWindow::paintEvent(QPaintEvent *)
@@ -487,6 +494,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
                            }
                            else if(op->status[now].comb[i][j].isBigger)
                            {
+                               qDebug()<<"in Main draw Bigger!";
                                p.drawEllipse((i-1)*unit+unit/2-lD/2,0-(j-1)*unit-unit/2+lD/2,lD,-lD);
                            }
                            else if(op->status[now].comb[i][j].isSmaller)
@@ -541,6 +549,7 @@ void myMainWindow::on_lastButton_clicked()
     if(now<0 || now>op->wholeTime)
     {
         drawLast = false;
+        now++;
     }
     else {
         drawLast = true;
@@ -563,6 +572,10 @@ void myMainWindow::on_nextButton_clicked()
         qDebug()<<"Next updating!";
         update();
         qDebug()<<"now: "<<now;
+    }
+    if(now >= op->wholeTime)
+    {
+        timer->stop();
     }
     ui->lcdNumber->display(now);
 }
@@ -590,4 +603,23 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
     {
         op->isClean = false;
     }
+}
+
+void myMainWindow::on_resetButton_clicked()
+{
+    now = 0;
+    ui->lcdNumber->display(now);
+    drawLast = false;
+    drawNext = false;
+    update();
+}
+
+void myMainWindow::on_playButton_clicked()
+{
+
+    timer->start(1000);
+
+    qDebug()<<"now = "<<now;
+
+
 }

@@ -16,8 +16,6 @@ public:
 
     void insertPollutedSet(QString kind);
 
-    bool isValid;
-
     bool isEmpty;
 
     bool isLongDrop;
@@ -37,7 +35,7 @@ public:
     //颜色信息
     QColor dropColor;
 
-    int d;
+    void setDefault();
 
 
 
