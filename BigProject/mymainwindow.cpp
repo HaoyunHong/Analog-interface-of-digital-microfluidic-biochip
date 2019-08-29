@@ -365,6 +365,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
 }
 
+//paintEvent里面就画图，数据的函数什么的扔到外面，再返回结果，否则会出问题
 void myMainWindow::paintEvent(QPaintEvent *)
 {
     QPainter p;//创建画家对象
@@ -635,19 +636,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
                       p.drawRect((i-1)*unit+unit/2-textD/2,0-(j-1)*unit-unit/2+textD/2,textD,-textD);
 
 
-
-                      int count=op->status[now].comb[i][j].pollutedSet.size();
-                      for(int k=1;k<count;k++)
-                      {
-                          for(int t=0;t<k;t++)
-                          {
-                              if(op->status[now].comb[i][j].pollutedSet[k]==op->status[now].comb[i][j].pollutedSet[t])
-                              {
-                                  count--;
-                              }
-                          }
-
-                      }
+                      int count = pollutedNum(i,j);
                       QFont font;
                       font.setPointSize(5);
                       font.setPointSize(20);
@@ -807,8 +796,8 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
             int ret = QMessageBox::warning(this,"Error","Clean point is taken! Can't start clean model!",QMessageBox::Ok);
             switch (ret) {
             case QMessageBox::Ok:
-                      ui->cleanCheckBox->setCheckState(Qt::Unchecked);
-                      ui->cleanCheckBox->setEnabled(false);
+                ui->cleanCheckBox->setCheckState(Qt::Unchecked);
+                ui->cleanCheckBox->setEnabled(false);
                 break;
 
             }
@@ -856,4 +845,21 @@ void myMainWindow::on_playButton_clicked()
     ui->playButton->setEnabled(false);
 
 
+}
+
+int myMainWindow::pollutedNum(int i, int j)
+{
+    int count = op->status[now].comb[i][j].pollutedSet.size();
+    for(int k=0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
+    {
+        for(int t = 0;t<k;t++)
+        {
+            if(op->status[now].comb[i][j].pollutedSet[k] == op->status[now].comb[i][j].pollutedSet[t])
+            {
+                count--;
+                break;
+            }
+        }
+    }
+    return count;
 }

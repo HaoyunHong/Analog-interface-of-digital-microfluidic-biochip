@@ -107,6 +107,8 @@ private:
 
     bool isClean;
 
+    int pollutedNum(int i, int j);
+
 
 
 protected:

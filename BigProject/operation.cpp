@@ -276,8 +276,6 @@ void Operation::parseFile()
                        status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
                    }
-
-                   //qDebug()<<"here";
                }
            }
         }
