@@ -315,7 +315,26 @@ myMainWindow::myMainWindow(QWidget *parent) :
     connect(timer,&QTimer::timeout,
             [=]()
     {
-        emit ui->nextButton->clicked();
+        now++;
+        if(now<0 || now>op->wholeTime)
+        {
+            drawNext = false;
+            now--;
+        }
+        else {
+            drawNext = true;
+            qDebug()<<"Next updating!";
+            update();
+            qDebug()<<"now: "<<now;
+        }
+        if(now >= op->wholeTime)
+        {
+            timer->stop();
+            ui->nextButton->setEnabled(true);
+            ui->lastButton->setEnabled(true);
+            ui->resetButton->setEnabled(true);
+        }
+        ui->lcdNumber->display(now);
     });
 
 }
@@ -566,16 +585,13 @@ void myMainWindow::on_nextButton_clicked()
     if(now<0 || now>op->wholeTime)
     {
         drawNext = false;
+        now--;
     }
     else {
         drawNext = true;
         qDebug()<<"Next updating!";
         update();
         qDebug()<<"now: "<<now;
-    }
-    if(now >= op->wholeTime)
-    {
-        timer->stop();
     }
     ui->lcdNumber->display(now);
 }
@@ -620,6 +636,9 @@ void myMainWindow::on_playButton_clicked()
     timer->start(1000);
 
     qDebug()<<"now = "<<now;
+    ui->nextButton->setEnabled(false);
+    ui->lastButton->setEnabled(false);
+    ui->resetButton->setEnabled(false);
 
 
 }
