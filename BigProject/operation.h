@@ -27,6 +27,9 @@ public:
     void parseFile();
     void parseLine(QString);
 
+    int rowNum;
+    int colNum;
+
     bool isLimited;
     bool isClean;
 
@@ -35,6 +38,10 @@ public:
     int wholeTime;
 
     QList<QStringList>* lineTimeList;
+
+    int judge();
+
+    int stopTime;
 
 
 signals:
@@ -53,8 +60,7 @@ private:
 
 
 
-    int rowNum;
-    int colNum;
+
 
     QVector<Line> commandLines;
 

@@ -115,6 +115,10 @@ private:
 
     //QPoint curBlock;
 
+    void showJudge();
+
+
+
 
 
 protected:

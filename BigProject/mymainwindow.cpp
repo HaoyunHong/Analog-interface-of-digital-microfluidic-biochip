@@ -353,6 +353,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
             update();
             play();
             qDebug()<<"now: "<<now;
+            showJudge();
+
         }
         if(now >= op->wholeTime)
         {
@@ -363,6 +365,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             ui->resetButton->setEnabled(true);
             ui->playButton->setEnabled(true);
         }
+
         ui->lcdNumber->display(now);
     });
 
@@ -595,7 +598,9 @@ void myMainWindow::paintEvent(QPaintEvent *)
                       {
                           for(int k =0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
                           {
-                              brush.setColor(op->status[now].comb[i][j].pollutedSet[k]);
+                              //把轨迹的透明度调低
+                              QColor trace = QColor(op->status[now].comb[i][j].pollutedSet[k].red(),op->status[now].comb[i][j].pollutedSet[k].green(),op->status[now].comb[i][j].pollutedSet[k].blue(),150);
+                              brush.setColor(trace);
                               p.setPen(Qt::NoPen);
                               p.setBrush(brush);
                               int littleD = 8;
@@ -615,7 +620,10 @@ void myMainWindow::paintEvent(QPaintEvent *)
                        {
                            brush.setColor(op->status[now].comb[i][j].dropColor);//设置颜色
                            p.setBrush(brush);
-                           p.setPen(Qt::NoPen);
+                           pen.setColor(QColor(219,77,109));
+                           pen.setWidth(3);
+                           pen.setStyle(Qt::SolidLine);
+                           p.setPen(pen);
                            if(op->status[now].comb[i][j].isLongDrop)
                            {
                                qDebug()<<"IsLong!";
@@ -681,7 +689,6 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
     }
     p.end();
-
 }
 
 void myMainWindow::closeEvent(QCloseEvent *event)
@@ -787,6 +794,8 @@ void myMainWindow::mousePressEvent(QMouseEvent *e)
     repaint();
 }
 
+
+
 myMainWindow::~myMainWindow()
 {
     delete ui;
@@ -796,7 +805,8 @@ void myMainWindow::setRC(int r, int c)
 {
     row = r;
     col = c;
-    //op->setRC(row,col);
+    op->rowNum = r;
+    op->colNum = c;
     qDebug()<<"setRC!"<<"row = "<<row<<" col = "<<col;
 }
 
@@ -828,6 +838,7 @@ void myMainWindow::on_nextButton_clicked()
 {
     //一旦开始玩了就不能进行清洗模式设置了
     cannotSet = true;
+    //canJudge = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
 
@@ -848,6 +859,7 @@ void myMainWindow::on_nextButton_clicked()
     }
 
     update();
+    showJudge();
     ui->lcdNumber->display(now);
 }
 
@@ -923,6 +935,7 @@ void myMainWindow::on_resetButton_clicked()
 void myMainWindow::on_playButton_clicked()
 {
     //一旦开始玩了就不能进行清洗模式设置了
+    //canJudge = true;
     cannotSet = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
@@ -935,8 +948,6 @@ void myMainWindow::on_playButton_clicked()
     ui->resetButton->setEnabled(false);
 
     ui->playButton->setEnabled(false);
-
-
 }
 
 int myMainWindow::pollutedNum(int i, int j)
@@ -954,4 +965,27 @@ int myMainWindow::pollutedNum(int i, int j)
         }
     }
     return count;
+}
+
+void myMainWindow::showJudge()
+{
+    qDebug()<<"op->stopTime: "<<op->stopTime;
+    if(now == op->stopTime)
+    {
+        if(!ui->nextButton->isEnabled())
+        {
+            timer->stop();
+        }
+        qDebug()<<"now: "<<now;
+        int ret = QMessageBox::warning(this, "Error", "It's going to violate the constraint! The application will be closed if you click Ok or the cross.", QMessageBox::Ok);
+            switch (ret)
+            {
+            case QMessageBox::Ok:
+                haveToClose = true;
+                this->close();
+                break;
+            default:
+                break;
+            }
+    }
 }
