@@ -544,6 +544,26 @@ void myMainWindow::paintEvent(QPaintEvent *)
                            }
 
                        }
+                       if(op->status[now].comb[i][j].pollutedSet.size()>0)
+                       {
+                           for(int k =0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
+                           {
+                               brush.setColor(op->status[now].comb[i][j].pollutedSet[k]);
+                               p.setPen(Qt::NoPen);
+                               p.setBrush(brush);
+                               int littleD = 8;
+                               int cnt = 10;
+                               while(cnt>0)
+                               {
+                                   int x = qrand()%(50-littleD);
+                                   int y = qrand()%(50-littleD);
+                                   p.drawEllipse((i-1)*unit+x,0-(j-1)*unit-y,littleD,-littleD);
+                                   cnt--;
+                               }
+
+                           }
+
+                       }
                   }
              }
         }

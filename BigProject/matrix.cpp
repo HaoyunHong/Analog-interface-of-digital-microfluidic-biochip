@@ -18,12 +18,6 @@ Matrix::Matrix()
 
 }
 
-void Matrix::insertPollutedSet(QString kind)
-{
-    pollutedSet<<kind;
-    qDebug()<<"kind = "<<kind;
-}
-
 void Matrix::setDefault()
 {
     isEmpty = true;

@@ -10,11 +10,7 @@ class Matrix
 public:
     Matrix();
 
-    //void setRGBA(int r, int g,int b,int a);
-
-    //void getRGBA();
-
-    void insertPollutedSet(QString kind);
+    QVector<QColor> pollutedSet;
 
     bool isEmpty;
 
@@ -38,11 +34,6 @@ public:
     void setDefault();
 
 
-
-
-private:
-    //污染信息
-    QSet<QString> pollutedSet;
 };
 
 #endif // MATRIX_H

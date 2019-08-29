@@ -159,6 +159,8 @@ void Operation::parseFile()
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t-1].comb[c][r].dropColor = nowColor;
+                       //status[t].comb[c][r].pollutedSet.push_back(nowColor);
+                       //然后在paintEvent里面遍历所有颜色画出污染
                    }
                    if(lineTimeList[t][k][0]=="move")
                    {
@@ -172,6 +174,7 @@ void Operation::parseFile()
                        QColor nowColor = status[t-1].comb[c1][r1].dropColor;
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c2][r2].dropColor = nowColor;
+                       //status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
 
                        status[t].isMm = true;
                    }
@@ -211,9 +214,14 @@ void Operation::parseFile()
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c1][r1].dropColor = nowColor;
                        status[t].comb[c1][r1].isSmaller = true;
+                       status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
+                       colorSeed++;
+                       nowColor = QColor((colorSeed*220)%255,(colorSeed*20)%255,(colorSeed*60)%255,200);
                        status[t].comb[c2][r2].dropColor = nowColor;
                        status[t].comb[c2][r2].isSmaller = true;
                        status[t].isAp = true;
+                       //status[t].comb[c2][r2].pollutedSet.push_back(nowColor);
+
                    }
                    if(lineTimeList[t][k][0]=="drawLM")
                    {
@@ -225,7 +233,7 @@ void Operation::parseFile()
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isLongDrop = true;
-                       //status[t].isMer = true;
+                       //status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
                    }
                    if(lineTimeList[t][k][0]=="drawLFM")
@@ -239,7 +247,7 @@ void Operation::parseFile()
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isLongDrop = true;
                        status[t].comb[c][r].isFat = true;
-                       //status[t].isMer = true;
+                       //status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
                    }
                    if(lineTimeList[t][k][0]=="drawB")
@@ -258,9 +266,15 @@ void Operation::parseFile()
                    }
                    if(lineTimeList[t][k][0]=="clear")
                    {
+
                        int c = lineTimeList[t][k][2].toInt();
                        int r = lineTimeList[t][k][3].toInt();
+                       QColor nowColor = status[t].comb[c][r].dropColor;
+                       qDebug()<<"nowColor = "<<nowColor;
+
                        status[t].comb[c][r].setDefault();
+                       status[t].comb[c][r].pollutedSet.push_back(nowColor);
+
                    }
 
                    //qDebug()<<"here";
