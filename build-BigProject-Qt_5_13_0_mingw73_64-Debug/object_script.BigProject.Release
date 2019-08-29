@@ -1,0 +1,15 @@
+release/line.o
+release/main.o
+release/matrix.o
+release/matrixcomb.o
+release/mymainwindow.o
+release/operation.o
+release/setinputdialog.o
+release/settingwidget.o
+release/qrc_image.o
+release/qrc_sound.o
+release/moc_mymainwindow.o
+release/moc_operation.o
+release/moc_operationsignal.o
+release/moc_setinputdialog.o
+release/moc_settingwidget.o

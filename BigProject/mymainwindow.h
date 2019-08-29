@@ -105,6 +105,8 @@ private:
 
     bool isEnd;
 
+    bool isClean;
+
 
 
 protected:

@@ -58,6 +58,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     isEnd= false;
 
+    isClean = false;
+
     //菜单栏
     QMenuBar *mBar = menuBar();
     setMenuBar(mBar);
@@ -508,6 +510,52 @@ void myMainWindow::paintEvent(QPaintEvent *)
         //椭圆形的参数
         int longD = 120;
         int shortD = 30;
+        if(isClean)
+        {
+            //画清洗液滴输入口
+            pen.setWidth(3);//设置线宽
+            pen.setColor(QColor(245,150,170));
+            pen.setStyle(Qt::DashLine);
+            brush.setColor(QColor(137, 207, 240,220));//设置颜色
+            brush.setStyle(Qt::SolidPattern);//设置样式
+
+            p.setPen(pen);
+            p.setBrush(brush);
+            p.drawRect(0-unit-unit/8,0,9*unit/8,-unit);
+
+            //画清洗液滴输出口
+            pen.setWidth(3);//设置线宽
+            pen.setColor(QColor(245,150,170));
+            pen.setStyle(Qt::DashLine);
+            brush.setColor(QColor(113, 150,159,200));//设置颜色
+            brush.setStyle(Qt::SolidPattern);//设置样式
+
+            p.setPen(pen);
+            p.setBrush(brush);
+            p.drawRect((col-1)*unit+unit,0-(row-1)*unit,9*unit/8,-unit);
+
+            QFont font;
+            font.setPointSize(5);
+            font.setPointSize(10);
+            font.setFamily("Microsoft YaHei");
+            p.setFont(font);
+
+            QString text = "clean";
+            pen.setColor(QColor(142,53,74,200));
+            p.setPen(pen);
+            p.setBrush(Qt::NoBrush);
+            QRect rec= QRect(0-unit-unit/8,-unit/2,9*unit/8,-unit/2);
+            QRect rec2=QRect((col-1)*unit+unit,0-(row-1)*unit-unit/2,9*unit/8,-unit/2);
+            p.drawText(rec,Qt::AlignCenter,text);
+            p.drawText(rec2,Qt::AlignCenter,text);
+            text = "in";
+            rec= QRect(0-unit-unit/8,0,9*unit/8,-unit/2);
+            p.drawText(rec,Qt::AlignCenter,text);
+
+            text = "out";
+            rec= QRect((col-1)*unit+unit,0-(row-1)*unit,9*unit/8,-unit/2);
+            p.drawText(rec,Qt::AlignCenter,text);
+        }
 
         if(drawNext || drawLast)
         {
@@ -586,11 +634,7 @@ void myMainWindow::paintEvent(QPaintEvent *)
                       p.setBrush(brush);
                       p.drawRect((i-1)*unit+unit/2-textD/2,0-(j-1)*unit-unit/2+textD/2,textD,-textD);
 
-                      QFont font;
-                      font.setPointSize(5);
-                      font.setPointSize(20);
-                      font.setFamily("Microsoft YaHei");
-                      p.setFont(font);
+
 
                       int count=op->status[now].comb[i][j].pollutedSet.size();
                       for(int k=1;k<count;k++)
@@ -604,6 +648,11 @@ void myMainWindow::paintEvent(QPaintEvent *)
                           }
 
                       }
+                      QFont font;
+                      font.setPointSize(5);
+                      font.setPointSize(20);
+                      font.setFamily("Microsoft YaHei");
+                      p.setFont(font);
 
                       QString numText = QString::number(count);
                       pen.setColor(QColor(142,53,74,200));
@@ -675,6 +724,9 @@ void myMainWindow::setRC(int r, int c)
 
 void myMainWindow::on_lastButton_clicked()
 {
+    //一旦开始玩了就不能进行清洗模式设置了
+    ui->cleanCheckBox->setEnabled(false);
+    ui->limitedCheckBox->setEnabled(false);
     now--;
     if(now<0 || now>op->wholeTime)
     {
@@ -695,6 +747,10 @@ void myMainWindow::on_lastButton_clicked()
 
 void myMainWindow::on_nextButton_clicked()
 {
+    //一旦开始玩了就不能进行清洗模式设置了
+    ui->cleanCheckBox->setEnabled(false);
+    ui->limitedCheckBox->setEnabled(false);
+
     now++;
     if(now<0 || now>op->wholeTime)
     {
@@ -710,6 +766,7 @@ void myMainWindow::on_nextButton_clicked()
         play();
         qDebug()<<"now: "<<now;
     }
+
     update();
     ui->lcdNumber->display(now);
 }
@@ -730,13 +787,46 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
 {
     if(state == Qt::Checked)
     {
+        bool isTaken = false;
+        if((outputPoint.x() == col && outputPoint.y() == row)||(outputPoint.x() == 1 && outputPoint.y() == 1))
+        {
+            isTaken = true;
+        }
+        else {
+            for(int i=0;i<inputPoints.size();i++)
+            {
+                if((inputPoints[i].x()==col && inputPoints[i].y()==row)||(inputPoints[i].x()==1 && inputPoints[i].y()==1))
+                {
+                    isTaken = true;
+                    break;
+                }
+            }
+        }
+        if(isTaken)
+        {
+            int ret = QMessageBox::warning(this,"Error","Clean point is taken! Can't start clean model!",QMessageBox::Ok);
+            switch (ret) {
+            case QMessageBox::Ok:
+                      ui->cleanCheckBox->setCheckState(Qt::Unchecked);
+                      ui->cleanCheckBox->setEnabled(false);
+                break;
+
+            }
+            return;
+
+        }
+
         ui->limitedCheckBox->setEnabled(true);
         op->isClean = true;
+        isClean = true;
     }
     else if(state == Qt::Unchecked)
     {
+        ui->limitedCheckBox->setEnabled(false);
         op->isClean = false;
+        isClean = false;
     }
+    update();
 }
 
 void myMainWindow::on_resetButton_clicked()
@@ -752,6 +842,9 @@ void myMainWindow::on_resetButton_clicked()
 
 void myMainWindow::on_playButton_clicked()
 {
+    //一旦开始玩了就不能进行清洗模式设置了
+    ui->cleanCheckBox->setEnabled(false);
+    ui->limitedCheckBox->setEnabled(false);
 
     timer->start(1500);
 
