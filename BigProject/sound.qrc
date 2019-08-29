@@ -4,5 +4,6 @@
         <file>sound/momi.wav</file>
         <file>sound/stretch.wav</file>
         <file>sound/merge.wav</file>
+        <file>sound/merge2.wav</file>
     </qresource>
 </RCC>

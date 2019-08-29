@@ -45,7 +45,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     apPlayer=new QMediaPlayer(this);
 
 
-    merPlayer->setMedia(QUrl("qrc:/sound/sound/merge.wav"));
+    merPlayer->setMedia(QUrl("qrc:/sound/sound/merge2.wav"));
     mmPlayer->setMedia(QUrl("qrc:/sound/sound/momi.wav"));
     strPlayer->setMedia(QUrl("qrc:/sound/sound/stretch.wav"));
     apPlayer->setMedia(QUrl("qrc:/sound/sound/apart.wav"));
@@ -55,6 +55,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
     strPlayer->setVolume(10);
     apPlayer->setVolume(10);
     merPlayer->setVolume(30);
+
+    isEnd= false;
 
     //菜单栏
     QMenuBar *mBar = menuBar();
@@ -335,10 +337,12 @@ myMainWindow::myMainWindow(QWidget *parent) :
         now++;
         if(now<0 || now>op->wholeTime)
         {
+            isEnd = true;
             drawNext = false;
             now--;
         }
         else {
+            isEnd = false;
             drawNext = true;
             qDebug()<<"Next updating!";
             update();
@@ -347,6 +351,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
         }
         if(now >= op->wholeTime)
         {
+            isEnd = true;
             timer->stop();
             ui->nextButton->setEnabled(true);
             ui->lastButton->setEnabled(true);
@@ -511,6 +516,26 @@ void myMainWindow::paintEvent(QPaintEvent *)
              {
                   for(int j=1;j<=row;j++)
                   {
+                      if(op->status[now].comb[i][j].pollutedSet.size()>0)
+                      {
+                          for(int k =0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
+                          {
+                              brush.setColor(op->status[now].comb[i][j].pollutedSet[k]);
+                              p.setPen(Qt::NoPen);
+                              p.setBrush(brush);
+                              int littleD = 8;
+                              int cnt = 10;
+                              while(cnt>0)
+                              {
+                                  int x = qrand()%(50-littleD);
+                                  int y = qrand()%(50-littleD);
+                                  p.drawEllipse((i-1)*unit+x,0-(j-1)*unit-y,littleD,-littleD);
+                                  cnt--;
+                              }
+
+                          }
+
+                      }
                        if(!op->status[now].comb[i][j].isEmpty)
                        {
                            brush.setColor(op->status[now].comb[i][j].dropColor);//设置颜色
@@ -544,29 +569,52 @@ void myMainWindow::paintEvent(QPaintEvent *)
                            }
 
                        }
-                       if(op->status[now].comb[i][j].pollutedSet.size()>0)
-                       {
-                           for(int k =0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
-                           {
-                               brush.setColor(op->status[now].comb[i][j].pollutedSet[k]);
-                               p.setPen(Qt::NoPen);
-                               p.setBrush(brush);
-                               int littleD = 8;
-                               int cnt = 10;
-                               while(cnt>0)
-                               {
-                                   int x = qrand()%(50-littleD);
-                                   int y = qrand()%(50-littleD);
-                                   p.drawEllipse((i-1)*unit+x,0-(j-1)*unit-y,littleD,-littleD);
-                                   cnt--;
-                               }
 
-                           }
-
-                       }
                   }
              }
         }
+
+        if(isEnd)
+        {
+            for(int i=1;i<=col;i++)
+             {
+                  for(int j=1;j<=row;j++)
+                  {
+                      int textD = 50;
+                      brush.setColor(QColor(255,255,255,200));
+                      p.setPen(Qt::NoPen);
+                      p.setBrush(brush);
+                      p.drawRect((i-1)*unit+unit/2-textD/2,0-(j-1)*unit-unit/2+textD/2,textD,-textD);
+
+                      QFont font;
+                      font.setPointSize(5);
+                      font.setPointSize(20);
+                      font.setFamily("Microsoft YaHei");
+                      p.setFont(font);
+
+                      int count=op->status[now].comb[i][j].pollutedSet.size();
+                      for(int k=1;k<count;k++)
+                      {
+                          for(int t=0;t<k;t++)
+                          {
+                              if(op->status[now].comb[i][j].pollutedSet[k]==op->status[now].comb[i][j].pollutedSet[t])
+                              {
+                                  count--;
+                              }
+                          }
+
+                      }
+
+                      QString numText = QString::number(count);
+                      pen.setColor(QColor(142,53,74,200));
+                      p.setPen(pen);
+                      p.setBrush(Qt::NoBrush);
+                      QRect rec= QRect((i-1)*unit+unit/2-textD/2,0-(j-1)*unit-unit/2+textD/2,textD,-textD);
+                      p.drawText(rec,Qt::AlignCenter,numText);
+                  }
+             }
+        }
+
     }
     p.end();
 
@@ -634,12 +682,14 @@ void myMainWindow::on_lastButton_clicked()
         now++;
     }
     else {
+        isEnd = false;
         drawLast = true;
         qDebug()<<"Last updating!";
-        update();
+
         play();
         qDebug()<<"now: "<<now;
     }
+    update();
     ui->lcdNumber->display(now);
 }
 
@@ -648,16 +698,19 @@ void myMainWindow::on_nextButton_clicked()
     now++;
     if(now<0 || now>op->wholeTime)
     {
+        isEnd = true;
         drawNext = false;
         now--;
     }
     else {
+        isEnd = false;
         drawNext = true;
         qDebug()<<"Next updating!";
-        update();
+
         play();
         qDebug()<<"now: "<<now;
     }
+    update();
     ui->lcdNumber->display(now);
 }
 
@@ -689,6 +742,7 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
 void myMainWindow::on_resetButton_clicked()
 {
     now = 0;
+    isEnd = false;
     ui->lcdNumber->display(now);
     drawLast = false;
     drawNext = false;

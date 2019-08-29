@@ -103,6 +103,8 @@ private:
 
     void play();
 
+    bool isEnd;
+
 
 
 protected:
