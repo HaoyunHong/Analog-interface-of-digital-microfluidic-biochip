@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/sound">
         <file>sound/apart.wav</file>
-        <file>sound/merge.wav</file>
         <file>sound/momi.wav</file>
         <file>sound/stretch.wav</file>
+        <file>sound/merge.wav</file>
     </qresource>
 </RCC>

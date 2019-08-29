@@ -39,18 +39,22 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     op = new Operation(this);
 
+    merPlayer=new QMediaPlayer(this);
     mmPlayer=new QMediaPlayer(this);
     strPlayer=new QMediaPlayer(this);
     apPlayer=new QMediaPlayer(this);
-    merPlayer=new QMediaPlayer(this);
+
+
+    merPlayer->setMedia(QUrl("qrc:/sound/sound/merge.wav"));
     mmPlayer->setMedia(QUrl("qrc:/sound/sound/momi.wav"));
     strPlayer->setMedia(QUrl("qrc:/sound/sound/stretch.wav"));
     apPlayer->setMedia(QUrl("qrc:/sound/sound/apart.wav"));
-    merPlayer->setMedia(QUrl("qrc:/sound/sound/merge.wav"));
+
+
     mmPlayer->setVolume(10);
     strPlayer->setVolume(10);
     apPlayer->setVolume(10);
-    merPlayer->setVolume(10);
+    merPlayer->setVolume(30);
 
     //菜单栏
     QMenuBar *mBar = menuBar();
@@ -312,7 +316,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     {
         ui->commandTextEdit->clear();
         ui->commandTextEdit->setText("Please choose a valid Command File!");
-        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please choose a valid Command File next time and restart the application! It will close soon!",QMessageBox::Ok);
+        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please choose a valid Command File next time and restart the application! It will close if you click OK!",QMessageBox::Ok);
         switch(ret)
         {
             case QMessageBox::Ok:
@@ -338,6 +342,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             drawNext = true;
             qDebug()<<"Next updating!";
             update();
+            play();
             qDebug()<<"now: "<<now;
         }
         if(now >= op->wholeTime)
@@ -346,6 +351,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
             ui->nextButton->setEnabled(true);
             ui->lastButton->setEnabled(true);
             ui->resetButton->setEnabled(true);
+            ui->playButton->setEnabled(true);
         }
         ui->lcdNumber->display(now);
     });
@@ -566,18 +572,22 @@ void myMainWindow::play()
 {
     if(op->status[now].isMm)
     {
+        qDebug()<<"Is moving or mixing!";
         mmPlayer->play();
     }
     if(op->status[now].isAp)
     {
+        qDebug()<<"Is apart!";
         apPlayer->play();
     }
     if(op->status[now].isMer)
     {
+        qDebug()<<now<<": now is mergeSuccess!";
         merPlayer->play();
     }
     if(op->status[now].isStr)
     {
+        qDebug()<<"Is streching!";
         strPlayer->play();
     }
 }
@@ -669,12 +679,14 @@ void myMainWindow::on_resetButton_clicked()
 void myMainWindow::on_playButton_clicked()
 {
 
-    timer->start(1000);
+    timer->start(1500);
 
     qDebug()<<"now = "<<now;
     ui->nextButton->setEnabled(false);
     ui->lastButton->setEnabled(false);
     ui->resetButton->setEnabled(false);
+
+    ui->playButton->setEnabled(false);
 
 
 }

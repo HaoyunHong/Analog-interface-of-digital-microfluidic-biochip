@@ -10,3 +10,11 @@ matrixComb::matrixComb()
     isAp = false;
     isMer = false;
 }
+
+void matrixComb::soundDefault()
+{
+    isMm = false;
+    isStr = false;
+    isAp = false;
+    isMer = false;
+}

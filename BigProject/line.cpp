@@ -79,13 +79,9 @@ Line::Line(QString line)
         lineList.push_back(list3);
         qDebug()<<list3;
         QStringList list4;
-        list4<< "drawS"<<QString::number(beginTime+2)<<parts[4]<<parts[5];
+        list4<< "drawS"<<QString::number(beginTime+2)<<parts[4]<<parts[5]<<parts[6]<<parts[7];
         lineList.push_back(list4);
         qDebug()<<list4;
-        QStringList list5;
-        list5<< "drawS"<<QString::number(beginTime+2)<<parts[6]<<parts[7];
-        lineList.push_back(list5);
-        qDebug()<<list5;
     }
     if(action == "Merge")
     {

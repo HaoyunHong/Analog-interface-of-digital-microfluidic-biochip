@@ -16,6 +16,8 @@ public:
     bool isAp;
     bool isMer;
 
+    void soundDefault();
+
 };
 
 #endif // MATRIXCOMB_H
