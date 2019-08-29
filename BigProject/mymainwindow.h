@@ -36,6 +36,8 @@
 #include <QTimer>
 #include <QTime>
 
+#include<QMediaPlayer>
+
 
 
 namespace Ui {
@@ -92,6 +94,14 @@ private:
     bool haveToClose;
 
     QTimer *timer;
+
+    //四种需要加音效的地方有四种音效
+    QMediaPlayer *mmPlayer;
+    QMediaPlayer *strPlayer;
+    QMediaPlayer *apPlayer;
+    QMediaPlayer *merPlayer;
+
+    void play();
 
 
 

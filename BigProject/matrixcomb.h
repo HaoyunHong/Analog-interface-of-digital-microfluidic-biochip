@@ -11,6 +11,11 @@ public:
     Matrix comb[13][13];
     bool isDecided;
 
+    bool isMm;
+    bool isStr;
+    bool isAp;
+    bool isMer;
+
 };
 
 #endif // MATRIXCOMB_H

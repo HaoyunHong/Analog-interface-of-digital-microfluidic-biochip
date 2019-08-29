@@ -39,6 +39,19 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     op = new Operation(this);
 
+    mmPlayer=new QMediaPlayer(this);
+    strPlayer=new QMediaPlayer(this);
+    apPlayer=new QMediaPlayer(this);
+    merPlayer=new QMediaPlayer(this);
+    mmPlayer->setMedia(QUrl("qrc:/sound/sound/momi.wav"));
+    strPlayer->setMedia(QUrl("qrc:/sound/sound/stretch.wav"));
+    apPlayer->setMedia(QUrl("qrc:/sound/sound/apart.wav"));
+    merPlayer->setMedia(QUrl("qrc:/sound/sound/merge.wav"));
+    mmPlayer->setVolume(10);
+    strPlayer->setVolume(10);
+    apPlayer->setVolume(10);
+    merPlayer->setVolume(10);
+
     //菜单栏
     QMenuBar *mBar = menuBar();
     setMenuBar(mBar);
@@ -549,6 +562,26 @@ void myMainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
+void myMainWindow::play()
+{
+    if(op->status[now].isMm)
+    {
+        mmPlayer->play();
+    }
+    if(op->status[now].isAp)
+    {
+        apPlayer->play();
+    }
+    if(op->status[now].isMer)
+    {
+        merPlayer->play();
+    }
+    if(op->status[now].isStr)
+    {
+        strPlayer->play();
+    }
+}
+
 myMainWindow::~myMainWindow()
 {
     delete ui;
@@ -574,6 +607,7 @@ void myMainWindow::on_lastButton_clicked()
         drawLast = true;
         qDebug()<<"Last updating!";
         update();
+        play();
         qDebug()<<"now: "<<now;
     }
     ui->lcdNumber->display(now);
@@ -591,6 +625,7 @@ void myMainWindow::on_nextButton_clicked()
         drawNext = true;
         qDebug()<<"Next updating!";
         update();
+        play();
         qDebug()<<"now: "<<now;
     }
     ui->lcdNumber->display(now);
@@ -628,6 +663,7 @@ void myMainWindow::on_resetButton_clicked()
     drawLast = false;
     drawNext = false;
     update();
+    play();
 }
 
 void myMainWindow::on_playButton_clicked()

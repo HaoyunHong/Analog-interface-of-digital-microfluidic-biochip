@@ -11,6 +11,8 @@
 #include "matrixcomb.h"
 #include<algorithm>
 
+#include<QMediaPlayer>
+
 
 class Operation : public QObject
 {

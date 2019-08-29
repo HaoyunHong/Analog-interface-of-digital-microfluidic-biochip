@@ -63,4 +63,5 @@ DISTFILES += \
     image/sky.jpg
 
 RESOURCES += \
-    image.qrc
+    image.qrc \
+    sound.qrc

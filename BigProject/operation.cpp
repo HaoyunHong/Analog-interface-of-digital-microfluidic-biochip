@@ -171,18 +171,9 @@ void Operation::parseFile()
                        QColor nowColor = status[t-1].comb[c1][r1].dropColor;
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c2][r2].dropColor = nowColor;
-                   }
-//                   if(lineTimeList[t][k][0]=="draw")
-//                   {
-//                       int c = lineTimeList[t][k][2].toInt();
-//                       int r = lineTimeList[t][k][3].toInt();
 
-//                       status[t].comb[c][r].isEmpty = false;
-//                       colorSeed++;
-//                       QColor nowColor = status[t-1].comb[c][r].dropColor;
-//                       qDebug()<<"nowColor = "<<nowColor;
-//                       status[t].comb[c][r].dropColor = nowColor;
-//                   }
+                       status[t].isMm = true;
+                   }
                    if(lineTimeList[t][k][0]=="drawLS")
                    {
                        int c = lineTimeList[t][k][2].toInt();
@@ -192,6 +183,7 @@ void Operation::parseFile()
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isLongDrop = true;
+                       status[t].isStr = true;
                    }
                    if(lineTimeList[t][k][0]=="drawLFS")
                    {
@@ -203,6 +195,7 @@ void Operation::parseFile()
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isLongDrop = true;
                        status[t].comb[c][r].isFat = true;
+                       status[t].isStr = true;
                    }
                    if(lineTimeList[t][k][0]=="drawS")
                    {
@@ -214,6 +207,7 @@ void Operation::parseFile()
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isSmaller = true;
+                       status[t].isAp = true;
                    }
                    if(lineTimeList[t][k][0]=="drawLM")
                    {
@@ -225,6 +219,7 @@ void Operation::parseFile()
                        qDebug()<<"nowColor = "<<nowColor;
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isLongDrop = true;
+
                    }
                    if(lineTimeList[t][k][0]=="drawLFM")
                    {
@@ -237,6 +232,7 @@ void Operation::parseFile()
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isLongDrop = true;
                        status[t].comb[c][r].isFat = true;
+
                    }
                    if(lineTimeList[t][k][0]=="drawB")
                    {
@@ -248,6 +244,7 @@ void Operation::parseFile()
                        status[t].comb[c][r].dropColor = nowColor;
                        status[t].comb[c][r].isBigger = true;
                        qDebug()<<"Draw Bigger!";
+                       status[t-1].isMer = true;
                    }
                    if(lineTimeList[t][k][0]=="clear")
                    {
