@@ -33,6 +33,7 @@ SOURCES += \
         matrix.cpp \
         matrixcomb.cpp \
         mymainwindow.cpp \
+        node.cpp \
         operation.cpp \
         setinputdialog.cpp \
         settingwidget.cpp
@@ -42,6 +43,7 @@ HEADERS += \
         matrix.h \
         matrixcomb.h \
         mymainwindow.h \
+        node.h \
         operation.h \
         operationsignal.h \
         setinputdialog.h \

@@ -13,6 +13,10 @@
 
 #include<QMediaPlayer>
 
+#include "node.h"
+
+#define MAXNUM 100000
+
 struct Polluted
 {
     int iniPol;
@@ -43,6 +47,7 @@ public:
     matrixComb* status;
 
     int wholeTime;
+    int wholeCleanTime;
 
     QList<QStringList>* lineTimeList;
 
@@ -83,11 +88,14 @@ private:
 
     int cannotCleanTime;
 
+    void out(int i,int j);
 
+    int **path;
 
+    QVector<QPoint> points;
 
-
-
+    QVector<int> road;//暂存路径的点下标
+    QVector<QPoint> wholeRoad;//存储头到中间再到尾的最短路径
 
     QVector<Line> commandLines;
 

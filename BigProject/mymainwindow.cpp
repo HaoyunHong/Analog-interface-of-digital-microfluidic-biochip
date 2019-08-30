@@ -26,6 +26,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     drawNext = false;
 
     now = 0;
+    cleanNow = 0;
 
     inputPointsNum = 0;
 
@@ -345,34 +346,68 @@ myMainWindow::myMainWindow(QWidget *parent) :
     connect(timer,&QTimer::timeout,
             [=]()
     {
-        now++;
-        if(now<0 || now>op->wholeTime)
+        if(!isClean)
         {
-            isEnd = true;
-            drawNext = false;
-            now--;
+            now++;
+            if(now<0 || now>op->wholeTime)
+            {
+                isEnd = true;
+                drawNext = false;
+                now--;
+            }
+            else {
+                isEnd = false;
+                drawNext = true;
+                qDebug()<<"Next updating!";
+                update();
+                play();
+                qDebug()<<"now: "<<now;
+                showJudge();
+
+            }
+            if(now >= op->wholeTime)
+            {
+                isEnd = true;
+                timer->stop();
+                ui->nextButton->setEnabled(true);
+                ui->lastButton->setEnabled(true);
+                ui->resetButton->setEnabled(true);
+                ui->playButton->setEnabled(true);
+            }
+
+            ui->lcdNumber->display(now);
         }
         else {
-            isEnd = false;
-            drawNext = true;
-            qDebug()<<"Next updating!";
-            update();
-            play();
-            qDebug()<<"now: "<<now;
-            showJudge();
 
-        }
-        if(now >= op->wholeTime)
-        {
-            isEnd = true;
-            timer->stop();
-            ui->nextButton->setEnabled(true);
-            ui->lastButton->setEnabled(true);
-            ui->resetButton->setEnabled(true);
-            ui->playButton->setEnabled(true);
+            qDebug()<<"Is cleaning: "<<isClean;
+            cleanNow++;
+            if(cleanNow<0 || cleanNow>op->wholeTime)
+            {
+                isEnd = true;
+                drawNext = false;
+                cleanNow--;
+            }
+            else {
+                isEnd = false;
+                drawNext = true;
+                qDebug()<<"Next updating!";
+                update();
+                play();
+                qDebug()<<"cleanNow: "<<cleanNow;
+            }
+            if(cleanNow >= op->wholeCleanTime)
+            {
+                isEnd = true;
+                timer->stop();
+                ui->nextButton->setEnabled(true);
+                ui->lastButton->setEnabled(true);
+                ui->resetButton->setEnabled(true);
+                ui->playButton->setEnabled(true);
+            }
+
+            ui->lcdNumber->display(cleanNow);
         }
 
-        ui->lcdNumber->display(now);
     });
 
     connect(ui->cleanCheckBox,&QCheckBox::isChecked,
@@ -401,7 +436,6 @@ void myMainWindow::paintEvent(QPaintEvent *)
     QPainter p;//创建画家对象
     p.begin(this);//指定当前窗口为绘图设备
 
-    qDebug()<<"Begin painting!";
     //反锯齿
     p.setRenderHint(QPainter::Antialiasing, true);
     p.drawPixmap(0,0,width(),height(),QPixmap(":/image/image/pinback.jpg"));
@@ -542,30 +576,32 @@ void myMainWindow::paintEvent(QPaintEvent *)
         //椭圆形的参数
         int longD = 120;
         int shortD = 30;
-        if(isClean)
+
+        //如果真正能进入清洗模式
+        if (isClean)
         {
 
             //画清洗液滴输入口
             pen.setWidth(3);//设置线宽
-            pen.setColor(QColor(245,150,170));
+            pen.setColor(QColor(245, 150, 170));
             pen.setStyle(Qt::DashLine);
-            brush.setColor(QColor(137, 207, 240,220));//设置颜色
+            brush.setColor(QColor(137, 207, 240, 220));//设置颜色
             brush.setStyle(Qt::SolidPattern);//设置样式
 
             p.setPen(pen);
             p.setBrush(brush);
-            p.drawRect(0-unit-unit/8,0,9*unit/8,-unit);
+            p.drawRect(0 - unit - unit / 8, 0, 9 * unit / 8, -unit);
 
             //画清洗液滴输出口
             pen.setWidth(3);//设置线宽
-            pen.setColor(QColor(245,150,170));
+            pen.setColor(QColor(245, 150, 170));
             pen.setStyle(Qt::DashLine);
-            brush.setColor(QColor(113, 150,159,200));//设置颜色
+            brush.setColor(QColor(113, 150, 159, 200));//设置颜色
             brush.setStyle(Qt::SolidPattern);//设置样式
 
             p.setPen(pen);
             p.setBrush(brush);
-            p.drawRect((col-1)*unit+unit,0-(row-1)*unit,9*unit/8,-unit);
+            p.drawRect((col - 1)*unit + unit, 0 - (row - 1)*unit, 9 * unit / 8, -unit);
 
             QFont font;
             font.setPointSize(5);
@@ -574,35 +610,35 @@ void myMainWindow::paintEvent(QPaintEvent *)
             p.setFont(font);
 
             QString text = "clean";
-            pen.setColor(QColor(142,53,74,200));
+            pen.setColor(QColor(142, 53, 74, 200));
             p.setPen(pen);
             p.setBrush(Qt::NoBrush);
-            QRect rec= QRect(0-unit-unit/8,-unit/2,9*unit/8,-unit/2);
-            QRect rec2=QRect((col-1)*unit+unit,0-(row-1)*unit-unit/2,9*unit/8,-unit/2);
-            p.drawText(rec,Qt::AlignCenter,text);
-            p.drawText(rec2,Qt::AlignCenter,text);
+            QRect rec = QRect(0 - unit - unit / 8, -unit / 2, 9 * unit / 8, -unit / 2);
+            QRect rec2 = QRect((col - 1)*unit + unit, 0 - (row - 1)*unit - unit / 2, 9 * unit / 8, -unit / 2);
+            p.drawText(rec, Qt::AlignCenter, text);
+            p.drawText(rec2, Qt::AlignCenter, text);
             text = "in";
-            rec= QRect(0-unit-unit/8,0,9*unit/8,-unit/2);
-            p.drawText(rec,Qt::AlignCenter,text);
+            rec = QRect(0 - unit - unit / 8, 0, 9 * unit / 8, -unit / 2);
+            p.drawText(rec, Qt::AlignCenter, text);
 
             text = "out";
-            rec= QRect((col-1)*unit+unit,0-(row-1)*unit,9*unit/8,-unit/2);
-            p.drawText(rec,Qt::AlignCenter,text);
+            rec = QRect((col - 1)*unit + unit, 0 - (row - 1)*unit, 9 * unit / 8, -unit / 2);
+            p.drawText(rec, Qt::AlignCenter, text);
 
-            if(isSet)
+            if (isSet)
             {
-                qDebug()<<"isSet";
-                for(int i=1;i<=col;i++)
+                //qDebug()<<"isSet";
+                for (int i = 1; i <= col; i++)
                 {
-                    for(int j=1;j<=row;j++)
+                    for (int j = 1; j <= row; j++)
                     {
-                        if(op->status[now].comb[i][j].isBlock)
+                        if (op->cleanStatus[cleanNow].comb[i][j].isBlock)
                         {
-                            brush.setColor(QColor(178,200,187,200));
+                            brush.setColor(QColor(178, 200, 187, 200));
                             p.setPen(Qt::NoPen);
                             p.setBrush(brush);
-                            p.drawRect((i-1)*unit+2,0-(j-1)*unit-2,unit-4,-unit+4);
-                            qDebug()<<"DrawRect!";
+                            p.drawRect((i - 1)*unit + 2, 0 - (j - 1)*unit - 2, unit - 4, -unit + 4);
+                            //qDebug()<<"DrawRect!";
                         }
                     }
                 }
@@ -610,74 +646,88 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
             }
 
-            if(drawNext || drawLast)
+            QColor washColor = QColor(137, 207, 240, 230);
+
+            if (drawNext || drawLast)
             {
                 brush.setStyle(Qt::SolidPattern);//设置样式
-                for(int i=1;i<=col;i++)
-                 {
-                      for(int j=1;j<=row;j++)
-                      {
-                          if(op->status[now].comb[i][j].pollutedSet.size()>0)
-                          {
-                              for(int k =0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
-                              {
-                                  //把轨迹的透明度调低
-                                  QColor trace = QColor(op->status[now].comb[i][j].pollutedSet[k].red(),op->status[now].comb[i][j].pollutedSet[k].green(),op->status[now].comb[i][j].pollutedSet[k].blue(),150);
-                                  brush.setColor(trace);
-                                  p.setPen(Qt::NoPen);
-                                  p.setBrush(brush);
-                                  int littleD = 8;
-                                  int cnt = 10;
-                                  while(cnt>0)
-                                  {
-                                      int x = qrand()%(50-littleD);
-                                      int y = qrand()%(50-littleD);
-                                      p.drawEllipse((i-1)*unit+x,0-(j-1)*unit-y,littleD,-littleD);
-                                      cnt--;
-                                  }
+                for (int i = 1; i <= col; i++)
+                {
+                    for (int j = 1; j <= row; j++)
+                    {
+                        if (op->cleanStatus[cleanNow].comb[i][j].hasWashing)
+                        {
+                            for (int k = 0; k < op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size(); k++)
+                            {
 
-                              }
+                                brush.setColor(washColor);
+                                pen.setColor(QColor(137, 207, 240, 255));
+                                p.setPen(pen);
+                                p.setBrush(brush);
+                                p.drawEllipse((i - 1)*unit + unit / 2 - lD / 2, 0 - (j - 1)*unit - unit / 2 + lD / 2, lD, -lD);
 
-                          }
-                           if(!op->status[now].comb[i][j].isEmpty)
-                           {
-                               brush.setColor(op->status[now].comb[i][j].dropColor);//设置颜色
-                               p.setBrush(brush);
-                               pen.setColor(QColor(219,77,109));
-                               pen.setWidth(3);
-                               pen.setStyle(Qt::SolidLine);
-                               p.setPen(pen);
-                               if(op->status[now].comb[i][j].isLongDrop)
-                               {
-                                   qDebug()<<"IsLong!";
-                                   if(op->status[now].comb[i][j].isFat)
-                                   {
-                                        qDebug()<<"IsFat!";
-                                        p.drawEllipse((i-1)*unit+unit/2-longD/2,0-(j-1)*unit-unit/2+shortD/2,longD,-shortD);
-                                   }
-                                   else {
-                                       qDebug()<<"IsThin!";
-                                        p.drawEllipse((i-1)*unit+unit/2-shortD/2,0-(j-1)*unit-unit/2+longD/2,shortD,-longD);
-                                   }
+                            }
+                        }
 
-                               }
-                               else if(op->status[now].comb[i][j].isBigger)
-                               {
-                                   qDebug()<<"in Main draw Bigger!";
-                                   p.drawEllipse((i-1)*unit+unit/2-lD/2,0-(j-1)*unit-unit/2+lD/2,lD,-lD);
-                               }
-                               else if(op->status[now].comb[i][j].isSmaller)
-                               {
-                                   p.drawEllipse((i-1)*unit+unit/2-sD/2,0-(j-1)*unit-unit/2+sD/2,sD,-sD);
-                               }
-                               else {
-                                   p.drawEllipse((i-1)*unit+unit/2-mD/2,0-(j-1)*unit-unit/2+mD/2,mD,-mD);
-                               }
+                        if (op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size() > 0)
+                        {
+                            for (int k = 0; k < op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size(); k++)
+                            {
+                                //把轨迹的透明度调低
+                                QColor trace = QColor(op->cleanStatus[cleanNow].comb[i][j].pollutedSet[k].red(), op->cleanStatus[cleanNow].comb[i][j].pollutedSet[k].green(), op->cleanStatus[cleanNow].comb[i][j].pollutedSet[k].blue(), 150);
+                                brush.setColor(trace);
+                                p.setPen(Qt::NoPen);
+                                p.setBrush(brush);
+                                int littleD = 8;
+                                int cnt = 10;
+                                while (cnt > 0)
+                                {
+                                    int x = qrand() % (50 - littleD);
+                                    int y = qrand() % (50 - littleD);
+                                    p.drawEllipse((i - 1)*unit + x, 0 - (j - 1)*unit - y, littleD, -littleD);
+                                    cnt--;
+                                }
+                            }
+                        }
+                        if (!op->cleanStatus[cleanNow].comb[i][j].isEmpty)
+                        {
+                            brush.setColor(op->cleanStatus[cleanNow].comb[i][j].dropColor);//设置颜色
+                            p.setBrush(brush);
+                            pen.setColor(QColor(219, 77, 109));
+                            pen.setWidth(3);
+                            pen.setStyle(Qt::SolidLine);
+                            p.setPen(pen);
+                            if (op->cleanStatus[cleanNow].comb[i][j].isLongDrop)
+                            {
+                                //qDebug()<<"IsLong!";
+                                if (op->cleanStatus[cleanNow].comb[i][j].isFat)
+                                {
+                                    //qDebug()<<"IsFat!";
+                                    p.drawEllipse((i - 1)*unit + unit / 2 - longD / 2, 0 - (j - 1)*unit - unit / 2 + shortD / 2, longD, -shortD);
+                                }
+                                else {
+                                    //qDebug()<<"IsThin!";
+                                    p.drawEllipse((i - 1)*unit + unit / 2 - shortD / 2, 0 - (j - 1)*unit - unit / 2 + longD / 2, shortD, -longD);
+                                }
 
-                           }
+                            }
+                            else if (op->cleanStatus[cleanNow].comb[i][j].isBigger)
+                            {
+                                //qDebug()<<"in Main draw Bigger!";
+                                p.drawEllipse((i - 1)*unit + unit / 2 - lD / 2, 0 - (j - 1)*unit - unit / 2 + lD / 2, lD, -lD);
+                            }
+                            else if (op->cleanStatus[cleanNow].comb[i][j].isSmaller)
+                            {
+                                p.drawEllipse((i - 1)*unit + unit / 2 - sD / 2, 0 - (j - 1)*unit - unit / 2 + sD / 2, sD, -sD);
+                            }
+                            else {
+                                p.drawEllipse((i - 1)*unit + unit / 2 - mD / 2, 0 - (j - 1)*unit - unit / 2 + mD / 2, mD, -mD);
+                            }
 
-                      }
-                 }
+                        }
+
+                    }
+                }
 
                 QString comStr = "Cleaning";
                 label->setText(comStr);
@@ -727,21 +777,21 @@ void myMainWindow::paintEvent(QPaintEvent *)
                                p.setPen(pen);
                                if(op->status[now].comb[i][j].isLongDrop)
                                {
-                                   qDebug()<<"IsLong!";
+                                   //qDebug()<<"IsLong!";
                                    if(op->status[now].comb[i][j].isFat)
                                    {
-                                        qDebug()<<"IsFat!";
+                                        //qDebug()<<"IsFat!";
                                         p.drawEllipse((i-1)*unit+unit/2-longD/2,0-(j-1)*unit-unit/2+shortD/2,longD,-shortD);
                                    }
                                    else {
-                                       qDebug()<<"IsThin!";
+                                       //qDebug()<<"IsThin!";
                                         p.drawEllipse((i-1)*unit+unit/2-shortD/2,0-(j-1)*unit-unit/2+longD/2,shortD,-longD);
                                    }
 
                                }
                                else if(op->status[now].comb[i][j].isBigger)
                                {
-                                   qDebug()<<"in Main draw Bigger!";
+                                   //qDebug()<<"in Main draw Bigger!";
                                    p.drawEllipse((i-1)*unit+unit/2-lD/2,0-(j-1)*unit-unit/2+lD/2,lD,-lD);
                                }
                                else if(op->status[now].comb[i][j].isSmaller)
@@ -814,22 +864,22 @@ void myMainWindow::play()
 {
     if(op->status[now].isMm)
     {
-        qDebug()<<"Is moving or mixing!";
+        //qDebug()<<"Is moving or mixing!";
         mmPlayer->play();
     }
     if(op->status[now].isAp)
     {
-        qDebug()<<"Is apart!";
+        //qDebug()<<"Is apart!";
         apPlayer->play();
     }
     if(op->status[now].isMer)
     {
-        qDebug()<<now<<": now is mergeSuccess!";
+        //qDebug()<<now<<": now is mergeSuccess!";
         merPlayer->play();
     }
     if(op->status[now].isStr)
     {
-        qDebug()<<"Is streching!";
+        //qDebug()<<"Is streching!";
         strPlayer->play();
     }
 }
@@ -849,7 +899,7 @@ void myMainWindow::mousePressEvent(QMouseEvent *e)
     curPoint.setX(e->pos().x()-nowOrigin.x());
     curPoint.setY(e->pos().y()-nowOrigin.y());
 
-    qDebug()<<"curPoint = "<<curPoint;
+    //qDebug()<<"curPoint = "<<curPoint;
 
     QPoint** centers;
     centers = new QPoint*[col+1];
@@ -923,35 +973,59 @@ void myMainWindow::on_lastButton_clicked()
     cannotSet = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
-    now--;
-    if(now<0 || now>op->wholeTime)
+    if(!isClean)
     {
-        drawLast = false;
-        now++;
+        now--;
+        if(now<0 || now>op->wholeTime)
+        {
+            drawLast = false;
+            now++;
+        }
+        else {
+            isEnd = false;
+            drawLast = true;
+            qDebug()<<"Last updating!";
+
+            play();
+            qDebug()<<"now: "<<now;
+        }
+        update();
+        ui->lcdNumber->display(now);
     }
     else {
-        isEnd = false;
-        drawLast = true;
-        qDebug()<<"Last updating!";
+        cleanNow--;
+        if(cleanNow<0 || cleanNow>op->wholeCleanTime)
+        {
+            drawLast = false;
+            cleanNow++;
+        }
+        else {
+            isCleanEnd = false;
+            drawLast = true;
+            qDebug()<<"Last updating!";
 
-        play();
-        qDebug()<<"now: "<<now;
+            play();
+            qDebug()<<"now: "<<cleanNow;
+        }
+        update();
+        ui->lcdNumber->display(cleanNow);
     }
-    update();
-    ui->lcdNumber->display(now);
+
 }
 
 void myMainWindow::on_nextButton_clicked()
 {
+    qDebug()<<"Next!";
     //一旦开始玩了就不能进行清洗模式设置了
     cannotSet = true;
     //canJudge = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
 
-
+    if (!isClean)
+    {
         now++;
-        if(now<0 || now>op->wholeTime)
+        if (now<0 || now>op->wholeTime)
         {
             isEnd = true;
             drawNext = false;
@@ -960,15 +1034,40 @@ void myMainWindow::on_nextButton_clicked()
         else {
             isEnd = false;
             drawNext = true;
-            qDebug()<<"Next updating!";
+            qDebug() << "Next updating!";
 
             play();
-            qDebug()<<"now: "<<now;
+            qDebug() << "now: " << now;
         }
 
         update();
         showJudge();
         ui->lcdNumber->display(now);
+    }
+    else
+    {
+        cleanNow++;
+        qDebug()<<"cleanNow: "<<cleanNow;
+        qDebug()<<"op->wholeCleanTime: "<<op->wholeCleanTime;
+        if (cleanNow<0 || cleanNow>op->wholeCleanTime)
+        {
+            isCleanEnd = true;
+            drawNext = false;
+            cleanNow--;
+        }
+        else {
+            isCleanEnd = false;
+            drawNext = true;
+            qDebug() << "Next updating!";
+
+            play();
+            qDebug() << "now: " << cleanNow;
+        }
+
+        update();
+        ui->lcdNumber->display(cleanNow);
+    }
+
 
 }
 
@@ -1032,13 +1131,26 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
 
 void myMainWindow::on_resetButton_clicked()
 {
-    now = 0;
-    isEnd = false;
-    ui->lcdNumber->display(now);
-    drawLast = false;
-    drawNext = false;
-    update();
-    play();
+    if(!isClean)
+    {
+        now = 0;
+        isEnd = false;
+        ui->lcdNumber->display(now);
+        drawLast = false;
+        drawNext = false;
+        update();
+        play();
+    }
+    else {
+        cleanNow = 0;
+        isCleanEnd = false;
+        ui->lcdNumber->display(cleanNow);
+        drawLast = false;
+        drawNext = false;
+        update();
+        play();
+    }
+
 }
 
 void myMainWindow::on_playButton_clicked()
@@ -1049,16 +1161,16 @@ void myMainWindow::on_playButton_clicked()
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
 
-    if(isClean)
-    {
-//        //一旦点了play就是确定是否是清洗模式了，如果是清洗模式，不能用last
-//        ui->lastButton->setEnabled(false);
-
-    }
-
     timer->start(1500);
 
-    qDebug()<<"now = "<<now;
+    if(!isClean)
+    {
+        qDebug()<<"now = "<<now;
+    }
+    else {
+        qDebug()<<"cleanNow = "<<cleanNow;
+    }
+
     ui->nextButton->setEnabled(false);
     ui->lastButton->setEnabled(false);
     ui->resetButton->setEnabled(false);
@@ -1068,18 +1180,37 @@ void myMainWindow::on_playButton_clicked()
 
 int myMainWindow::pollutedNum(int i, int j)
 {
-    int count = op->status[now].comb[i][j].pollutedSet.size();
-    for(int k=0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
+    int count;
+    if(!isClean)
     {
-        for(int t = 0;t<k;t++)
+        count = op->status[now].comb[i][j].pollutedSet.size();
+        for(int k=0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
         {
-            if(op->status[now].comb[i][j].pollutedSet[k] == op->status[now].comb[i][j].pollutedSet[t])
+            for(int t = 0;t<k;t++)
             {
-                count--;
-                break;
+                if(op->status[now].comb[i][j].pollutedSet[k] == op->status[now].comb[i][j].pollutedSet[t])
+                {
+                    count--;
+                    break;
+                }
             }
         }
     }
+    else {
+        count = op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size();
+        for(int k=0;k<op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size();k++)
+        {
+            for(int t = 0;t<k;t++)
+            {
+                if(op->cleanStatus[cleanNow].comb[i][j].pollutedSet[k] == op->cleanStatus[cleanNow].comb[i][j].pollutedSet[t])
+                {
+                    count--;
+                    break;
+                }
+            }
+        }
+    }
+
     return count;
 }
 

@@ -106,6 +106,7 @@ private:
     void play();
 
     bool isEnd;
+    bool isCleanEnd;
 
     bool isClean;
 
@@ -113,11 +114,11 @@ private:
     bool isSet;
     bool cannotSet;
 
-    //QPoint curBlock;
-
     void showJudge();
 
     QLabel *label;
+
+    int cleanNow;
 
 
 
