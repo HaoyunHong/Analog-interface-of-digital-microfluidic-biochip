@@ -18,8 +18,6 @@ public:
 
     bool isFat;
 
-    bool hasTrace;
-
     bool isBigger;
 
     bool isSmaller;
@@ -34,6 +32,10 @@ public:
     void setDefault();
 
     bool isBlock;
+
+    bool isSafe;
+
+    bool hasWashing;
 
 
 };

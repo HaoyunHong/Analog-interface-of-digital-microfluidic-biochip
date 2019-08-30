@@ -10,6 +10,8 @@ Operation::Operation(QObject *parent) : QObject(parent)
       isClean = false;
 
       colorSeed = 0;
+
+      cannotCleanTime = -1;
 }
 
 void Operation::setFile(QString path)
@@ -18,7 +20,16 @@ void Operation::setFile(QString path)
     myFile = new QFile(path);
     qDebug()<<"File parsing!";
     this->parseFile();
+    if(pollutedInfo.size()==0)
+    {
+        isClean = false;
+        emit neednotClean();
+    }
     stopTime = this->judge();
+    if(isClean)
+    {
+        cleanMode();
+    }
 
 }
 
@@ -177,6 +188,25 @@ void Operation::parseFile()
                     //status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
 
                     status[t].isMm = true;
+
+                    Polluted pol;
+                    for(int s=t-1;s>=0;s--)
+                    {
+                        if(status[s].comb[c2][r2].isEmpty == false)
+                        {
+                            pol.iniPol = s;
+                            break;
+                        }
+                    }
+                    if(status[t].comb[c2][r2].pollutedSet.size()>0)
+                    {
+
+                        pol.time=t;
+                        pol.p = QPoint(c2,r2);
+                        pollutedInfo.push_back(pol);
+                    }
+
+
                 }
                 if (lineTimeList[t][k][0] == "drawLS")
                 {
@@ -276,14 +306,21 @@ void Operation::parseFile()
                     status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
                 }
+
+
+                //只是轨迹变化，其它并不变，等做了一次清洗操作后，如果后面的之前会发生污染液滴事件的点也被清洗了，那就跳过它，再去清洗下一个
+                //如果pollutedInfo已被赋值，就去寻找每一个该去clean的之前的时间
+                //说不定前面的清理已经将后面的一个polluted给去除了
             }
         }
-
-
     }
+
+
     myFile->close();
 }
 
+
+//这里还可以再加入信息
 int Operation::cannotClean()
 {
     int cannotCleanTime = -1;
@@ -324,10 +361,10 @@ int Operation::cannotClean()
                     }
                 }
                 if(flag) break;
-
             }
         }
     }
+
     return cannotCleanTime;
 }
 
@@ -335,8 +372,6 @@ int Operation::judge()
 {
     qDebug()<<"judge~judge~";
     qDebug()<<wholeTime;
-
-
 
     //只要找到最新violate的就可以
     bool violate = false;
@@ -519,6 +554,240 @@ int Operation::judge()
     return t;
 }
 
-\
+
+void Operation::changeIsSafe()
+{
+    for(int now=0;now<=wholeTime;now++)
+    {
+        for(int i=1;i<=colNum;i++)
+        {
+            for(int j=1;j<=rowNum;j++)
+            {
+                if (!status[now].comb[i][j].isEmpty)
+                {
+                    status[now].comb[i][j].isSafe=false;
+                }
+                if (status[now].comb[i][j].isEmpty)
+                {
+                    if (i < colNum && i > 1 && j < rowNum && j>1)
+                    {
+                        //qDebug()<<"i < colNum && i > 1 && j < rowNum && j>1";
+                        if (!status[now].comb[i - 1][j - 1].isEmpty
+                            || !status[now].comb[i - 1][j].isEmpty
+                            || !status[now].comb[i - 1][j + 1].isEmpty
+                            || !status[now].comb[i][j - 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty
+                            || !status[now].comb[i + 1][j - 1].isEmpty
+                            || !status[now].comb[i + 1][j].isEmpty
+                            || !status[now].comb[i + 1][j + 1].isEmpty)
+                        {
+                            status[now].comb[i][j].isSafe=false;
+                        }
+
+                    }
+
+                    if (i == colNum && j > 0 && j < rowNum)
+                    {
+                        //qDebug()<<"i == colNum && j > 0 && j < rowNum";
+                        if (!status[now].comb[i - 1][j - 1].isEmpty
+                            || !status[now].comb[i - 1][j + 1].isEmpty
+                            || !status[now].comb[i - 1][j].isEmpty
+                            || !status[now].comb[i][j - 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty)
+                        {
+                            status[now].comb[i][j].isSafe=false;
+                        }
+                    }
+                    if (i == 1 && j > 0 && j < rowNum)
+                    {
+                       // qDebug()<<"i == 1 && j > 0 && j < rowNum";
+                        if (!status[now].comb[i][j - 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty
+                            || !status[now].comb[i + 1][j - 1].isEmpty
+                            || !status[now].comb[i + 1][j].isEmpty
+                            || !status[now].comb[i + 1][j + 1].isEmpty)
+                        {
+                           status[now].comb[i][j].isSafe=false;
+                        }
+
+
+
+                    }
+
+                    if (i < colNum && i > 1 && j == 1)
+                    {
+                        //qDebug()<<"i < colNum && i > 1 && j == 1";
+                        if (!status[now].comb[i - 1][j].isEmpty
+                            || !status[now].comb[i - 1][j + 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty
+                            || !status[now].comb[i + 1][j].isEmpty
+                            || !status[now].comb[i + 1][j + 1].isEmpty)
+                        {
+                            status[now].comb[i][j].isSafe=false;
+                        }
+
+                    }
+
+                    if (i < colNum && i > 1 && j == rowNum)
+                    {
+                        //qDebug()<<"i < colNum && i > 1 && j == rowNum";
+                        if (!status[now].comb[i - 1][j - 1].isEmpty
+                            || !status[now].comb[i - 1][j].isEmpty
+                            || !status[now].comb[i][j - 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty
+                            || !status[now].comb[i + 1][j - 1].isEmpty
+                            || !status[now].comb[i + 1][j].isEmpty)
+                        {
+                            status[now].comb[i][j].isSafe=false;
+                        }
+                    }
+
+                    if (i == colNum && j == rowNum)
+                    {
+                        //qDebug()<<"i == colNum && j == rowNum";
+                        if (!status[now].comb[i - 1][j - 1].isEmpty
+                            || !status[now].comb[i - 1][j].isEmpty
+                            || !status[now].comb[i][j - 1].isEmpty)
+                        {
+                            status[now].comb[i][j].isSafe=false;
+                        }
+                    }
+
+                    if (i == colNum && j == 1)
+                    {
+                        //qDebug()<<"i == colNum && j == 1";
+                        if (!status[now].comb[i - 1][j].isEmpty
+                            || !status[now].comb[i - 1][j + 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty)
+                        {
+                           status[now].comb[i][j].isSafe=false;
+                        }
+                    }
+
+                    if (i == 1 && j == 1)
+                    {
+                        qDebug()<<"i == 1 && j == 1";
+                        if (!status[now].comb[i + 1][j].isEmpty
+                            || !status[now].comb[i + 1][j + 1].isEmpty
+                            || !status[now].comb[i][j + 1].isEmpty)
+                        {
+                           status[now].comb[i][j].isSafe=false;
+                        }
+                    }
+
+                    if (i == 1 && j == rowNum)
+                    {
+                        //qDebug()<<"i == 1 && j == rowNum";
+                        if (!status[now].comb[i + 1][j].isEmpty
+                            || !status[now].comb[i][j - 1].isEmpty
+                            || !status[now].comb[i + 1][j - 1].isEmpty)
+                        {
+                            status[now].comb[i][j].isSafe=false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for(int now=0;now<=wholeTime;now++)
+    {
+        for(int i=1;i<=colNum;i++)
+        {
+            for(int j=1;j<=rowNum;j++)
+            {
+                qDebug()<<"status["<<now<<"].comb["<<i<<"]["<<j<<"].isSafe"<<status[now].comb[i][j].isSafe;
+            }
+         }
+
+    }
+}
+
+//针对每一个最早的污染点来洗，使用index来取得值即可，如果不需要清洗也就不用调用对应index的函数
+//其实应该是这里来判断是不是可以洗
+int Operation::startCleanTime(int index)
+{
+
+    int start = -1;
+    for(int t=pollutedInfo[index].time-1;t>pollutedInfo[index].iniPol;t--)
+    {
+        //清洗点是安全的，并且要保证出口和入口也是安全的，这样才能洗
+        if(status[t].comb[pollutedInfo[index].p.x()][pollutedInfo[index].p.y()].isSafe && status[t].comb[1][1].isSafe)
+        {
+            start = t;
+
+            break;
+        }
+    }
+
+    qDebug()<<"clean startTime: "<<start;
+
+    pollutedInfo[index].cleanTime=start;
+
+    qDebug()<<"pollutedInfo["<<index<<"].cleanTime: "<<pollutedInfo[index].cleanTime;
+
+    if(start == -1)
+    {
+        cannotCleanTime = pollutedInfo[index].time;
+    }
+    return start;
+}
+
+void Operation::cleanMode()
+{
+    changeIsSafe();
+    qDebug()<<"isClean: "<<isClean;
+    if(isClean)
+    {
+
+        //这里不怕,就是按时间顺序排的
+        for(int i =0;i<pollutedInfo.size();i++)
+        {
+            qDebug()<<"pollutedInfo["<<i<<"].time: "<<pollutedInfo[i].time;
+            qDebug()<<"pollutedInfo["<<i<<"].p: "<<pollutedInfo[i].p;
+            //此时还未初始化
+            //qDebug()<<"pollutedInfo["<<i<<"].cleanTime: "<<pollutedInfo[i].cleanTime;
+        }
+    }
+
+    int polIndex=0;
+    while(polIndex<pollutedInfo.size())
+    {
+        qDebug()<<"polIndex: "<<polIndex;
+
+        startCleanTime(polIndex);
+
+        qDebug()<<"Here!";
+        if(pollutedInfo[polIndex].cleanTime==-1)
+        {
+            return;
+        }
+        for(int t =0;t<pollutedInfo[polIndex].cleanTime;t++)
+        {
+            cleanStatus.push_back(status[t]);
+        }
+
+        //然后开始对入口到清洗点和清洗点到出口分别进行bfs，寻找最短路径并且至多清洗路径上的三个点（即到清洗点之前不能已经洗了三个点）
+        //寻找最短路径，把每一次能走到终点的路径存下来，如果后面走着还有更短的，更新存储的最短路径
+        //然后把该时刻安全的点和没有被Block的点加入队列，开始bfs
+        //用一个清洗次数的计数器
+        //如果怎么走，清洗液滴都会违反以下规则
+        /*
+        1. 还没到清洗点时已被污染三次（解决办法，再来一个液滴，重复走这条路）
+        2. 走不到清洗点，报错，指出此时无法清洗
+        3. 走不到终点，报错，指出此时无法清洗
+        */
+
+
+        polIndex++;
+    }
+
+
+
+
+
+    int cleanTime = pollutedInfo[polIndex].cleanTime;
+     cleanStatus[cleanTime].comb[1][1].hasWashing = true;
+}
 
 

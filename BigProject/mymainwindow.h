@@ -117,7 +117,7 @@ private:
 
     void showJudge();
 
-
+    QLabel *label;
 
 
 

@@ -13,6 +13,13 @@
 
 #include<QMediaPlayer>
 
+struct Polluted
+{
+    int iniPol;
+    int time;
+    QPoint p;
+    int cleanTime;
+};
 
 class Operation : public QObject
 {
@@ -43,11 +50,25 @@ public:
 
     int stopTime;
 
+
     int cannotClean();
 
+    QVector<matrixComb> cleanStatus;
+
+    int startClean();
+
+    void changeIsSafe();
+
+    //然后它在mainwindow的画布里会有自己的ints计时器
+    int startCleanTime(int index);
+
+    QVector<Polluted> pollutedInfo;
+
+    void cleanMode();
 
 signals:
     void cannotShowCommand();
+    void neednotClean();
 
 public slots:
 
@@ -59,6 +80,10 @@ private:
     int time;
 
     bool canShowCommand;
+
+    int cannotCleanTime;
+
+
 
 
 
