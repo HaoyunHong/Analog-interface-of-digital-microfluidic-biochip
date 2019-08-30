@@ -10,7 +10,7 @@ Line::Line(QString line)
     QStringList parts = line.split(",");
     qDebug()<<parts;
 
-    QString action = parts[0];
+    action = parts[0];
     qDebug()<<"action = "<<action;
 
 

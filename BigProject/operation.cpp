@@ -134,161 +134,209 @@ void Operation::parseFile()
         }
 
 
-        if(!isClean)
+        //先把无论是否清洗模式都要做的存状态步骤做完
+        status[0].isDecided = true;
+        for (int t = 0; t <= wholeTime; t++)
         {
-            //然后在每一步之间检查是否满足动态约束，写一个分析的函数;
-           status[0].isDecided = true;
-           for(int t = 0;t<=wholeTime;t++)
-           {
-               if(t>0)
-               {
-                   status[t]=status[t-1];
-                   status[t].soundDefault();
-               }
+            if (t > 0)
+            {
+                status[t] = status[t - 1];
+                status[t].soundDefault();
+            }
 
-               for(int k=0;k<lineTimeList[t].size();k++)
-               {
-                   if(lineTimeList[t][k][0]=="drawI")
-                   {
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       qDebug()<<"c = "<<c;
-                       qDebug()<<"r = "<<r;
+            for (int k = 0; k < lineTimeList[t].size(); k++)
+            {
+                if (lineTimeList[t][k][0] == "drawI")
+                {
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    qDebug() << "c = " << c;
+                    qDebug() << "r = " << r;
 
-                       status[t].comb[c][r].isEmpty = false;
-                       colorSeed++;
-                       QColor nowColor = QColor((colorSeed*220)%255,(colorSeed*20)%255,(colorSeed*60)%255,200);
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c][r].dropColor = nowColor;
-                       status[t-1].comb[c][r].dropColor = nowColor;
-                       //status[t].comb[c][r].pollutedSet.push_back(nowColor);
-                       //然后在paintEvent里面遍历所有颜色画出污染
-                   }
-                   if(lineTimeList[t][k][0]=="move")
-                   {
-                       int c1 = lineTimeList[t][k][2].toInt();
-                       int r1 = lineTimeList[t][k][3].toInt();
-                       int c2 = lineTimeList[t][k][4].toInt();
-                       int r2 = lineTimeList[t][k][5].toInt();
+                    status[t].comb[c][r].isEmpty = false;
+                    colorSeed++;
+                    QColor nowColor = QColor((colorSeed * 220) % 255, (colorSeed * 20) % 255, (colorSeed * 60) % 255, 200);
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c][r].dropColor = nowColor;
+                    status[t - 1].comb[c][r].dropColor = nowColor;
+                    //status[t].comb[c][r].pollutedSet.push_back(nowColor);
+                    //然后在paintEvent里面遍历所有颜色画出污染
+                }
+                if (lineTimeList[t][k][0] == "move")
+                {
+                    int c1 = lineTimeList[t][k][2].toInt();
+                    int r1 = lineTimeList[t][k][3].toInt();
+                    int c2 = lineTimeList[t][k][4].toInt();
+                    int r2 = lineTimeList[t][k][5].toInt();
 
-                       status[t].comb[c2][r2].isEmpty = false;
-                       colorSeed++;
-                       QColor nowColor = status[t-1].comb[c1][r1].dropColor;
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c2][r2].dropColor = nowColor;
-                       //status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
+                    status[t].comb[c2][r2].isEmpty = false;
+                    colorSeed++;
+                    QColor nowColor = status[t - 1].comb[c1][r1].dropColor;
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c2][r2].dropColor = nowColor;
+                    //status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
 
-                       status[t].isMm = true;
-                   }
-                   if(lineTimeList[t][k][0]=="drawLS")
-                   {
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       status[t].comb[c][r].isEmpty = false;
-                       QColor nowColor = status[t].comb[c][r].dropColor;
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c][r].dropColor = nowColor;
-                       status[t].comb[c][r].isLongDrop = true;
-                       status[t].isStr = true;
-                   }
-                   if(lineTimeList[t][k][0]=="drawLFS")
-                   {
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       status[t].comb[c][r].isEmpty = false;
-                       QColor nowColor = status[t].comb[c][r].dropColor;
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c][r].dropColor = nowColor;
-                       status[t].comb[c][r].isLongDrop = true;
-                       status[t].comb[c][r].isFat = true;
-                       status[t].isStr = true;
-                   }
-                   if(lineTimeList[t][k][0]=="drawS")
-                   {
-                       int c1 = lineTimeList[t][k][2].toInt();
-                       int r1 = lineTimeList[t][k][3].toInt();
-                       int c2 = lineTimeList[t][k][4].toInt();
-                       int r2 = lineTimeList[t][k][5].toInt();
-                       status[t].comb[c1][r1].isEmpty = false;
-                       status[t].comb[c2][r2].isEmpty = false;
-                       colorSeed++;
-                       QColor nowColor = QColor((colorSeed*220)%255,(colorSeed*20)%255,(colorSeed*60)%255,200);
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c1][r1].dropColor = nowColor;
-                       status[t].comb[c1][r1].isSmaller = true;
-                       status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
-                       colorSeed++;
-                       nowColor = QColor((colorSeed*220)%255,(colorSeed*20)%255,(colorSeed*60)%255,200);
-                       status[t].comb[c2][r2].dropColor = nowColor;
-                       status[t].comb[c2][r2].isSmaller = true;
-                       status[t].isAp = true;
-                       //status[t].comb[c2][r2].pollutedSet.push_back(nowColor);
+                    status[t].isMm = true;
+                }
+                if (lineTimeList[t][k][0] == "drawLS")
+                {
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    status[t].comb[c][r].isEmpty = false;
+                    QColor nowColor = status[t].comb[c][r].dropColor;
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c][r].dropColor = nowColor;
+                    status[t].comb[c][r].isLongDrop = true;
+                    status[t].isStr = true;
+                }
+                if (lineTimeList[t][k][0] == "drawLFS")
+                {
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    status[t].comb[c][r].isEmpty = false;
+                    QColor nowColor = status[t].comb[c][r].dropColor;
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c][r].dropColor = nowColor;
+                    status[t].comb[c][r].isLongDrop = true;
+                    status[t].comb[c][r].isFat = true;
+                    status[t].isStr = true;
+                }
+                if (lineTimeList[t][k][0] == "drawS")
+                {
+                    int c1 = lineTimeList[t][k][2].toInt();
+                    int r1 = lineTimeList[t][k][3].toInt();
+                    int c2 = lineTimeList[t][k][4].toInt();
+                    int r2 = lineTimeList[t][k][5].toInt();
+                    status[t].comb[c1][r1].isEmpty = false;
+                    status[t].comb[c2][r2].isEmpty = false;
+                    colorSeed++;
+                    QColor nowColor = QColor((colorSeed * 220) % 255, (colorSeed * 20) % 255, (colorSeed * 60) % 255, 200);
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c1][r1].dropColor = nowColor;
+                    status[t].comb[c1][r1].isSmaller = true;
+                    status[t].comb[c1][r1].pollutedSet.push_back(nowColor);
+                    colorSeed++;
+                    nowColor = QColor((colorSeed * 220) % 255, (colorSeed * 20) % 255, (colorSeed * 60) % 255, 200);
+                    status[t].comb[c2][r2].dropColor = nowColor;
+                    status[t].comb[c2][r2].isSmaller = true;
+                    status[t].isAp = true;
+                    //status[t].comb[c2][r2].pollutedSet.push_back(nowColor);
 
-                   }
-                   if(lineTimeList[t][k][0]=="drawLM")
-                   {
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       status[t].comb[c][r].isEmpty = false;
-                       colorSeed++;
-                       QColor nowColor = QColor((colorSeed*220)%255,(colorSeed*20)%255,(colorSeed*60)%255,200);
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c][r].dropColor = nowColor;
-                       status[t].comb[c][r].isLongDrop = true;
-                       //status[t].comb[c][r].pollutedSet.push_back(nowColor);
+                }
+                if (lineTimeList[t][k][0] == "drawLM")
+                {
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    status[t].comb[c][r].isEmpty = false;
+                    colorSeed++;
+                    QColor nowColor = QColor((colorSeed * 220) % 255, (colorSeed * 20) % 255, (colorSeed * 60) % 255, 200);
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c][r].dropColor = nowColor;
+                    status[t].comb[c][r].isLongDrop = true;
+                    //status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
-                   }
-                   if(lineTimeList[t][k][0]=="drawLFM")
-                   {
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       status[t].comb[c][r].isEmpty = false;
-                       colorSeed++;
-                       QColor nowColor = QColor((colorSeed*220)%255,(colorSeed*20)%255,(colorSeed*60)%255,200);
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c][r].dropColor = nowColor;
-                       status[t].comb[c][r].isLongDrop = true;
-                       status[t].comb[c][r].isFat = true;
-                       //status[t].comb[c][r].pollutedSet.push_back(nowColor);
+                }
+                if (lineTimeList[t][k][0] == "drawLFM")
+                {
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    status[t].comb[c][r].isEmpty = false;
+                    colorSeed++;
+                    QColor nowColor = QColor((colorSeed * 220) % 255, (colorSeed * 20) % 255, (colorSeed * 60) % 255, 200);
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c][r].dropColor = nowColor;
+                    status[t].comb[c][r].isLongDrop = true;
+                    status[t].comb[c][r].isFat = true;
+                    //status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
-                   }
-                   if(lineTimeList[t][k][0]=="drawB")
-                   {
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       status[t].comb[c][r].isEmpty = false;
-                       QColor nowColor = status[t-1].comb[c][r].dropColor;
-                       qDebug()<<"nowColor = "<<nowColor;
-                       status[t].comb[c][r].dropColor = nowColor;
-                       status[t].comb[c][r].isBigger = true;
-                       qDebug()<<"Draw Bigger!";
+                }
+                if (lineTimeList[t][k][0] == "drawB")
+                {
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    status[t].comb[c][r].isEmpty = false;
+                    QColor nowColor = status[t - 1].comb[c][r].dropColor;
+                    qDebug() << "nowColor = " << nowColor;
+                    status[t].comb[c][r].dropColor = nowColor;
+                    status[t].comb[c][r].isBigger = true;
+                    qDebug() << "Draw Bigger!";
 
-                       status[t].isMer = true;
-                       qDebug()<<"status["<<t<<"].isMer = true";
-                   }
-                   if(lineTimeList[t][k][0]=="clear")
-                   {
+                    status[t].isMer = true;
+                    qDebug() << "status[" << t << "].isMer = true";
+                }
+                if (lineTimeList[t][k][0] == "clear")
+                {
 
-                       int c = lineTimeList[t][k][2].toInt();
-                       int r = lineTimeList[t][k][3].toInt();
-                       QColor nowColor = status[t].comb[c][r].dropColor;
-                       qDebug()<<"nowColor = "<<nowColor;
+                    int c = lineTimeList[t][k][2].toInt();
+                    int r = lineTimeList[t][k][3].toInt();
+                    QColor nowColor = status[t].comb[c][r].dropColor;
+                    qDebug() << "nowColor = " << nowColor;
 
-                       status[t].comb[c][r].setDefault();
-                       status[t].comb[c][r].pollutedSet.push_back(nowColor);
+                    status[t].comb[c][r].setDefault();
+                    status[t].comb[c][r].pollutedSet.push_back(nowColor);
 
-                   }
-               }
-           }
+                }
+            }
         }
+
+
     }
     myFile->close();
+}
+
+int Operation::cannotClean()
+{
+    int cannotCleanTime = -1;
+    if(isClean)
+    {
+        qDebug()<<"Judging clean!";
+        for(int i=0;i<commandLines.size();i++)
+        {
+            bool flag = false;
+            qDebug()<<"Judging clean!";
+            if(commandLines[i].action == "Merge")
+            {
+                qDebug()<<"Merge case!";
+                qDebug()<<"commandLines["<<i<<"].wholeLine: "<<commandLines[i].wholeLine;
+                QPoint p1 = commandLines[i].path[0];
+                QPoint p2 = commandLines[i].path[1];
+                QPoint p = (p1+p2)/2;
+                for(int j=i+1;j<commandLines.size();j++)
+                {
+                    if(commandLines[j].action == "Move" && commandLines[j].path[0]==p &&(commandLines[j].path[1]==p1 || commandLines[j].path[1]==p2))
+                    {
+                        qDebug()<<"Here!";
+                        qDebug()<<"commandLines["<<j<<"].wholeLine: "<<commandLines[j].wholeLine;
+                        cannotCleanTime = commandLines[j].beginTime;
+                        qDebug()<<"cannotCleanTime: "<<cannotCleanTime;
+                        flag = true;
+                        break;
+                    }
+                    if(commandLines[j].action == "Mix" && commandLines[j].path[0]==p &&(commandLines[j].path[1]==p1 || commandLines[j].path[1]==p2))
+                    {
+                        qDebug()<<"Here!";
+                        qDebug()<<"commandLines["<<j<<"].wholeLine: "<<commandLines[j].wholeLine;
+                        cannotCleanTime = commandLines[j].beginTime;
+                        qDebug()<<"cannotCleanTime: "<<cannotCleanTime;
+                        flag = true;
+                        break;
+                    }
+                }
+                if(flag) break;
+
+            }
+        }
+    }
+    return cannotCleanTime;
 }
 
 int Operation::judge()
 {
     qDebug()<<"judge~judge~";
     qDebug()<<wholeTime;
+
+
+
     //只要找到最新violate的就可以
     bool violate = false;
     int t = -1;

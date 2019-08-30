@@ -43,6 +43,8 @@ public:
 
     int stopTime;
 
+    int cannotClean();
+
 
 signals:
     void cannotShowCommand();

@@ -788,10 +788,10 @@ void myMainWindow::mousePressEvent(QMouseEvent *e)
                 }
             }
         }
-
+        isSet = true;
+        repaint();
     }
-    isSet = true;
-    repaint();
+
 }
 
 
@@ -987,5 +987,36 @@ void myMainWindow::showJudge()
             default:
                 break;
             }
+    }
+
+    qDebug()<<"Is clean: "<<isClean;
+
+    qDebug() << "op->cannotClean(): " << op->cannotClean();
+    if (now == op->cannotClean())
+    {
+        qDebug() << "now: " << now;
+        qDebug() << "op->cannotCleanTime: " << op->cannotClean();
+        if (!ui->nextButton->isEnabled())
+        {
+            timer->stop();
+        }
+        isClean = false;
+
+        int ret = QMessageBox::warning(this, "Error", "Cannot clean in this situation! The application will be closed if you click OK! Otherwise you can continue the process without cleaning.", QMessageBox::Ok|QMessageBox::Cancel);
+        switch (ret)
+        {
+        case QMessageBox::Ok:
+            haveToClose = true;
+            this->close();
+            break;
+        case QMessageBox::Cancel:
+            ui->cleanCheckBox->hide();
+            ui->limitedCheckBox->hide();
+            break;
+        default:
+            ui->cleanCheckBox->hide();
+            ui->limitedCheckBox->hide();
+            break;
+        }
     }
 }
