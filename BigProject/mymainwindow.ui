@@ -245,7 +245,7 @@
       <enum>Qt::LeftToRight</enum>
      </property>
      <property name="text">
-      <string>Command Viewer</string>
+      <string>Raw Commands</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

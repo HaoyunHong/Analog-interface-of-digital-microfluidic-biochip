@@ -1012,10 +1012,18 @@ void myMainWindow::showJudge()
         case QMessageBox::Cancel:
             ui->cleanCheckBox->hide();
             ui->limitedCheckBox->hide();
+            ui->nextButton->setEnabled(true);
+            ui->lastButton->setEnabled(true);
+            ui->resetButton->setEnabled(true);
+            ui->playButton->setEnabled(true);
             break;
         default:
             ui->cleanCheckBox->hide();
             ui->limitedCheckBox->hide();
+            ui->nextButton->setEnabled(true);
+            ui->lastButton->setEnabled(true);
+            ui->resetButton->setEnabled(true);
+            ui->playButton->setEnabled(true);
             break;
         }
     }

@@ -301,9 +301,10 @@ int Operation::cannotClean()
                 QPoint p1 = commandLines[i].path[0];
                 QPoint p2 = commandLines[i].path[1];
                 QPoint p = (p1+p2)/2;
+                int now = commandLines[i].beginTime;
                 for(int j=i+1;j<commandLines.size();j++)
                 {
-                    if(commandLines[j].action == "Move" && commandLines[j].path[0]==p &&(commandLines[j].path[1]==p1 || commandLines[j].path[1]==p2))
+                    if(commandLines[j].action == "Move" && commandLines[j].beginTime == commandLines[i].endTime && commandLines[j].path[0]==p &&(commandLines[j].path[1]==p1 || commandLines[j].path[1]==p2))
                     {
                         qDebug()<<"Here!";
                         qDebug()<<"commandLines["<<j<<"].wholeLine: "<<commandLines[j].wholeLine;
@@ -312,7 +313,7 @@ int Operation::cannotClean()
                         flag = true;
                         break;
                     }
-                    if(commandLines[j].action == "Mix" && commandLines[j].path[0]==p &&(commandLines[j].path[1]==p1 || commandLines[j].path[1]==p2))
+                    if(commandLines[j].action == "Mix" && commandLines[j].beginTime == commandLines[i].endTime && commandLines[j].path[0]==p &&(commandLines[j].path[1]==p1 || commandLines[j].path[1]==p2))
                     {
                         qDebug()<<"Here!";
                         qDebug()<<"commandLines["<<j<<"].wholeLine: "<<commandLines[j].wholeLine;
