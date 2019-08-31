@@ -120,6 +120,8 @@ private:
 
     int cleanNow;
 
+    int wholeCleanTime;
+
 
 
 protected:

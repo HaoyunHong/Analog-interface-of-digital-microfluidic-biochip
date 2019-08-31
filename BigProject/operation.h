@@ -48,6 +48,7 @@ public:
 
     int wholeTime;
     int wholeCleanTime;
+    int cleanLength;
 
     QList<QStringList>* lineTimeList;
 
@@ -60,20 +61,21 @@ public:
 
     QVector<matrixComb> cleanStatus;
 
-    int startClean();
+    int startClean( );
 
     void changeIsSafe();
 
     //然后它在mainwindow的画布里会有自己的ints计时器
-    int startCleanTime(int index);
+    int startCleanTime(Polluted &pol);
 
     QVector<Polluted> pollutedInfo;
 
-    void cleanMode();
+
+
 
 signals:
     void cannotShowCommand();
-    void neednotClean();
+    void sendWholeCleanTimeSignal(int);
 
 public slots:
 
@@ -110,6 +112,8 @@ private:
 //    void updateMatrixO(int);
 
     //void fillBlank(int);
+
+    QVector<int> cleanTimes;
 
 };
 

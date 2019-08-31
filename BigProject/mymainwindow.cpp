@@ -8,7 +8,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setFixedSize(1200,900);
+    this->setFixedSize(1200, 900);
 
     this->setWindowTitle("Main Window");
 
@@ -17,11 +17,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     this->setStyleSheet("color: rgba(142,53,74,200);font-weight:bold;");
 
-//    this->setAutoFillBackground(true);
-//    QPalette palette;
-//    palette.setBrush(QPalette::Background, QBrush(QPixmap(":/image/image/pinback.jpg")));
-//    this->setPalette(palette);
-//    setAcceptDrops(true);
+    //    this->setAutoFillBackground(true);
+    //    QPalette palette;
+    //    palette.setBrush(QPalette::Background, QBrush(QPixmap(":/image/image/pinback.jpg")));
+    //    this->setPalette(palette);
+    //    setAcceptDrops(true);
     drawLast = false;
     drawNext = false;
 
@@ -38,12 +38,16 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     haveToClose = false;
 
+    wholeCleanTime = -1;
+
+    isCleanEnd = false;
+
     op = new Operation(this);
 
-    merPlayer=new QMediaPlayer(this);
-    mmPlayer=new QMediaPlayer(this);
-    strPlayer=new QMediaPlayer(this);
-    apPlayer=new QMediaPlayer(this);
+    merPlayer = new QMediaPlayer(this);
+    mmPlayer = new QMediaPlayer(this);
+    strPlayer = new QMediaPlayer(this);
+    apPlayer = new QMediaPlayer(this);
 
 
     merPlayer->setMedia(QUrl("qrc:/sound/sound/merge2.wav"));
@@ -57,7 +61,7 @@ myMainWindow::myMainWindow(QWidget *parent) :
     apPlayer->setVolume(10);
     merPlayer->setVolume(30);
 
-    isEnd= false;
+    isEnd = false;
 
     isClean = false;
 
@@ -72,11 +76,11 @@ myMainWindow::myMainWindow(QWidget *parent) :
     QMenu *menu = mBar->addMenu("Option");
     menu->setStyleSheet("background-image:url(:/image/image/back.jpg)");
 
-    QAction *actSet= menu->addAction("Setting");
+    QAction *actSet = menu->addAction("Setting");
 
     //工具栏，菜单项的快捷方式
-    QToolBar *toolBar = new QToolBar("toolBar",this);
-    addToolBar(Qt::RightToolBarArea,toolBar);
+    QToolBar *toolBar = new QToolBar("toolBar", this);
+    addToolBar(Qt::RightToolBarArea, toolBar);
     toolBar->setStyleSheet("background-image:url(:/image/image/back.jpg)");
 
     menu->addSeparator();//为了美观添加分割线
@@ -130,145 +134,145 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     settingWidget = new SettingWidget(this);
 
-    connect(actCommand,&QAction::triggered,
-            [=]()
+    connect(actCommand, &QAction::triggered,
+        [=]()
     {
         QString chooseCommand = "Light pink represents input points, dark pink represents the output point.";
         label->setText(chooseCommand);
         label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
         QString path = QFileDialog::getOpenFileName(this,
-                                        "open","../","TXT(*.txt)");
-            //只有当文件不为空时才进行操作
-            if(path.isEmpty()== false)
-            {
-                //文件操作
-                QFile file(path);
-                myFile = new QFile(path);
-                //打开文件，只读方式
-                bool isOK = file.open(QIODevice::ReadOnly);
-                if(isOK == true)
-                {
-                    op->setFile(path);
-                    QByteArray array;
-                    while(file.atEnd() == false)
-                    {
-                        //每次读一行
-                        array += file.readLine();
-                    }
-                    ui->commandTextEdit->setText(array);
-                }
-                else if(isOK == false){
-                    int ret = QMessageBox::warning(this,"Error","Please choose another readable file as the command file!",QMessageBox::Ok);
-                    switch(ret)
-                    {
-                        case QMessageBox::Ok:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                //关闭文件
-                file.close();
-             }
-
-            ui->lastButton->setEnabled(true);
-            ui->nextButton->setEnabled(true);
-            //ui->cleanButton->setEnabled(true);
-            ui->cleanCheckBox->setEnabled(false);
-
-            ui->playButton->setEnabled(true);
-            ui->resetButton->setEnabled(true);
-
-            ui->lcdNumber->display("0");
-            ui->lcdNumber->show();
-
-            if(path.isEmpty())
-            {
-                ui->cleanCheckBox->setEnabled(true);
-                ui->lcdNumber->hide();
-            }
-    });
-    connect(actSet,&QAction::triggered,
-            [=]()
+            "open", "../", "TXT(*.txt)");
+        //只有当文件不为空时才进行操作
+        if (path.isEmpty() == false)
         {
+            //文件操作
+            QFile file(path);
+            myFile = new QFile(path);
+            //打开文件，只读方式
+            bool isOK = file.open(QIODevice::ReadOnly);
+            if (isOK == true)
+            {
+                op->setFile(path);
+                QByteArray array;
+                while (file.atEnd() == false)
+                {
+                    //每次读一行
+                    array += file.readLine();
+                }
+                ui->commandTextEdit->setText(array);
+            }
+            else if (isOK == false) {
+                int ret = QMessageBox::warning(this, "Error", "Please choose another readable file as the command file!", QMessageBox::Ok);
+                switch (ret)
+                {
+                case QMessageBox::Ok:
+                    break;
+                default:
+                    break;
+                }
+            }
+            //关闭文件
+            file.close();
+        }
+
+        ui->lastButton->setEnabled(true);
+        ui->nextButton->setEnabled(true);
+        //ui->cleanButton->setEnabled(true);
+        ui->cleanCheckBox->setEnabled(false);
+
+        ui->playButton->setEnabled(true);
+        ui->resetButton->setEnabled(true);
+
+        ui->lcdNumber->display("0");
+        ui->lcdNumber->show();
+
+        if (path.isEmpty())
+        {
+            ui->cleanCheckBox->setEnabled(true);
+            ui->lcdNumber->hide();
+        }
+    });
+    connect(actSet, &QAction::triggered,
+        [=]()
+    {
         QString chooseCommand = "Setting now~";
         label->setText(chooseCommand);
         label->setStyleSheet("font-size:40px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
-            //这里弹出一个子窗口
-            //connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setRC);
+        //这里弹出一个子窗口
+        //connect(settingWidget,&SettingWidget::confirmSignal,this,&myMainWindow::setRC);
 
-            connect(settingWidget,&SettingWidget::sendRC,this,&myMainWindow::setRC);
-            connect(settingWidget,&SettingWidget::setInputPointsNumberSignal,
-                    [=](int n)
+        connect(settingWidget, &SettingWidget::sendRC, this, &myMainWindow::setRC);
+        connect(settingWidget, &SettingWidget::setInputPointsNumberSignal,
+            [=](int n)
+        {
+            inputPointsNum = n;
+            qDebug() << "inputPointsNum = " << inputPointsNum;
+        });
+
+        connect(settingWidget, &SettingWidget::sendInputPoint,
+            [=](QPoint p)
+        {
+            int size = inputPoints.size();
+            qDebug() << "size = " << size;
+            bool canStore = true;
+            for (int i = 0; i < size; i++)
             {
-                inputPointsNum = n;
-                qDebug()<<"inputPointsNum = "<<inputPointsNum;
-            });
-
-            connect(settingWidget,&SettingWidget::sendInputPoint,
-                    [=](QPoint p)
+                if (inputPoints[i] == p || p == outputPoint)
+                {
+                    qDebug() << i << " : inputPoints[" << i << "] = " << inputPoints[i];
+                    qDebug() << "p = " << p;
+                    settingWidget->sendDuplicate(true);
+                    canStore = false;
+                    qDebug() << "In Main Window Duplicate : p = " << p;
+                    break;
+                }
+            }
+            if (canStore)
             {
-                int size = inputPoints.size();
-                qDebug()<<"size = "<<size;
-                    bool canStore = true;
-                    for(int i=0;i<size;i++)
-                    {
-                        if(inputPoints[i]==p || p == outputPoint)
-                        {
-                            qDebug()<<i<<" : inputPoints["<<i<<"] = "<<inputPoints[i];
-                            qDebug()<<"p = "<<p;
-                            settingWidget->sendDuplicate(true);
-                            canStore = false;
-                            qDebug()<<"In Main Window Duplicate : p = "<<p;
-                            break;
-                        }
-                    }
-                    if(canStore)
-                    {
-                        settingWidget->sendDuplicate(false);
-                        inputPoints.push_back(p);
-                        qDebug()<<"In main window p = "<<p;
-                    }
-            });
-            settingWidget->exec();
+                settingWidget->sendDuplicate(false);
+                inputPoints.push_back(p);
+                qDebug() << "In main window p = " << p;
+            }
+        });
+        settingWidget->exec();
 
-            connect(settingWidget,&SettingWidget::setAgain,
-                    [=]()
-            {
-                inputPoints.clear();
-                qDebug()<<"Clear input points!";
-            });
+        connect(settingWidget, &SettingWidget::setAgain,
+            [=]()
+        {
+            inputPoints.clear();
+            qDebug() << "Clear input points!";
+        });
 
-        }
+    }
     );
 
-    connect(settingWidget,&SettingWidget::outputCheckSignal,
-            [=](int x, int y)
+    connect(settingWidget, &SettingWidget::outputCheckSignal,
+        [=](int x, int y)
     {
-       int size = inputPoints.size();
-        qDebug()<<"size = "<<size;
-//        for(unsigned int i=0;i<size;i++)
-//        {
-//            qDebug()<<inputPoints[i];
-//        }
-        if(size == 0)
+        int size = inputPoints.size();
+        qDebug() << "size = " << size;
+        //        for(unsigned int i=0;i<size;i++)
+        //        {
+        //            qDebug()<<inputPoints[i];
+        //        }
+        if (size == 0)
         {
             settingWidget->outIsOK(true);
-            qDebug()<<"Input points haven't entered, so it's OK.";
+            qDebug() << "Input points haven't entered, so it's OK.";
         }
         else
         {
             bool flag = true;
-            for(int i=0;i<size;i++)
+            for (int i = 0; i < size; i++)
             {
-                qDebug()<<"x = "<<x<<"y = "<<y;
-                qDebug()<<"inputPoints["<<i<<"]"<<inputPoints[i];
+                qDebug() << "x = " << x << "y = " << y;
+                qDebug() << "inputPoints[" << i << "]" << inputPoints[i];
 
 
-                if(inputPoints[i].x() == x && inputPoints[i].y() == y)
+                if (inputPoints[i].x() == x && inputPoints[i].y() == y)
                 {
                     flag = false;
-                    qDebug()<<"Output overlap with input!";
+                    qDebug() << "Output overlap with input!";
                     break;
                 }
             }
@@ -276,24 +280,24 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
         }
     }
-        );
+    );
 
 
-    connect(settingWidget,&SettingWidget::outputFinishedSignal,
-            [=](int x, int y)
+    connect(settingWidget, &SettingWidget::outputFinishedSignal,
+        [=](int x, int y)
     {
         outputPoint.setX(x);
         outputPoint.setY(y);
-        qDebug()<<"outputPoint = "<<outputPoint;
+        qDebug() << "outputPoint = " << outputPoint;
     });
 
     canShowMatrix = false;
 
-    connect(settingWidget,&SettingWidget::setAllDone,
-            [=]()
+    connect(settingWidget, &SettingWidget::setAllDone,
+        [=]()
     {
         canShowMatrix = true;
-        qDebug()<<"Set all done Updating!";
+        qDebug() << "Set all done Updating!";
         update();
         actCommand->setEnabled(true);
         ui->commandTextEdit->show();
@@ -313,43 +317,43 @@ myMainWindow::myMainWindow(QWidget *parent) :
         label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
         //sBar->addWidget(label);
 
-        for(int i = 0;i< inputPoints.size();i++)
+        for (int i = 0; i < inputPoints.size(); i++)
         {
             op->setEveryInput(inputPoints[i]);
-            qDebug()<<"In Main Window send av inputPoint to Operation!";
-            qDebug()<<"inputPoints["<<i<<"] = "<<inputPoints[i];
+            qDebug() << "In Main Window send av inputPoint to Operation!";
+            qDebug() << "inputPoints[" << i << "] = " << inputPoints[i];
         }
         op->setTheOut(outputPoint);
-        qDebug()<<"In Main Window send the outputPoint to Operation!";
-        qDebug()<<"outputPoint = "<<outputPoint;
+        qDebug() << "In Main Window send the outputPoint to Operation!";
+        qDebug() << "outputPoint = " << outputPoint;
     });
 
 
-    connect(op,&Operation::cannotShowCommand,
-            [=]()
+    connect(op, &Operation::cannotShowCommand,
+        [=]()
     {
         ui->commandTextEdit->clear();
         ui->commandTextEdit->setText("Please choose a valid Command File!");
-        int ret = QMessageBox::warning(this,"Error","[Invalid Command File] Please choose a valid Command File next time and restart the application! It will close if you click OK!",QMessageBox::Ok);
-        switch(ret)
+        int ret = QMessageBox::warning(this, "Error", "[Invalid Command File] Please choose a valid Command File next time and restart the application! It will close if you click OK!", QMessageBox::Ok);
+        switch (ret)
         {
-            case QMessageBox::Ok:
-                haveToClose = true;
-                this->close();
-                break;
-            default:
-                break;
+        case QMessageBox::Ok:
+            haveToClose = true;
+            this->close();
+            break;
+        default:
+            break;
         }
     });
 
     timer = new QTimer(this);
-    connect(timer,&QTimer::timeout,
-            [=]()
+    connect(timer, &QTimer::timeout,
+        [=]()
     {
-        if(!isClean)
+        if (!isClean)
         {
             now++;
-            if(now<0 || now>op->wholeTime)
+            if (now<0 || now>op->wholeTime)
             {
                 isEnd = true;
                 drawNext = false;
@@ -358,14 +362,14 @@ myMainWindow::myMainWindow(QWidget *parent) :
             else {
                 isEnd = false;
                 drawNext = true;
-                qDebug()<<"Next updating!";
+                qDebug() << "Next updating!";
                 update();
                 play();
-                qDebug()<<"now: "<<now;
+                qDebug() << "now: " << now;
                 showJudge();
 
             }
-            if(now >= op->wholeTime)
+            if (now >= op->wholeTime)
             {
                 isEnd = true;
                 timer->stop();
@@ -379,30 +383,27 @@ myMainWindow::myMainWindow(QWidget *parent) :
         }
         else {
 
-            qDebug()<<"Is cleaning: "<<isClean;
+            qDebug() << "Is cleaning: " << isClean;
             cleanNow++;
-            if(cleanNow<0 || cleanNow>op->wholeTime)
+            if (cleanNow<0 || cleanNow>op->wholeCleanTime)
             {
-                isEnd = true;
+                isCleanEnd = true;
                 drawNext = false;
                 cleanNow--;
-            }
-            else {
-                isEnd = false;
-                drawNext = true;
-                qDebug()<<"Next updating!";
-                update();
-                play();
-                qDebug()<<"cleanNow: "<<cleanNow;
-            }
-            if(cleanNow >= op->wholeCleanTime)
-            {
-                isEnd = true;
                 timer->stop();
                 ui->nextButton->setEnabled(true);
                 ui->lastButton->setEnabled(true);
                 ui->resetButton->setEnabled(true);
                 ui->playButton->setEnabled(true);
+                update();
+            }
+            else {
+                isCleanEnd = false;
+                drawNext = true;
+                qDebug() << "Next updating!";
+                update();
+                play();
+                qDebug() << "cleanNow: " << cleanNow;
             }
 
             ui->lcdNumber->display(cleanNow);
@@ -410,8 +411,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     });
 
-    connect(ui->cleanCheckBox,&QCheckBox::isChecked,
-            [=]()
+    connect(ui->cleanCheckBox, &QCheckBox::isChecked,
+        [=]()
     {
         QString chooseCommand = "Please choose your Command file.";
         //label->show();
@@ -420,12 +421,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
         //sBar->addWidget(label);
     });
 
-    connect(op,&Operation::neednotClean,
+    connect(op,&Operation::sendWholeCleanTimeSignal,
             [=]()
     {
-        QMessageBox::information(this, "Inform", "You don't need clean mode here!", QMessageBox::Ok);
-        ui->cleanCheckBox->hide();
-        ui->limitedCheckBox->hide();
+        wholeCleanTime = op->wholeCleanTime;
     });
 
 }
@@ -438,18 +437,18 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
     //反锯齿
     p.setRenderHint(QPainter::Antialiasing, true);
-    p.drawPixmap(0,0,width(),height(),QPixmap(":/image/image/pinback.jpg"));
+    p.drawPixmap(0, 0, width(), height(), QPixmap(":/image/image/pinback.jpg"));
     //设置屏幕透明度
     setWindowOpacity(0.96);
 
-    QPoint center = QPoint(width()/2,height()/2);
+    QPoint center = QPoint(width() / 2, height() / 2);
 
-    if(canShowMatrix)
+    if (canShowMatrix)
     {
         //定义画笔
         QPen pen;
         pen.setWidth(2);//设置线宽
-        pen.setColor(QColor(220,159,180));
+        pen.setColor(QColor(220, 159, 180));
         pen.setStyle(Qt::DashDotDotLine);
 
         //把画笔交给画家
@@ -457,115 +456,115 @@ void myMainWindow::paintEvent(QPaintEvent *)
 
         //创建画刷对象
         QBrush brush;
-        brush.setColor(QColor(255,255,255,98));//设置颜色
+        brush.setColor(QColor(255, 255, 255, 98));//设置颜色
         brush.setStyle(Qt::SolidPattern);//设置样式
         //把画刷交给画家
         p.setBrush(brush);
-        int x = width()-40;
-        int y = height()-70;
-        int x2 = 3*width()/5;
-        int y2 = y-60;
+        int x = width() - 40;
+        int y = height() - 70;
+        int x2 = 3 * width() / 5;
+        int y2 = y - 60;
 
         //画背景矩形
-        p.drawRect(20,50,x,y);
+        p.drawRect(20, 50, x, y);
 
         //画矩阵框
         pen.setWidth(5);//设置线宽
-        pen.setColor(QColor(220,159,180));
+        pen.setColor(QColor(220, 159, 180));
         pen.setStyle(Qt::SolidLine);
         p.setPen(pen);
-        brush.setColor(QColor(255,255,255));//设置颜色
+        brush.setColor(QColor(255, 255, 255));//设置颜色
         brush.setStyle(Qt::SolidPattern);//设置样式
         p.setBrush(brush);
 
         //对坐标做平移变换
-        QPoint origin(50,80);
-        p.translate(origin.x(),origin.y());
-        p.drawRect(0,0,x2,y2);
+        QPoint origin(50, 80);
+        p.translate(origin.x(), origin.y());
+        p.drawRect(0, 0, x2, y2);
 
-        center.setX(x2/2);
-        center.setY(y2/2);
+        center.setX(x2 / 2);
+        center.setY(y2 / 2);
         //qDebug()<<"center = "<<center;
 
         //qDebug()<<"row = "<<row;
         //qDebug()<<"col = "<<col;
         int unit = 50;
-        int mwidth = col*unit;
+        int mwidth = col * unit;
         //qDebug()<<"mwidth = "<<mwidth;
-        int mheight = row*unit;
+        int mheight = row * unit;
         //qDebug()<<"mheight = "<<mheight;
         pen.setWidth(3);//设置线宽
-        pen.setColor(QColor(245,150,170));
+        pen.setColor(QColor(245, 150, 170));
         pen.setStyle(Qt::SolidLine);
         p.setPen(pen);
         //一定要是center,把坐标画对
         p.drawPoint(center);
-        p.drawRect(center.x()-mwidth/2,center.y()-mheight/2,mwidth,mheight);
-        for(int i=1;i<col;i++)
+        p.drawRect(center.x() - mwidth / 2, center.y() - mheight / 2, mwidth, mheight);
+        for (int i = 1; i < col; i++)
         {
             //qDebug()<<"center.x()-mwidth/2+i*unit = "<<center.x()-mwidth/2+i*unit;
-            p.drawLine(center.x()-mwidth/2+i*unit,center.y()-mheight/2,center.x()-mwidth/2+i*unit,center.y()+mheight/2);
+            p.drawLine(center.x() - mwidth / 2 + i * unit, center.y() - mheight / 2, center.x() - mwidth / 2 + i * unit, center.y() + mheight / 2);
         }
-        for(int i=1;i<row;i++)
+        for (int i = 1; i < row; i++)
         {
-            p.drawLine(center.x()-mwidth/2,center.y()-mheight/2+i*unit,center.x()+mwidth/2,center.y()-mheight/2+i*unit);
+            p.drawLine(center.x() - mwidth / 2, center.y() - mheight / 2 + i * unit, center.x() + mwidth / 2, center.y() - mheight / 2 + i * unit);
         }
 
         //然后以左下角为原点
-        nowOrigin = QPoint(50+center.x()-mwidth/2,80+center.y()+mheight/2);
-        p.translate(center.x()-mwidth/2,center.y()+mheight/2);
+        nowOrigin = QPoint(50 + center.x() - mwidth / 2, 80 + center.y() + mheight / 2);
+        p.translate(center.x() - mwidth / 2, center.y() + mheight / 2);
 
         //开始画输出口
         pen.setWidth(3);//设置线宽
-        pen.setColor(QColor(245,150,170));
+        pen.setColor(QColor(245, 150, 170));
         pen.setStyle(Qt::DashLine);
-        brush.setColor(QColor(219,77,109));//设置颜色
+        brush.setColor(QColor(219, 77, 109));//设置颜色
         brush.setStyle(Qt::SolidPattern);//设置样式
 
         p.setPen(pen);
         p.setBrush(brush);
-        if(outputPoint.y()==1 && outputPoint.x() < col)
+        if (outputPoint.y() == 1 && outputPoint.x() < col)
         {
-            p.drawRect((outputPoint.x()-1)*unit,0-(outputPoint.y()-2)*unit+unit/8,unit,-9*unit/8);
+            p.drawRect((outputPoint.x() - 1)*unit, 0 - (outputPoint.y() - 2)*unit + unit / 8, unit, -9 * unit / 8);
         }
-        else if(outputPoint.y()==row && outputPoint.x() <= col)
+        else if (outputPoint.y() == row && outputPoint.x() <= col)
         {
-            p.drawRect((outputPoint.x()-1)*unit,0-(outputPoint.y())*unit,unit,-9*unit/8);
+            p.drawRect((outputPoint.x() - 1)*unit, 0 - (outputPoint.y())*unit, unit, -9 * unit / 8);
         }
-        else if(outputPoint.x()==1 && outputPoint.y() < row)
+        else if (outputPoint.x() == 1 && outputPoint.y() < row)
         {
-            p.drawRect((outputPoint.x()-2)*unit-unit/8,0-(outputPoint.y()-1)*unit,9*unit/8,-unit);
+            p.drawRect((outputPoint.x() - 2)*unit - unit / 8, 0 - (outputPoint.y() - 1)*unit, 9 * unit / 8, -unit);
         }
-        else if(outputPoint.x()==col && outputPoint.y() < row)
+        else if (outputPoint.x() == col && outputPoint.y() < row)
         {
-            p.drawRect((outputPoint.x())*unit,0-(outputPoint.y()-1)*unit,9*unit/8,-unit);
+            p.drawRect((outputPoint.x())*unit, 0 - (outputPoint.y() - 1)*unit, 9 * unit / 8, -unit);
         }
 
         //画输入端口
         pen.setWidth(3);//设置线宽
-        pen.setColor(QColor(245,150,170));
+        pen.setColor(QColor(245, 150, 170));
         pen.setStyle(Qt::DashLine);
-        brush.setColor(QColor(254,223,225));//设置颜色
+        brush.setColor(QColor(254, 223, 225));//设置颜色
         brush.setStyle(Qt::SolidPattern);//设置样式
         p.setPen(pen);
         p.setBrush(brush);
-        for(int i=0;i<inputPoints.size();i++)
+        for (int i = 0; i < inputPoints.size(); i++)
         {
-            if(inputPoints[i].y()==1 && inputPoints[i].x() < col)
+            if (inputPoints[i].y() == 1 && inputPoints[i].x() < col)
             {
-                p.drawRect((inputPoints[i].x()-1)*unit,0-(inputPoints[i].y()-2)*unit+unit/8,unit,-9*unit/8);
+                p.drawRect((inputPoints[i].x() - 1)*unit, 0 - (inputPoints[i].y() - 2)*unit + unit / 8, unit, -9 * unit / 8);
             }
-            else if(inputPoints[i].y()==row && inputPoints[i].x() <= col)
+            else if (inputPoints[i].y() == row && inputPoints[i].x() <= col)
             {
-                p.drawRect((inputPoints[i].x()-1)*unit,0-(inputPoints[i].y())*unit,unit,-9*unit/8);
+                p.drawRect((inputPoints[i].x() - 1)*unit, 0 - (inputPoints[i].y())*unit, unit, -9 * unit / 8);
             }
-            else if(inputPoints[i].x()==1 && inputPoints[i].y() < row)
+            else if (inputPoints[i].x() == 1 && inputPoints[i].y() < row)
             {
-                p.drawRect((inputPoints[i].x()-2)*unit-unit/8,0-(inputPoints[i].y()-1)*unit,9*unit/8,-unit);
+                p.drawRect((inputPoints[i].x() - 2)*unit - unit / 8, 0 - (inputPoints[i].y() - 1)*unit, 9 * unit / 8, -unit);
             }
-            else if(inputPoints[i].x()==col && inputPoints[i].y() < row)
+            else if (inputPoints[i].x() == col && inputPoints[i].y() < row)
             {
-                p.drawRect((inputPoints[i].x())*unit,0-(inputPoints[i].y()-1)*unit,9*unit/8,-unit);
+                p.drawRect((inputPoints[i].x())*unit, 0 - (inputPoints[i].y() - 1)*unit, 9 * unit / 8, -unit);
             }
         }
 
@@ -657,11 +656,12 @@ void myMainWindow::paintEvent(QPaintEvent *)
                     {
                         if (op->cleanStatus[cleanNow].comb[i][j].hasWashing)
                         {
-                            for (int k = 0; k < op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size(); k++)
+                            //for (int k = 0; k < op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size(); k++)
                             {
 
                                 brush.setColor(washColor);
                                 pen.setColor(QColor(137, 207, 240, 255));
+                                pen.setStyle(Qt::SolidLine);
                                 p.setPen(pen);
                                 p.setBrush(brush);
                                 p.drawEllipse((i - 1)*unit + unit / 2 - lD / 2, 0 - (j - 1)*unit - unit / 2 + lD / 2, lD, -lD);
@@ -733,162 +733,218 @@ void myMainWindow::paintEvent(QPaintEvent *)
                 label->setText(comStr);
                 label->setStyleSheet("font-size:30px;font-weight:bold;font-family:Calibri;background-color:rgba(255,255,255,200)");
             }
+            if (isCleanEnd)
+            {
+                qDebug() << "Number!!!";
+                for (int i = 1; i <= col; i++)
+                {
+                    for (int j = 1; j <= row; j++)
+                    {
+                        int textD = 50;
+                        brush.setColor(QColor(255, 255, 255, 200));
+                        p.setPen(Qt::NoPen);
+                        p.setBrush(brush);
+                        p.drawRect((i - 1)*unit + unit / 2 - textD / 2, 0 - (j - 1)*unit - unit / 2 + textD / 2, textD, -textD);
+
+
+                        int count = pollutedNum(i, j);
+                        QFont font;
+                        font.setPointSize(5);
+                        font.setPointSize(20);
+                        font.setFamily("Microsoft YaHei");
+                        p.setFont(font);
+
+                        QString numText = QString::number(count);
+                        pen.setColor(QColor(142, 53, 74, 200));
+                        p.setPen(pen);
+                        p.setBrush(Qt::NoBrush);
+                        QRect rec = QRect((i - 1)*unit + unit / 2 - textD / 2, 0 - (j - 1)*unit - unit / 2 + textD / 2, textD, -textD);
+                        p.drawText(rec, Qt::AlignCenter, numText);
+                    }
+
+                }
+            }
 
         }
 
-        if(!isClean)
+        if (!isClean)
         {
-            if(drawNext || drawLast)
+            if (drawNext || drawLast)
             {
                 brush.setStyle(Qt::SolidPattern);//设置样式
-                for(int i=1;i<=col;i++)
-                 {
-                      for(int j=1;j<=row;j++)
-                      {
-                          if(op->status[now].comb[i][j].pollutedSet.size()>0)
-                          {
-                              for(int k =0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
-                              {
-                                  //把轨迹的透明度调低
-                                  QColor trace = QColor(op->status[now].comb[i][j].pollutedSet[k].red(),op->status[now].comb[i][j].pollutedSet[k].green(),op->status[now].comb[i][j].pollutedSet[k].blue(),150);
-                                  brush.setColor(trace);
-                                  p.setPen(Qt::NoPen);
-                                  p.setBrush(brush);
-                                  int littleD = 8;
-                                  int cnt = 10;
-                                  while(cnt>0)
-                                  {
-                                      int x = qrand()%(50-littleD);
-                                      int y = qrand()%(50-littleD);
-                                      p.drawEllipse((i-1)*unit+x,0-(j-1)*unit-y,littleD,-littleD);
-                                      cnt--;
-                                  }
+                for (int i = 1; i <= col; i++)
+                {
+                    for (int j = 1; j <= row; j++)
+                    {
+                        if (op->status[now].comb[i][j].pollutedSet.size() > 0)
+                        {
+                            for (int k = 0; k < op->status[now].comb[i][j].pollutedSet.size(); k++)
+                            {
+                                //把轨迹的透明度调低
+                                QColor trace = QColor(op->status[now].comb[i][j].pollutedSet[k].red(), op->status[now].comb[i][j].pollutedSet[k].green(), op->status[now].comb[i][j].pollutedSet[k].blue(), 150);
+                                brush.setColor(trace);
+                                p.setPen(Qt::NoPen);
+                                p.setBrush(brush);
+                                int littleD = 8;
+                                int cnt = 10;
+                                while (cnt > 0)
+                                {
+                                    int x = qrand() % (50 - littleD);
+                                    int y = qrand() % (50 - littleD);
+                                    p.drawEllipse((i - 1)*unit + x, 0 - (j - 1)*unit - y, littleD, -littleD);
+                                    cnt--;
+                                }
 
-                              }
+                            }
 
-                          }
-                           if(!op->status[now].comb[i][j].isEmpty)
-                           {
-                               brush.setColor(op->status[now].comb[i][j].dropColor);//设置颜色
-                               p.setBrush(brush);
-                               pen.setColor(QColor(219,77,109));
-                               pen.setWidth(3);
-                               pen.setStyle(Qt::SolidLine);
-                               p.setPen(pen);
-                               if(op->status[now].comb[i][j].isLongDrop)
-                               {
-                                   //qDebug()<<"IsLong!";
-                                   if(op->status[now].comb[i][j].isFat)
-                                   {
-                                        //qDebug()<<"IsFat!";
-                                        p.drawEllipse((i-1)*unit+unit/2-longD/2,0-(j-1)*unit-unit/2+shortD/2,longD,-shortD);
-                                   }
-                                   else {
-                                       //qDebug()<<"IsThin!";
-                                        p.drawEllipse((i-1)*unit+unit/2-shortD/2,0-(j-1)*unit-unit/2+longD/2,shortD,-longD);
-                                   }
+                        }
+                        if (!op->status[now].comb[i][j].isEmpty)
+                        {
+                            brush.setColor(op->status[now].comb[i][j].dropColor);//设置颜色
+                            p.setBrush(brush);
+                            pen.setColor(QColor(219, 77, 109));
+                            pen.setWidth(3);
+                            pen.setStyle(Qt::SolidLine);
+                            p.setPen(pen);
+                            if (op->status[now].comb[i][j].isLongDrop)
+                            {
+                                //qDebug()<<"IsLong!";
+                                if (op->status[now].comb[i][j].isFat)
+                                {
+                                    //qDebug()<<"IsFat!";
+                                    p.drawEllipse((i - 1)*unit + unit / 2 - longD / 2, 0 - (j - 1)*unit - unit / 2 + shortD / 2, longD, -shortD);
+                                }
+                                else {
+                                    //qDebug()<<"IsThin!";
+                                    p.drawEllipse((i - 1)*unit + unit / 2 - shortD / 2, 0 - (j - 1)*unit - unit / 2 + longD / 2, shortD, -longD);
+                                }
 
-                               }
-                               else if(op->status[now].comb[i][j].isBigger)
-                               {
-                                   //qDebug()<<"in Main draw Bigger!";
-                                   p.drawEllipse((i-1)*unit+unit/2-lD/2,0-(j-1)*unit-unit/2+lD/2,lD,-lD);
-                               }
-                               else if(op->status[now].comb[i][j].isSmaller)
-                               {
-                                   p.drawEllipse((i-1)*unit+unit/2-sD/2,0-(j-1)*unit-unit/2+sD/2,sD,-sD);
-                               }
-                               else {
-                                   p.drawEllipse((i-1)*unit+unit/2-mD/2,0-(j-1)*unit-unit/2+mD/2,mD,-mD);
-                               }
+                            }
+                            else if (op->status[now].comb[i][j].isBigger)
+                            {
+                                //qDebug()<<"in Main draw Bigger!";
+                                p.drawEllipse((i - 1)*unit + unit / 2 - lD / 2, 0 - (j - 1)*unit - unit / 2 + lD / 2, lD, -lD);
+                            }
+                            else if (op->status[now].comb[i][j].isSmaller)
+                            {
+                                p.drawEllipse((i - 1)*unit + unit / 2 - sD / 2, 0 - (j - 1)*unit - unit / 2 + sD / 2, sD, -sD);
+                            }
+                            else {
+                                p.drawEllipse((i - 1)*unit + unit / 2 - mD / 2, 0 - (j - 1)*unit - unit / 2 + mD / 2, mD, -mD);
+                            }
 
-                           }
+                        }
 
-                      }
-                 }
+                    }
+                }
+            }
+
+            if (isEnd)
+            {
+                for (int i = 1; i <= col; i++)
+                {
+                    for (int j = 1; j <= row; j++)
+                    {
+                        int textD = 50;
+                        brush.setColor(QColor(255, 255, 255, 200));
+                        p.setPen(Qt::NoPen);
+                        p.setBrush(brush);
+                        p.drawRect((i - 1)*unit + unit / 2 - textD / 2, 0 - (j - 1)*unit - unit / 2 + textD / 2, textD, -textD);
+
+
+                        int count = pollutedNum(i, j);
+                        QFont font;
+                        font.setPointSize(5);
+                        font.setPointSize(20);
+                        font.setFamily("Microsoft YaHei");
+                        p.setFont(font);
+
+                        QString numText = QString::number(count);
+                        pen.setColor(QColor(142, 53, 74, 200));
+                        p.setPen(pen);
+                        p.setBrush(Qt::NoBrush);
+                        QRect rec = QRect((i - 1)*unit + unit / 2 - textD / 2, 0 - (j - 1)*unit - unit / 2 + textD / 2, textD, -textD);
+                        p.drawText(rec, Qt::AlignCenter, numText);
+                    }
+                }
             }
         }
-
-
-        if(isEnd)
-        {
-            for(int i=1;i<=col;i++)
-             {
-                  for(int j=1;j<=row;j++)
-                  {
-                      int textD = 50;
-                      brush.setColor(QColor(255,255,255,200));
-                      p.setPen(Qt::NoPen);
-                      p.setBrush(brush);
-                      p.drawRect((i-1)*unit+unit/2-textD/2,0-(j-1)*unit-unit/2+textD/2,textD,-textD);
-
-
-                      int count = pollutedNum(i,j);
-                      QFont font;
-                      font.setPointSize(5);
-                      font.setPointSize(20);
-                      font.setFamily("Microsoft YaHei");
-                      p.setFont(font);
-
-                      QString numText = QString::number(count);
-                      pen.setColor(QColor(142,53,74,200));
-                      p.setPen(pen);
-                      p.setBrush(Qt::NoBrush);
-                      QRect rec= QRect((i-1)*unit+unit/2-textD/2,0-(j-1)*unit-unit/2+textD/2,textD,-textD);
-                      p.drawText(rec,Qt::AlignCenter,numText);
-                  }
-             }
-        }
-
     }
     p.end();
 }
 
 void myMainWindow::closeEvent(QCloseEvent *event)
 {
-    if(haveToClose) return;
-    int ret = QMessageBox::question(this,"question","Do you want to quit?",QMessageBox::Yes|QMessageBox::No);
-    switch(ret)
+    if (haveToClose) return;
+    int ret = QMessageBox::question(this, "question", "Do you want to quit?", QMessageBox::Yes | QMessageBox::No);
+    switch (ret)
     {
-        case QMessageBox::Yes:
-            break;
-        case QMessageBox::No:
-            event->ignore();
-            break;
-        default:
-            break;
+    case QMessageBox::Yes:
+        break;
+    case QMessageBox::No:
+        event->ignore();
+        break;
+    default:
+        break;
     }
 }
 
 void myMainWindow::play()
 {
-    if(op->status[now].isMm)
+    if (!isClean)
     {
-        //qDebug()<<"Is moving or mixing!";
-        mmPlayer->play();
+        if (op->status[now].isMm)
+        {
+            //qDebug()<<"Is moving or mixing!";
+            mmPlayer->play();
+        }
+        if (op->status[now].isAp)
+        {
+            //qDebug()<<"Is apart!";
+            apPlayer->play();
+        }
+        if (op->status[now].isMer)
+        {
+            //qDebug()<<now<<": now is mergeSuccess!";
+            merPlayer->play();
+        }
+        if (op->status[now].isStr)
+        {
+            //qDebug()<<"Is streching!";
+            strPlayer->play();
+        }
     }
-    if(op->status[now].isAp)
+    else
     {
-        //qDebug()<<"Is apart!";
-        apPlayer->play();
+        if (op->cleanStatus[cleanNow].isMm)
+        {
+            //qDebug()<<"Is moving or mixing!";
+            mmPlayer->play();
+        }
+        if (op->cleanStatus[cleanNow].isAp)
+        {
+            //qDebug()<<"Is apart!";
+            apPlayer->play();
+        }
+        if (op->cleanStatus[cleanNow].isMer)
+        {
+            //qDebug()<<now<<": now is mergeSuccess!";
+            merPlayer->play();
+        }
+        if (op->cleanStatus[cleanNow].isStr)
+        {
+            //qDebug()<<"Is streching!";
+            strPlayer->play();
+        }
     }
-    if(op->status[now].isMer)
-    {
-        //qDebug()<<now<<": now is mergeSuccess!";
-        merPlayer->play();
-    }
-    if(op->status[now].isStr)
-    {
-        //qDebug()<<"Is streching!";
-        strPlayer->play();
-    }
+
 }
 
 void myMainWindow::mousePressEvent(QMouseEvent *e)
 {
-    if(ui->cleanCheckBox->isEnabled()==false || ui->cleanCheckBox->isChecked()==false)
+    if (ui->cleanCheckBox->isEnabled() == false || ui->cleanCheckBox->isChecked() == false)
     {
-        qDebug()<<"CannotSet Now, it's already begin!";
+        qDebug() << "CannotSet Now, it's already begin!";
         return;
     }
 
@@ -896,48 +952,48 @@ void myMainWindow::mousePressEvent(QMouseEvent *e)
 
     QPoint curPoint;
 
-    curPoint.setX(e->pos().x()-nowOrigin.x());
-    curPoint.setY(e->pos().y()-nowOrigin.y());
+    curPoint.setX(e->pos().x() - nowOrigin.x());
+    curPoint.setY(e->pos().y() - nowOrigin.y());
 
     //qDebug()<<"curPoint = "<<curPoint;
 
     QPoint** centers;
-    centers = new QPoint*[col+1];
-    for(int i=0;i<=col;i++)
+    centers = new QPoint*[col + 1];
+    for (int i = 0; i <= col; i++)
     {
-        centers[i] = new QPoint[row+1];
+        centers[i] = new QPoint[row + 1];
     }
 
-    for(int i=1;i<=col;i++)
+    for (int i = 1; i <= col; i++)
     {
-        for(int j=1;j<=row;j++)
+        for (int j = 1; j <= row; j++)
         {
-            centers[i][j]=QPoint((i-1)*unit+unit/2,0-(j-1)*unit-unit/2);
+            centers[i][j] = QPoint((i - 1)*unit + unit / 2, 0 - (j - 1)*unit - unit / 2);
             //qDebug()<<"centers["<<i<<"]["<<j<<"]"<<centers[i][j];
         }
     }
 
-    if(e->button() == Qt::RightButton)
+    if (e->button() == Qt::RightButton)
     {
-        qDebug()<<"RightButton!";
-        for(int t = 0;t <= op->wholeTime;t++)
+        qDebug() << "RightButton!";
+        for (int t = 0; t <= op->wholeTime; t++)
         {
-            for(int i=1;i<=col;i++)
+            for (int i = 1; i <= col; i++)
             {
-                for(int j=1;j<=row;j++)
+                for (int j = 1; j <= row; j++)
                 {
-                    if(qAbs(centers[i][j].x()-curPoint.x())<unit/2 &&qAbs(centers[i][j].y()-curPoint.y())<unit/2)
+                    if (qAbs(centers[i][j].x() - curPoint.x()) < unit / 2 && qAbs(centers[i][j].y() - curPoint.y()) < unit / 2)
                     {
-                        qDebug()<<"Clicked!";
+                        qDebug() << "Clicked!";
                         //curBlock = QPoint(i,j);
                         //qDebug()<<"curBlock = "<<curBlock;
-                        if(op->status[t].comb[i][j].isBlock)
+                        if (op->status[t].comb[i][j].isBlock)
                         {
-                            qDebug()<<"op->status["<<t<<"].comb["<<i<<"]["<<j<<"]is ALREADY Blocked!";
-                            op->status[t].comb[i][j].isBlock=false;
+                            qDebug() << "op->status[" << t << "].comb[" << i << "][" << j << "]is ALREADY Blocked!";
+                            op->status[t].comb[i][j].isBlock = false;
                         }
-                        else{
-                            qDebug()<<"op->status["<<t<<"].comb["<<i<<"]["<<j<<"]is NEW Blocked!";
+                        else {
+                            qDebug() << "op->status[" << t << "].comb[" << i << "][" << j << "]is NEW Blocked!";
                             op->status[t].comb[i][j].isBlock = true;
                         }
 
@@ -964,7 +1020,7 @@ void myMainWindow::setRC(int r, int c)
     col = c;
     op->rowNum = r;
     op->colNum = c;
-    qDebug()<<"setRC!"<<"row = "<<row<<" col = "<<col;
+    qDebug() << "setRC!" << "row = " << row << " col = " << col;
 }
 
 void myMainWindow::on_lastButton_clicked()
@@ -973,10 +1029,10 @@ void myMainWindow::on_lastButton_clicked()
     cannotSet = true;
     ui->cleanCheckBox->setEnabled(false);
     ui->limitedCheckBox->setEnabled(false);
-    if(!isClean)
+    if (!isClean)
     {
         now--;
-        if(now<0 || now>op->wholeTime)
+        if (now<0 || now>op->wholeTime)
         {
             drawLast = false;
             now++;
@@ -984,17 +1040,17 @@ void myMainWindow::on_lastButton_clicked()
         else {
             isEnd = false;
             drawLast = true;
-            qDebug()<<"Last updating!";
+            qDebug() << "Last updating!";
 
             play();
-            qDebug()<<"now: "<<now;
+            qDebug() << "now: " << now;
         }
         update();
         ui->lcdNumber->display(now);
     }
     else {
         cleanNow--;
-        if(cleanNow<0 || cleanNow>op->wholeCleanTime)
+        if (cleanNow<0 || cleanNow>op->wholeCleanTime)
         {
             drawLast = false;
             cleanNow++;
@@ -1002,10 +1058,10 @@ void myMainWindow::on_lastButton_clicked()
         else {
             isCleanEnd = false;
             drawLast = true;
-            qDebug()<<"Last updating!";
+            qDebug() << "Last updating!";
 
             play();
-            qDebug()<<"now: "<<cleanNow;
+            qDebug() << "now: " << cleanNow;
         }
         update();
         ui->lcdNumber->display(cleanNow);
@@ -1015,7 +1071,7 @@ void myMainWindow::on_lastButton_clicked()
 
 void myMainWindow::on_nextButton_clicked()
 {
-    qDebug()<<"Next!";
+    qDebug() << "Next!";
     //一旦开始玩了就不能进行清洗模式设置了
     cannotSet = true;
     //canJudge = true;
@@ -1047,15 +1103,17 @@ void myMainWindow::on_nextButton_clicked()
     else
     {
         cleanNow++;
-        qDebug()<<"cleanNow: "<<cleanNow;
-        qDebug()<<"op->wholeCleanTime: "<<op->wholeCleanTime;
+        qDebug() << "cleanNow: " << cleanNow;
+        qDebug() << "op->wholeCleanTime: " << op->wholeCleanTime;
         if (cleanNow<0 || cleanNow>op->wholeCleanTime)
         {
             isCleanEnd = true;
+            qDebug() << "isCleanEnd: " << isCleanEnd;
             drawNext = false;
             cleanNow--;
         }
         else {
+
             isCleanEnd = false;
             drawNext = true;
             qDebug() << "Next updating!";
@@ -1073,11 +1131,11 @@ void myMainWindow::on_nextButton_clicked()
 
 void myMainWindow::on_limitedCheckBox_stateChanged(int state)
 {
-    if(state == Qt::Checked)
+    if (state == Qt::Checked)
     {
         op->isLimited = true;
     }
-    else if(state == Qt::Unchecked)
+    else if (state == Qt::Unchecked)
     {
         op->isLimited = false;
     }
@@ -1085,26 +1143,26 @@ void myMainWindow::on_limitedCheckBox_stateChanged(int state)
 
 void myMainWindow::on_cleanCheckBox_stateChanged(int state)
 {
-    if(state == Qt::Checked)
+    if (state == Qt::Checked)
     {
         bool isTaken = false;
-        if((outputPoint.x() == col && outputPoint.y() == row)||(outputPoint.x() == 1 && outputPoint.y() == 1))
+        if ((outputPoint.x() == col && outputPoint.y() == row) || (outputPoint.x() == 1 && outputPoint.y() == 1))
         {
             isTaken = true;
         }
         else {
-            for(int i=0;i<inputPoints.size();i++)
+            for (int i = 0; i < inputPoints.size(); i++)
             {
-                if((inputPoints[i].x()==col && inputPoints[i].y()==row)||(inputPoints[i].x()==1 && inputPoints[i].y()==1))
+                if ((inputPoints[i].x() == col && inputPoints[i].y() == row) || (inputPoints[i].x() == 1 && inputPoints[i].y() == 1))
                 {
                     isTaken = true;
                     break;
                 }
             }
         }
-        if(isTaken)
+        if (isTaken)
         {
-            int ret = QMessageBox::warning(this,"Error","Clean point is taken! Can't start clean model!",QMessageBox::Ok);
+            int ret = QMessageBox::warning(this, "Error", "Clean point is taken! Can't start clean model!", QMessageBox::Ok);
             switch (ret) {
             case QMessageBox::Ok:
                 ui->cleanCheckBox->setCheckState(Qt::Unchecked);
@@ -1120,7 +1178,7 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
         op->isClean = true;
         isClean = true;
     }
-    else if(state == Qt::Unchecked)
+    else if (state == Qt::Unchecked)
     {
         ui->limitedCheckBox->setEnabled(false);
         op->isClean = false;
@@ -1131,7 +1189,7 @@ void myMainWindow::on_cleanCheckBox_stateChanged(int state)
 
 void myMainWindow::on_resetButton_clicked()
 {
-    if(!isClean)
+    if (!isClean)
     {
         now = 0;
         isEnd = false;
@@ -1163,12 +1221,12 @@ void myMainWindow::on_playButton_clicked()
 
     timer->start(1500);
 
-    if(!isClean)
+    if (!isClean)
     {
-        qDebug()<<"now = "<<now;
+        qDebug() << "now = " << now;
     }
     else {
-        qDebug()<<"cleanNow = "<<cleanNow;
+        qDebug() << "cleanNow = " << cleanNow;
     }
 
     ui->nextButton->setEnabled(false);
@@ -1181,14 +1239,14 @@ void myMainWindow::on_playButton_clicked()
 int myMainWindow::pollutedNum(int i, int j)
 {
     int count;
-    if(!isClean)
+    if (!isClean)
     {
         count = op->status[now].comb[i][j].pollutedSet.size();
-        for(int k=0;k<op->status[now].comb[i][j].pollutedSet.size();k++)
+        for (int k = 0; k < op->status[now].comb[i][j].pollutedSet.size(); k++)
         {
-            for(int t = 0;t<k;t++)
+            for (int t = 0; t < k; t++)
             {
-                if(op->status[now].comb[i][j].pollutedSet[k] == op->status[now].comb[i][j].pollutedSet[t])
+                if (op->status[now].comb[i][j].pollutedSet[k] == op->status[now].comb[i][j].pollutedSet[t])
                 {
                     count--;
                     break;
@@ -1198,11 +1256,11 @@ int myMainWindow::pollutedNum(int i, int j)
     }
     else {
         count = op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size();
-        for(int k=0;k<op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size();k++)
+        for (int k = 0; k < op->cleanStatus[cleanNow].comb[i][j].pollutedSet.size(); k++)
         {
-            for(int t = 0;t<k;t++)
+            for (int t = 0; t < k; t++)
             {
-                if(op->cleanStatus[cleanNow].comb[i][j].pollutedSet[k] == op->cleanStatus[cleanNow].comb[i][j].pollutedSet[t])
+                if (op->cleanStatus[cleanNow].comb[i][j].pollutedSet[k] == op->cleanStatus[cleanNow].comb[i][j].pollutedSet[t])
                 {
                     count--;
                     break;
@@ -1216,27 +1274,27 @@ int myMainWindow::pollutedNum(int i, int j)
 
 void myMainWindow::showJudge()
 {
-    qDebug()<<"op->stopTime: "<<op->stopTime;
-    if(now == op->stopTime)
+    qDebug() << "op->stopTime: " << op->stopTime;
+    if (now == op->stopTime)
     {
-        if(!ui->nextButton->isEnabled())
+        if (!ui->nextButton->isEnabled())
         {
             timer->stop();
         }
-        qDebug()<<"now: "<<now;
+        qDebug() << "now: " << now;
         int ret = QMessageBox::warning(this, "Error", "It's going to violate the constraint! The application will be closed if you click Ok or the cross.", QMessageBox::Ok);
-            switch (ret)
-            {
-            case QMessageBox::Ok:
-                haveToClose = true;
-                this->close();
-                break;
-            default:
-                break;
-            }
+        switch (ret)
+        {
+        case QMessageBox::Ok:
+            haveToClose = true;
+            this->close();
+            break;
+        default:
+            break;
+        }
     }
 
-    qDebug()<<"Is clean: "<<isClean;
+    qDebug() << "Is clean: " << isClean;
 
     qDebug() << "op->cannotClean(): " << op->cannotClean();
     if (now == op->cannotClean())
@@ -1249,7 +1307,7 @@ void myMainWindow::showJudge()
         }
         isClean = false;
 
-        int ret = QMessageBox::warning(this, "Error", "Cannot clean in this situation! The application will be closed if you click OK! Otherwise you can continue the process without cleaning.", QMessageBox::Ok|QMessageBox::Cancel);
+        int ret = QMessageBox::warning(this, "Error", "Cannot clean in this situation! The application will be closed if you click OK! Otherwise you can continue the process without cleaning.", QMessageBox::Ok | QMessageBox::Cancel);
         switch (ret)
         {
         case QMessageBox::Ok:
