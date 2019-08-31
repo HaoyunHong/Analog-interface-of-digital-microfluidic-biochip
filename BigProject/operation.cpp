@@ -15,6 +15,8 @@ Operation::Operation(QObject *parent) : QObject(parent)
 
     wholeCleanTime = 0;
     cleanLength = 0;
+
+    BlockStatus = new matrixComb[1000];
 }
 
 void Operation::setFile(QString path)
@@ -319,6 +321,13 @@ void Operation::parseFile()
                 {
                     status[t] = status[t - 1];
                     status[t].soundDefault();
+                    for(int i=1;i<=colNum;i++)
+                    {
+                        for(int j=1;j<=rowNum;j++)
+                        {
+                            status[t].comb[i][j].isBlock = BlockStatus[t].comb[i][j].isBlock;
+                        }
+                    }
                 }
                 for (int k = 0; k < lineTimeList[t].size(); k++)
                 {
@@ -493,6 +502,11 @@ void Operation::parseFile()
                         startCleanTime(pol);
 
                         qDebug() << "pol.cleanTime" << pol.cleanTime;
+
+                        if(pol.cleanTime==-1)
+                        {
+                            emit cannotCleaninCleanMode(pol.time);
+                        }
 
                         int trueCleanTime = pol.cleanTime + cleanLength;
                         qDebug() << "trueCleanTime: " << trueCleanTime;

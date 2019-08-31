@@ -61,6 +61,8 @@ public:
 
     QVector<matrixComb> cleanStatus;
 
+    matrixComb* BlockStatus;
+
     int startClean( );
 
     void changeIsSafe();
@@ -78,6 +80,7 @@ public:
 signals:
     void cannotShowCommand();
     void sendWholeCleanTimeSignal(int);
+    void cannotCleaninCleanMode(int);
 
 public slots:
 

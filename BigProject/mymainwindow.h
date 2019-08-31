@@ -124,6 +124,8 @@ private:
 
 
 
+
+
 protected:
     void closeEvent(QCloseEvent *event);
     void paintEvent(QPaintEvent *);

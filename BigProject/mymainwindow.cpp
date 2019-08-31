@@ -42,6 +42,8 @@ myMainWindow::myMainWindow(QWidget *parent) :
 
     isCleanEnd = false;
 
+    isSet = false;
+
     op = new Operation(this);
 
     merPlayer = new QMediaPlayer(this);
@@ -427,6 +429,20 @@ myMainWindow::myMainWindow(QWidget *parent) :
         wholeCleanTime = op->wholeCleanTime;
     });
 
+    connect(op,&Operation::cannotCleaninCleanMode,
+            [=]()
+    {
+        int ret = QMessageBox::warning(this, "Error", "Cannot clean in this situation! Stop.", QMessageBox::Close);
+        switch (ret)
+        {
+        case QMessageBox::Close:
+            this->close();
+            break;
+        default:
+            break;
+        }
+    });
+
 }
 
 //paintEvent里面就画图，数据的函数什么的扔到外面，再返回结果，否则会出问题
@@ -624,14 +640,15 @@ void myMainWindow::paintEvent(QPaintEvent *)
             rec = QRect((col - 1)*unit + unit, 0 - (row - 1)*unit, 9 * unit / 8, -unit / 2);
             p.drawText(rec, Qt::AlignCenter, text);
 
+            qDebug()<<"isSet"<<isSet;
             if (isSet)
             {
-                //qDebug()<<"isSet";
+                qDebug()<<"isSet"<<isSet;
                 for (int i = 1; i <= col; i++)
                 {
                     for (int j = 1; j <= row; j++)
                     {
-                        if (op->cleanStatus[cleanNow].comb[i][j].isBlock)
+                        if (op->BlockStatus[cleanNow].comb[i][j].isBlock)
                         {
                             brush.setColor(QColor(178, 200, 187, 200));
                             p.setPen(Qt::NoPen);
@@ -940,11 +957,13 @@ void myMainWindow::play()
 
 }
 
+//还是在读文件之前设置
 void myMainWindow::mousePressEvent(QMouseEvent *e)
 {
-    if (ui->cleanCheckBox->isEnabled() == false || ui->cleanCheckBox->isChecked() == false)
+    if (ui->cleanCheckBox->isEnabled() == false || ui->cleanCheckBox->isChecked()==false)
     {
-        qDebug() << "CannotSet Now, it's already begin!";
+        qDebug() << "CannotSet Now!";
+        isSet = false;
         return;
     }
 
@@ -976,7 +995,7 @@ void myMainWindow::mousePressEvent(QMouseEvent *e)
     if (e->button() == Qt::RightButton)
     {
         qDebug() << "RightButton!";
-        for (int t = 0; t <= op->wholeTime; t++)
+        for (int t = 0; t < 1000; t++)
         {
             for (int i = 1; i <= col; i++)
             {
@@ -987,22 +1006,26 @@ void myMainWindow::mousePressEvent(QMouseEvent *e)
                         qDebug() << "Clicked!";
                         //curBlock = QPoint(i,j);
                         //qDebug()<<"curBlock = "<<curBlock;
-                        if (op->status[t].comb[i][j].isBlock)
+                        if (op->BlockStatus[t].comb[i][j].isBlock)
                         {
-                            qDebug() << "op->status[" << t << "].comb[" << i << "][" << j << "]is ALREADY Blocked!";
-                            op->status[t].comb[i][j].isBlock = false;
+                            //qDebug() << "op->status[" << t << "].comb[" << i << "][" << j << "]is ALREADY Blocked!";
+                            op->BlockStatus[t].comb[i][j].isBlock = false;
+                            isSet = true;
+                            update();
                         }
                         else {
-                            qDebug() << "op->status[" << t << "].comb[" << i << "][" << j << "]is NEW Blocked!";
-                            op->status[t].comb[i][j].isBlock = true;
+                            //qDebug() << "op->status[" << t << "].comb[" << i << "][" << j << "]is NEW Blocked!";
+                            op->BlockStatus[t].comb[i][j].isBlock = true;
+                            isSet = true;
+                            update();
                         }
 
                     }
                 }
             }
         }
-        isSet = true;
-        repaint();
+
+
     }
 
 }
