@@ -70,6 +70,8 @@ public:
 
     QVector<Polluted> pollutedInfo;
 
+    void changeCleanSafe(int now);
+
 
 
 

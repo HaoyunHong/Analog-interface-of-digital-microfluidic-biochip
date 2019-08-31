@@ -507,6 +507,8 @@ void Operation::parseFile()
 
                         cleanTimes.push_back(pol.cleanTime);
 
+                        changeCleanSafe(pol.cleanTime);
+
                         qDebug() << "Here!";
                         if (cleanTimes.size() == 1)
                         {
@@ -1396,5 +1398,150 @@ void Operation::out(int i, int j)
     out(i, k);
     road.push_back(k);
     qDebug("%d->", k);
+}
+
+void Operation::changeCleanSafe(int now)
+{
+    for (int i = 1; i <= colNum; i++)
+    {
+        for (int j = 1; j <= rowNum; j++)
+        {
+            status[now].comb[i][j].isSafe = true;
+        }
+    }
+
+
+    for (int i = 1; i <= colNum; i++)
+    {
+        for (int j = 1; j <= rowNum; j++)
+        {
+            if (!status[now].comb[i][j].isEmpty)
+            {
+                status[now].comb[i][j].isSafe = false;
+            }
+            if (status[now].comb[i][j].isEmpty)
+            {
+                if (i < colNum && i > 1 && j < rowNum && j>1)
+                {
+                    //qDebug()<<"i < colNum && i > 1 && j < rowNum && j>1";
+                    if (!status[now].comb[i - 1][j - 1].isEmpty
+                        || !status[now].comb[i - 1][j].isEmpty
+                        || !status[now].comb[i - 1][j + 1].isEmpty
+                        || !status[now].comb[i][j - 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty
+                        || !status[now].comb[i + 1][j - 1].isEmpty
+                        || !status[now].comb[i + 1][j].isEmpty
+                        || !status[now].comb[i + 1][j + 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+
+                }
+
+                if (i == colNum && j > 0 && j < rowNum)
+                {
+                    //qDebug()<<"i == colNum && j > 0 && j < rowNum";
+                    if (!status[now].comb[i - 1][j - 1].isEmpty
+                        || !status[now].comb[i - 1][j + 1].isEmpty
+                        || !status[now].comb[i - 1][j].isEmpty
+                        || !status[now].comb[i][j - 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+                }
+                if (i == 1 && j > 0 && j < rowNum)
+                {
+                    // qDebug()<<"i == 1 && j > 0 && j < rowNum";
+                    if (!status[now].comb[i][j - 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty
+                        || !status[now].comb[i + 1][j - 1].isEmpty
+                        || !status[now].comb[i + 1][j].isEmpty
+                        || !status[now].comb[i + 1][j + 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+
+
+
+                }
+
+                if (i < colNum && i > 1 && j == 1)
+                {
+                    //qDebug()<<"i < colNum && i > 1 && j == 1";
+                    if (!status[now].comb[i - 1][j].isEmpty
+                        || !status[now].comb[i - 1][j + 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty
+                        || !status[now].comb[i + 1][j].isEmpty
+                        || !status[now].comb[i + 1][j + 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+
+                }
+
+                if (i < colNum && i > 1 && j == rowNum)
+                {
+                    //qDebug()<<"i < colNum && i > 1 && j == rowNum";
+                    if (!status[now].comb[i - 1][j - 1].isEmpty
+                        || !status[now].comb[i - 1][j].isEmpty
+                        || !status[now].comb[i][j - 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty
+                        || !status[now].comb[i + 1][j - 1].isEmpty
+                        || !status[now].comb[i + 1][j].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+                }
+
+                if (i == colNum && j == rowNum)
+                {
+                    //qDebug()<<"i == colNum && j == rowNum";
+                    if (!status[now].comb[i - 1][j - 1].isEmpty
+                        || !status[now].comb[i - 1][j].isEmpty
+                        || !status[now].comb[i][j - 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+                }
+
+                if (i == colNum && j == 1)
+                {
+                    //qDebug()<<"i == colNum && j == 1";
+                    if (!status[now].comb[i - 1][j].isEmpty
+                        || !status[now].comb[i - 1][j + 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+                }
+
+                if (i == 1 && j == 1)
+                {
+                    //qDebug()<<"i == 1 && j == 1";
+                    if (!status[now].comb[i + 1][j].isEmpty
+                        || !status[now].comb[i + 1][j + 1].isEmpty
+                        || !status[now].comb[i][j + 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+                }
+
+                if (i == 1 && j == rowNum)
+                {
+                    //qDebug()<<"i == 1 && j == rowNum";
+                    if (!status[now].comb[i + 1][j].isEmpty
+                        || !status[now].comb[i][j - 1].isEmpty
+                        || !status[now].comb[i + 1][j - 1].isEmpty)
+                    {
+                        status[now].comb[i][j].isSafe = false;
+                    }
+                }
+            }
+        }
+    }
+
+
+
 }
 
