@@ -593,7 +593,15 @@ void Operation::parseFile()
                             }
                         }
 
+
+
                         qDebug() << "middle: " << middle;
+
+                        if(middle == -1)
+                        {
+                            emit cannotCleaninCleanMode(pol.cleanTime);
+                            return;
+                        }
 
 
                         for (int i = 0; i < pointNum; i++)
@@ -684,11 +692,13 @@ void Operation::parseFile()
 
                         cleanStatus[trueCleanTime].comb[1][1].hasWashing = true;
                         int oneCleanDropTime = trueCleanTime;
+                        qDebug() << "oneCleanDropTime = trueCleanTime: " << oneCleanDropTime;
 
 
                         if (!isLimited)
                         {
                             //先不加约束
+
                             for (int n = 1; n < wholeRoad.size(); n++)
                             {
                                 qDebug() << "n: " << n;
@@ -716,39 +726,46 @@ void Operation::parseFile()
 
                         else
                         {
+                            int _oneCleanDropTime = oneCleanDropTime;
+
+                            int dropNum = 0;
                             while (status[pol.cleanTime].comb[mid.x()][mid.y()].pollutedSet.size() > 0)
                             {
-                                qDebug()<<"status["<<pol.cleanTime<<"].comb["<<mid.x()<<"]["<<mid.y()<<"].pollutedSet.size(): "<<status[pol.cleanTime].comb[mid.x()][mid.y()].pollutedSet.size();
-                                cleanStatus[oneCleanDropTime].comb[1][1].hasWashing = true;
+
+                                //cleanStatus[_oneCleanDropTime].comb[colNum][rowNum].hasWashing = false;
+                                qDebug() << "status[" << pol.cleanTime << "].comb[" << mid.x() << "][" << mid.y() << "].pollutedSet.size(): " << status[pol.cleanTime].comb[mid.x()][mid.y()].pollutedSet.size();
+                                //cleanStatus[_oneCleanDropTime].comb[1][1].hasWashing = true;
                                 int limited = 0;
                                 for (int n = 1; n < wholeRoad.size(); n++)
                                 {
                                     qDebug() << "n: " << n;
-                                    oneCleanDropTime++;
-                                    qDebug() << "oneCleanDropTime: " << oneCleanDropTime;
-                                    cleanStatus.push_back(cleanStatus[oneCleanDropTime - 1]);
-                                    cleanStatus[oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].hasWashing = false;
+                                    _oneCleanDropTime++;
+                                    qDebug() << "_oneCleanDropTime: " << _oneCleanDropTime;
+                                    //cleanStatus.push_back(cleanStatus[oneCleanDropTime - 1]);
+                                    //cleanStatus[oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].hasWashing = false;
 
-                                    cleanStatus[oneCleanDropTime].comb[wholeRoad[n].x()][wholeRoad[n].y()].hasWashing = true;
+                                    //cleanStatus[oneCleanDropTime].comb[wholeRoad[n].x()][wholeRoad[n].y()].hasWashing = true;
 
 
 
-                                    qDebug()<<"status["<<pol.cleanTime<<"].comb["<<wholeRoad[n - 1].x()<<"]["<<wholeRoad[n - 1].y()<<"].pollutedSet.size(): "<<status[pol.cleanTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.size();
-                                    if(status[pol.cleanTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.size()>0)
+                                    //qDebug() << "status[" << pol.cleanTime << "].comb[" << wholeRoad[n - 1].x() << "][" << wholeRoad[n - 1].y() << "].pollutedSet.size(): " << status[pol.cleanTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.size();
+                                    if (status[pol.cleanTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.size() > 0)
                                     {
+
                                         limited++;
 
-                                        if(limited <= 3)
+                                        if (limited <= 3)
                                         {
-
-                                            cleanStatus[oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
+                                            //cleanStatus[oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
                                             status[pol.cleanTime - 1].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
                                             status[pol.cleanTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
 
                                             status[pol.cleanTime + 1].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
                                             status[t].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
                                         }
+
                                     }
+
 
 
 
@@ -756,12 +773,82 @@ void Operation::parseFile()
 
 
                                 }
+                                dropNum++;
                             }
 
 
-                            wholeCleanTime = oneCleanDropTime;
 
-                            cleanLength += wholeRoad.size();
+                            qDebug() << "dropNum: " << dropNum;
+
+                            cleanStatus[oneCleanDropTime].comb[1][1].hasWashing = true;
+
+
+                            int* cnt = new int[dropNum];
+                            for(int q = 0;q<dropNum;q++)
+                            {
+                                cnt[q] = 0;
+                            }
+                            for (int n = 1; n < wholeRoad.size(); n++)
+                            {
+                                cleanStatus[oneCleanDropTime].comb[colNum][rowNum].hasWashing = false;
+                                //qDebug() << "status[" << pol.cleanTime << "].comb[" << mid.x() << "][" << mid.y() << "].pollutedSet.size(): " << status[pol.cleanTime].comb[mid.x()][mid.y()].pollutedSet.size();
+
+                                qDebug() << "n: " << n;
+
+
+
+                                oneCleanDropTime++;
+                                int copy_oneCleanDropTime = oneCleanDropTime;
+
+                                int copy_dropNum = dropNum;
+                                int p=-1;
+
+                                while (copy_dropNum > 0)
+                                {
+                                    cleanStatus.push_back(cleanStatus[oneCleanDropTime+p]);
+                                    p++;
+                                    copy_dropNum--;
+                                    qDebug() << "copy_dropNum: " << copy_dropNum;
+
+
+                                    qDebug() << "copy_oneCleanDropTime: " << copy_oneCleanDropTime;
+
+                                    cleanStatus[copy_oneCleanDropTime].comb[1][1].hasWashing = false;
+                                    cleanStatus[copy_oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].hasWashing = false;
+
+
+                                        if (cleanStatus[copy_oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.size() > 0)
+                                        {
+                                            if(cnt[p]<3)
+                                            {
+                                                cnt++;
+                                                cleanStatus[copy_oneCleanDropTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
+                                                status[pol.cleanTime - 1].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
+                                                status[pol.cleanTime].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
+
+                                                status[pol.cleanTime + 1].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
+                                                status[t].comb[wholeRoad[n - 1].x()][wholeRoad[n - 1].y()].pollutedSet.clear();
+                                            }
+
+                                        }
+
+
+
+                                    cleanStatus[copy_oneCleanDropTime].comb[wholeRoad[n].x()][wholeRoad[n].y()].hasWashing = true;
+                                    qDebug() << "wholeRoad[" << n << "]: " << wholeRoad[n];
+                                    copy_oneCleanDropTime++;
+                                }
+
+
+                            }
+
+
+
+
+
+                            wholeCleanTime = oneCleanDropTime + dropNum - 1;
+
+                            cleanLength += wholeRoad.size() + dropNum - 1;
 
                             qDebug() << "wholeCleanTime =" << wholeCleanTime;
 
@@ -1426,6 +1513,7 @@ void Operation::out(int i, int j)
     if (k == -1)
     {
         qDebug() << i << " and " << j << " can't be connected!";
+        emit cannotCleanHere();
         return;
     }
     out(i, k);

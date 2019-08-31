@@ -430,9 +430,10 @@ myMainWindow::myMainWindow(QWidget *parent) :
     });
 
     connect(op,&Operation::cannotCleaninCleanMode,
-            [=]()
+            [=](int t)
     {
-        int ret = QMessageBox::warning(this, "Error", "Cannot clean in this situation! Stop.", QMessageBox::Close);
+        QString str = QString("Cannot clean in %1 second! Stop.").arg(t);
+        int ret = QMessageBox::warning(this, "Error", str, QMessageBox::Close);
         switch (ret)
         {
         case QMessageBox::Close:
@@ -442,6 +443,21 @@ myMainWindow::myMainWindow(QWidget *parent) :
             break;
         }
     });
+
+    connect(op,&Operation::cannotCleanHere,
+            [=]()
+    {
+        int ret = QMessageBox::warning(this, "Error", "Cannot clean here!", QMessageBox::Close);
+        switch (ret)
+        {
+        case QMessageBox::Close:
+            this->close();
+            break;
+        default:
+            break;
+        }
+    });
+
 
 }
 
@@ -640,10 +656,10 @@ void myMainWindow::paintEvent(QPaintEvent *)
             rec = QRect((col - 1)*unit + unit, 0 - (row - 1)*unit, 9 * unit / 8, -unit / 2);
             p.drawText(rec, Qt::AlignCenter, text);
 
-            qDebug()<<"isSet"<<isSet;
+            //qDebug()<<"isSet"<<isSet;
             if (isSet)
             {
-                qDebug()<<"isSet"<<isSet;
+                //qDebug()<<"isSet"<<isSet;
                 for (int i = 1; i <= col; i++)
                 {
                     for (int j = 1; j <= row; j++)
@@ -1156,6 +1172,7 @@ void myMainWindow::on_limitedCheckBox_stateChanged(int state)
 {
     if (state == Qt::Checked)
     {
+        qDebug()<<"Limited!";
         op->isLimited = true;
     }
     else if (state == Qt::Unchecked)

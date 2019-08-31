@@ -81,6 +81,7 @@ signals:
     void cannotShowCommand();
     void sendWholeCleanTimeSignal(int);
     void cannotCleaninCleanMode(int);
+    void cannotCleanHere();
 
 public slots:
 
